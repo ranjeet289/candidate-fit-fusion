@@ -6,9 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye } from "lucide-react";
+import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye, CheckCircle, Clock, Star, ArrowRight } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const candidates = [
+const candidatesFromPipeline = [
   {
     id: "C001",
     name: "Sarah Chen",
@@ -16,7 +17,10 @@ const candidates = [
     email: "sarah.chen@email.com",
     phone: "+1 (555) 123-4567",
     lastContact: "Never contacted",
-    status: "new_lead"
+    status: "new_lead",
+    fit: 9.2,
+    source: "Sourcing Agent",
+    addedDate: "2024-01-15"
   },
   {
     id: "C002", 
@@ -25,7 +29,10 @@ const candidates = [
     email: "m.johnson@email.com",
     phone: "+1 (555) 234-5678",
     lastContact: "2 days ago",
-    status: "responded"
+    status: "responded",
+    fit: 8.8,
+    source: "Sourcing Agent",
+    addedDate: "2024-01-14"
   },
   {
     id: "C003",
@@ -34,7 +41,10 @@ const candidates = [
     email: "priya.patel@email.com",
     phone: "+1 (555) 345-6789",
     lastContact: "1 week ago",
-    status: "no_response"
+    status: "no_response",
+    fit: 8.5,
+    source: "Sourcing Agent",
+    addedDate: "2024-01-10"
   }
 ];
 
@@ -66,7 +76,8 @@ const outreachHistory = [
     type: "email",
     subject: "Exciting Opportunity - AI Engineer at TechCorp",
     sentAt: "2 hours ago",
-    status: "sent"
+    status: "sent",
+    template: "initial"
   },
   {
     id: "O002",
@@ -74,7 +85,8 @@ const outreachHistory = [
     type: "email",
     subject: "Following up - ML Scientist Role",
     sentAt: "1 day ago",
-    status: "opened"
+    status: "opened",
+    template: "followup"
   },
   {
     id: "O003",
@@ -82,7 +94,27 @@ const outreachHistory = [
     type: "linkedin",
     subject: "Data Scientist Opportunity",
     sentAt: "3 days ago",
-    status: "replied"
+    status: "replied",
+    template: "initial"
+  }
+];
+
+const automatedSequences = [
+  {
+    id: "SEQ001",
+    name: "AI Engineer Sequence",
+    candidateCount: 3,
+    status: "active",
+    steps: ["Initial outreach", "Follow-up (Day 3)", "Final follow-up (Day 7)"],
+    responseRate: "67%"
+  },
+  {
+    id: "SEQ002",
+    name: "ML Scientist Sequence", 
+    candidateCount: 2,
+    status: "active",
+    steps: ["Initial outreach", "Follow-up (Day 5)", "LinkedIn message (Day 10)"],
+    responseRate: "50%"
   }
 ];
 
@@ -92,6 +124,8 @@ export default function OutreachAgent() {
   const [messageContent, setMessageContent] = useState("");
   const [subject, setSubject] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [isPersonalizing, setIsPersonalizing] = useState(false);
+  const { toast } = useToast();
 
   const handleTemplateSelect = (templateId: string) => {
     const template = messageTemplates.find(t => t.id === templateId);
@@ -111,6 +145,39 @@ export default function OutreachAgent() {
       setSelectedTemplate("");
       setMessageContent("");
       setSubject("");
+      toast({
+        title: "Message Sent",
+        description: "Outreach message has been sent successfully",
+      });
+    }, 1500);
+  };
+
+  const handleAIPersonalize = () => {
+    if (!selectedCandidate) {
+      toast({
+        title: "Selection Required",
+        description: "Please select a candidate first",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsPersonalizing(true);
+    setTimeout(() => {
+      const candidate = candidatesFromPipeline.find(c => c.id === selectedCandidate);
+      const personalizedContent = messageContent
+        .replace('{CandidateName}', candidate?.name || '')
+        .replace('{JobTitle}', 'Senior AI Engineer')
+        .replace('{Company}', 'TechCorp')
+        .replace('{RelevantSkill}', 'machine learning')
+        .replace('{RecruiterName}', 'Alex Thompson');
+      
+      setMessageContent(personalizedContent);
+      setIsPersonalizing(false);
+      toast({
+        title: "Message Personalized",
+        description: "AI has personalized the message for the selected candidate",
+      });
     }, 1500);
   };
 
@@ -125,10 +192,11 @@ export default function OutreachAgent() {
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="compose" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="compose">Compose Message</TabsTrigger>
-              <TabsTrigger value="candidates">Candidate Pipeline</TabsTrigger>
-              <TabsTrigger value="history">Outreach History</TabsTrigger>
+              <TabsTrigger value="pipeline">Pipeline ({candidatesFromPipeline.length})</TabsTrigger>
+              <TabsTrigger value="sequences">Auto Sequences</TabsTrigger>
+              <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
 
             <TabsContent value="compose">
@@ -143,17 +211,22 @@ export default function OutreachAgent() {
                 <form onSubmit={handleSendMessage} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block font-semibold mb-2">Select Candidate</label>
+                      <label className="block font-semibold mb-2">Select Candidate from Pipeline</label>
                       <Select value={selectedCandidate} onValueChange={setSelectedCandidate}>
                         <SelectTrigger>
                           <SelectValue placeholder="Choose a candidate..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {candidates.map((candidate) => (
+                          {candidatesFromPipeline.map((candidate) => (
                             <SelectItem key={candidate.id} value={candidate.id}>
-                              <div className="flex items-center gap-2">
-                                <User className="w-4 h-4" />
-                                <span>{candidate.name} - {candidate.title}</span>
+                              <div className="flex items-center justify-between w-full">
+                                <div className="flex items-center gap-2">
+                                  <User className="w-4 h-4" />
+                                  <span>{candidate.name} - {candidate.title}</span>
+                                </div>
+                                <Badge variant="outline" className="ml-2">
+                                  Fit: {candidate.fit}
+                                </Badge>
                               </div>
                             </SelectItem>
                           ))}
@@ -198,8 +271,14 @@ export default function OutreachAgent() {
                       className="min-h-48"
                     />
                     <div className="flex gap-2 mt-2">
-                      <Button type="button" variant="outline" size="sm">
-                        AI Personalize
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm"
+                        onClick={handleAIPersonalize}
+                        disabled={isPersonalizing || !selectedCandidate}
+                      >
+                        {isPersonalizing ? "Personalizing..." : "AI Personalize"}
                       </Button>
                       <Button type="button" variant="outline" size="sm">
                         Preview
@@ -225,11 +304,17 @@ export default function OutreachAgent() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="candidates">
+            <TabsContent value="pipeline">
               <Card className="p-8 bg-background shadow-xl">
-                <h3 className="text-lg font-semibold mb-4">Candidate Pipeline</h3>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Candidate Pipeline</h3>
+                  <p className="text-muted-foreground">
+                    Candidates added from the Sourcing Agent, ready for outreach.
+                  </p>
+                </div>
+                
                 <div className="space-y-4">
-                  {candidates.map((candidate) => (
+                  {candidatesFromPipeline.map((candidate) => (
                     <div key={candidate.id} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
@@ -247,6 +332,10 @@ export default function OutreachAgent() {
                               <Phone className="w-3 h-3" />
                               {candidate.phone}
                             </span>
+                            <span className="flex items-center gap-1">
+                              <Star className="w-3 h-3" />
+                              Fit: {candidate.fit}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -262,14 +351,84 @@ export default function OutreachAgent() {
                           <p className="text-xs text-muted-foreground">
                             Last contact: {candidate.lastContact}
                           </p>
+                          <p className="text-xs text-muted-foreground">
+                            Added: {candidate.addedDate}
+                          </p>
                         </div>
                         
-                        <Button size="sm" variant="outline">
-                          Contact
+                        <Button size="sm" className="bg-primary text-white">
+                          Start Outreach
                         </Button>
                       </div>
                     </div>
                   ))}
+                  
+                  {candidatesFromPipeline.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p>No candidates in pipeline. Add candidates from the Sourcing Agent.</p>
+                      <Button variant="outline" className="mt-4" asChild>
+                        <a href="/sourcing-agent">
+                          <ArrowRight className="w-4 h-4 mr-2" />
+                          Go to Sourcing Agent
+                        </a>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="sequences">
+              <Card className="p-8 bg-background shadow-xl">
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Automated Sequences</h3>
+                  <p className="text-muted-foreground">
+                    Set up automated outreach sequences for different candidate types.
+                  </p>
+                </div>
+                
+                <div className="space-y-4">
+                  {automatedSequences.map((sequence) => (
+                    <Card key={sequence.id} className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <h4 className="font-medium">{sequence.name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {sequence.candidateCount} candidates • {sequence.responseRate} response rate
+                          </p>
+                        </div>
+                        <Badge variant={sequence.status === 'active' ? 'default' : 'outline'}>
+                          {sequence.status}
+                        </Badge>
+                      </div>
+                      
+                      <div className="mb-3">
+                        <p className="text-sm font-medium mb-1">Sequence Steps:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {sequence.steps.map((step, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {step}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline">
+                          Edit Sequence
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          View Analytics
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                  
+                  <Button className="w-full" variant="outline">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create New Sequence
+                  </Button>
                 </div>
               </Card>
             </TabsContent>
@@ -291,6 +450,7 @@ export default function OutreachAgent() {
                         <div>
                           <p className="font-medium">{outreach.candidate}</p>
                           <p className="text-sm text-muted-foreground">{outreach.subject}</p>
+                          <p className="text-xs text-muted-foreground">Template: {outreach.template}</p>
                         </div>
                       </div>
                       
