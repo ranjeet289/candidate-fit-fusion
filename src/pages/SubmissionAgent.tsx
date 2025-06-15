@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -116,7 +115,7 @@ export default function SubmissionAgent() {
 I am excited to submit ${candidate?.name} for the ${job?.title} position at ${job?.company}. With a fit score of ${candidate?.fit}, ${candidate?.name} brings exceptional expertise in ${candidate?.skills.join(", ")}.
 
 Key highlights:
-• ${candidate?.experience || "5+"} years of relevant experience
+• 5+ years of relevant experience
 • Strong background in ${candidate?.skills[0]} and ${candidate?.skills[1]}
 • Proven track record in ${candidate?.title.toLowerCase()} roles
 

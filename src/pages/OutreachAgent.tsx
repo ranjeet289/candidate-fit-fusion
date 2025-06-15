@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye, CheckCircle, Clock, Star, ArrowRight } from "lucide-react";
+import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye, CheckCircle, Clock, Star, ArrowRight, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const candidatesFromPipeline = [
