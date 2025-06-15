@@ -14,7 +14,7 @@ import {
 // Premium badge for premium features
 function PremiumBadge() {
   return (
-    <span className="ml-auto bg-gradient-to-r from-yellow-400 to-yellow-600 text-xs text-white font-semibold px-2 py-0.5 rounded select-none">
+    <span className="ml-auto bg-primary text-primary-foreground text-xs font-semibold px-2 py-0.5 rounded select-none">
       Premium
     </span>
   );
