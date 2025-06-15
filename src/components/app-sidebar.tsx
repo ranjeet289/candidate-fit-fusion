@@ -1,5 +1,5 @@
 
-import { Users, Briefcase, Home, Search, UserPlus, Target, Send, MessageSquare } from "lucide-react";
+import { Users, Briefcase, Home, Search, Target, Send, MessageSquare } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -11,10 +11,20 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
+// Premium badge for premium features
 function PremiumBadge() {
   return (
     <span className="ml-auto bg-gradient-to-r from-yellow-400 to-yellow-600 text-xs text-white font-semibold px-2 py-0.5 rounded select-none">
       Premium
+    </span>
+  );
+}
+
+// New badge for new features
+function NewBadge() {
+  return (
+    <span className="ml-auto bg-gradient-to-r from-green-400 to-green-600 text-xs text-white font-semibold px-2 py-0.5 rounded select-none">
+      New
     </span>
   );
 }
@@ -66,6 +76,7 @@ export function AppSidebar() {
                     <Send className="mr-2" size={18} />
                     <span>Submission Agent</span>
                     <PremiumBadge />
+                    <NewBadge />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
