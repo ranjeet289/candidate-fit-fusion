@@ -9,6 +9,9 @@ import { AppSidebar } from "@/components/app-sidebar";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AIRecruiter from "./pages/AIRecruiter";
+import SourcingAgent from "./pages/SourcingAgent";
+import SubmissionAgent from "./pages/SubmissionAgent";
+import OutreachAgent from "./pages/OutreachAgent";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +28,9 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/ai-recruiter" element={<AIRecruiter />} />
+                <Route path="/sourcing-agent" element={<SourcingAgent />} />
+                <Route path="/submission-agent" element={<SubmissionAgent />} />
+                <Route path="/outreach-agent" element={<OutreachAgent />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

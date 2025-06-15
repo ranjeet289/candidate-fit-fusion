@@ -1,5 +1,5 @@
 
-import { Users, Briefcase, Home, Search, UserPlus } from "lucide-react";
+import { Users, Briefcase, Home, Search, UserPlus, Target, Send, MessageSquare } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -31,20 +31,43 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Recruitment</SidebarGroupLabel>
+          <SidebarGroupLabel>AI Agents</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href="/ai-recruiter">
-                    <UserPlus className="mr-2" size={18} />
-                    <span>AI Agents</span>
+                  <a href="/sourcing-agent">
+                    <Target className="mr-2" size={18} />
+                    <span>Sourcing Agent</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href="#">
+                  <a href="/submission-agent">
+                    <Send className="mr-2" size={18} />
+                    <span>Submission Agent</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a href="/outreach-agent">
+                    <MessageSquare className="mr-2" size={18} />
+                    <span>Outreach Agent</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Recruitment</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a href="/candidates">
                     <Users className="mr-2" size={18} />
                     <span>Candidates</span>
                   </a>
@@ -52,7 +75,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href="#">
+                  <a href="/jobs">
                     <Briefcase className="mr-2" size={18} />
                     <span>Jobs</span>
                   </a>
@@ -67,7 +90,7 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href="#">
+                  <a href="/faq">
                     <Search className="mr-2" size={18} />
                     <span>FAQ</span>
                   </a>
