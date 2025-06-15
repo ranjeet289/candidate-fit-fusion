@@ -1,5 +1,4 @@
-
-import { Users, Briefcase, Home, Search, UserPlus, Target, Send, MessageSquare } from "lucide-react";
+import { Users, Briefcase, Home, Search, UserPlus, Target, Send, MessageSquare, Star } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -39,6 +38,7 @@ export function AppSidebar() {
                   <a href="/sourcing-agent">
                     <Target className="mr-2" size={18} />
                     <span>Sourcing Agent</span>
+                    <Star className="ml-auto text-yellow-500" size={14} />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -47,6 +47,7 @@ export function AppSidebar() {
                   <a href="/outreach-agent">
                     <MessageSquare className="mr-2" size={18} />
                     <span>Outreach Agent</span>
+                    <Star className="ml-auto text-yellow-500" size={14} />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -55,6 +56,7 @@ export function AppSidebar() {
                   <a href="/submission-agent">
                     <Send className="mr-2" size={18} />
                     <span>Submission Agent</span>
+                    <Star className="ml-auto text-yellow-500" size={14} />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
