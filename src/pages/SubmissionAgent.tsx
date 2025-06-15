@@ -33,6 +33,7 @@ import JobMultiSelect from "./submission-agent/JobMultiSelect";
 import CoverLetterSection from "./submission-agent/CoverLetterSection";
 import SubmissionHistory from "./submission-agent/SubmissionHistory";
 import SmartMatches from "./submission-agent/SmartMatches";
+import { useEntities } from "@/context/EntityContext";
 
 const candidatesFromPipeline = [
   { id: "C001", name: "Sarah Chen", title: "Senior AI Engineer", fit: 9.2, source: "Sourcing Agent", skills: ["Python", "TensorFlow", "AWS"] },
@@ -99,6 +100,8 @@ const smartMatches = [
 ];
 
 export default function SubmissionAgent() {
+  const { candidates, jobs, addCandidate } = useEntities();
+
   const [selectedCandidate, setSelectedCandidate] = useState(""); // Candidate id, or "manual"
   const [manualCandidate, setManualCandidate] = useState({
     name: "",
@@ -112,14 +115,14 @@ export default function SubmissionAgent() {
   const [isGeneratingCover, setIsGeneratingCover] = useState(false);
   const { toast } = useToast();
 
-  // Collect all candidates: pipeline + manual (if filled)
+  // manualCandidateIsValid: all fields must be filled
   const manualCandidateIsValid = manualCandidate.name && manualCandidate.title && manualCandidate.fit && manualCandidate.skills;
   const showManualForm = selectedCandidate === "manual";
 
-  // For display and cover letter: combine both candidates lists for lookup
+  // Merge: if manual filled, add to choices
   const allCandidates = [
-    ...candidatesFromPipeline,
-    ...(manualCandidateIsValid
+    ...candidates,
+    ...(manualCandidateIsValid && !candidates.some(c=>c.id==="manual")
       ? [{
           id: "manual",
           name: manualCandidate.name,
@@ -133,13 +136,20 @@ export default function SubmissionAgent() {
 
   function getChosenCandidate() {
     if (selectedCandidate === "manual" && manualCandidateIsValid) {
-      return allCandidates.find(c => c.id === "manual");
+      // Optionally add to global context on submit
+      return {
+        id: "manual",
+        name: manualCandidate.name,
+        title: manualCandidate.title,
+        fit: manualCandidate.fit,
+        source: "Manual",
+        skills: manualCandidate.skills.split(",").map(s => s.trim()),
+      };
     } else {
       return allCandidates.find(c => c.id === selectedCandidate);
     }
   }
 
-  // Multiple job select (we'll do a simple custom UI)
   function toggleJob(id: string) {
     setSelectedJobs(sel =>
       sel.includes(id) ? sel.filter(jid => jid !== id) : [...sel, id]
@@ -167,6 +177,17 @@ export default function SubmissionAgent() {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
+      if (selectedCandidate === "manual" && manualCandidateIsValid) {
+        // Add manual candidate to context for global listing
+        addCandidate({
+          id: String(Date.now()),
+          name: manualCandidate.name,
+          title: manualCandidate.title,
+          fit: Number(manualCandidate.fit),
+          source: "Manual",
+          skills: manualCandidate.skills.split(",").map(s => s.trim()),
+        });
+      }
       setSelectedCandidate("");
       setManualCandidate({ name: "", title: "", fit: "", skills: "" });
       setSelectedJobs([]);
@@ -191,9 +212,9 @@ export default function SubmissionAgent() {
 
     setIsGeneratingCover(true);
     setTimeout(() => {
-      const firstJob = availableJobs.find(j => j.id === selectedJobs[0]);
+      const firstJob = jobs.find(j => j.id === selectedJobs[0]);
       let jobsInfo = selectedJobs.map(jid => {
-        const job = availableJobs.find(j => j.id === jid);
+        const job = jobs.find(j => j.id === jid);
         return job ? `${job.title} at ${job.company}` : "";
       }).filter(Boolean).join(", ");
       const generatedLetter = `Dear Hiring Manager,
@@ -283,7 +304,7 @@ AI Recruitment Team`;
                 <form onSubmit={handleSubmission} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CandidateSelector
-                      candidatesFromPipeline={candidatesFromPipeline}
+                      candidatesFromPipeline={candidates}
                       selectedCandidate={selectedCandidate}
                       setSelectedCandidate={setSelectedCandidate}
                       showManualForm={showManualForm}
@@ -291,7 +312,7 @@ AI Recruitment Team`;
                       setManualCandidate={setManualCandidate}
                     />
                     <JobMultiSelect
-                      availableJobs={availableJobs}
+                      availableJobs={jobs}
                       selectedJobs={selectedJobs}
                       toggleJob={toggleJob}
                     />
