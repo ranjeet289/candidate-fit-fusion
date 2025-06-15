@@ -44,17 +44,17 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href="/submission-agent">
-                    <Send className="mr-2" size={18} />
-                    <span>Submission Agent</span>
+                  <a href="/outreach-agent">
+                    <MessageSquare className="mr-2" size={18} />
+                    <span>Outreach Agent</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href="/outreach-agent">
-                    <MessageSquare className="mr-2" size={18} />
-                    <span>Outreach Agent</span>
+                  <a href="/submission-agent">
+                    <Send className="mr-2" size={18} />
+                    <span>Submission Agent</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
