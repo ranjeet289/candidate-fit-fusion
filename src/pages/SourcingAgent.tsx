@@ -1,11 +1,40 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Target, User, MapPin, Briefcase, Star } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Target, User, MapPin, Briefcase, Star, Globe } from "lucide-react";
+
+const dummyJobs = [
+  {
+    id: "J001",
+    title: "Senior AI Engineer",
+    company: "TechCorp",
+    location: "San Francisco, CA",
+    type: "Full-time",
+    experience: "5+ years",
+    skills: ["Python", "TensorFlow", "AWS", "Docker"]
+  },
+  {
+    id: "J002", 
+    title: "ML Research Scientist",
+    company: "InnovateLabs",
+    location: "Boston, MA",
+    type: "Full-time",
+    experience: "7+ years",
+    skills: ["PyTorch", "NLP", "Computer Vision", "Python"]
+  },
+  {
+    id: "J003",
+    title: "Data Scientist",
+    company: "DataFlow Inc",
+    location: "Remote",
+    type: "Contract",
+    experience: "4+ years",
+    skills: ["Machine Learning", "SQL", "R", "Statistics"]
+  }
+];
 
 const dummyCandidates = [
   {
@@ -17,7 +46,8 @@ const dummyCandidates = [
     skills: ["Python", "TensorFlow", "AWS", "Docker"],
     fit: 9.2,
     linkedin: "linkedin.com/in/sarahchen",
-    email: "sarah.chen@email.com"
+    email: "sarah.chen@email.com",
+    source: "LinkedIn"
   },
   {
     id: "C002", 
@@ -28,7 +58,8 @@ const dummyCandidates = [
     skills: ["PyTorch", "NLP", "Computer Vision", "Python"],
     fit: 8.8,
     linkedin: "linkedin.com/in/marcusjohnson",
-    email: "m.johnson@email.com"
+    email: "m.johnson@email.com",
+    source: "GitHub"
   },
   {
     id: "C003",
@@ -37,27 +68,48 @@ const dummyCandidates = [
     location: "Remote",
     experience: "4+ years",
     skills: ["Machine Learning", "SQL", "R", "Statistics"],
-    fit: 8.5,
+    fit: 8.7,
     linkedin: "linkedin.com/in/priyapatel",
-    email: "priya.patel@email.com"
+    email: "priya.patel@email.com",
+    source: "AngelList"
+  },
+  {
+    id: "C004",
+    name: "Alex Rodriguez",
+    title: "Senior Data Engineer", 
+    location: "Austin, TX",
+    experience: "6+ years",
+    skills: ["Python", "Spark", "Kafka", "AWS"],
+    fit: 8.6,
+    linkedin: "linkedin.com/in/alexrodriguez",
+    email: "alex.rodriguez@email.com",
+    source: "Indeed"
   }
 ];
 
 export default function SourcingAgent() {
-  const [jobDescription, setJobDescription] = useState("");
-  const [requirements, setRequirements] = useState("");
-  const [location, setLocation] = useState("");
+  const [selectedJob, setSelectedJob] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [candidates, setCandidates] = useState<typeof dummyCandidates>([]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleJobSelect = (jobId: string) => {
+    setSelectedJob(jobId);
+    setCandidates([]);
+  };
+
+  const handleStartSourcing = () => {
+    if (!selectedJob) return;
+    
     setIsSearching(true);
     setTimeout(() => {
-      setCandidates(dummyCandidates);
+      // Filter candidates with 8.5+ fit score
+      const highFitCandidates = dummyCandidates.filter(candidate => candidate.fit >= 8.5);
+      setCandidates(highFitCandidates);
       setIsSearching(false);
-    }, 2000);
+    }, 3000);
   };
+
+  const selectedJobData = dummyJobs.find(job => job.id === selectedJob);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -72,54 +124,94 @@ export default function SourcingAgent() {
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-2">AI-Powered Candidate Sourcing</h2>
             <p className="text-muted-foreground">
-              Let our AI agent find the perfect candidates by analyzing job requirements and sourcing from multiple platforms.
+              Select a job from your platform and let our AI agent scrape profiles across the internet to find candidates with 8.5+ fit score.
             </p>
           </div>
 
-          <form onSubmit={handleSearch} className="space-y-6 mb-8">
+          <div className="space-y-6 mb-8">
             <div>
-              <label className="block font-semibold mb-2">Job Description</label>
-              <Textarea
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                placeholder="Paste the complete job description here..."
-                className="min-h-32"
-                required
-              />
+              <label className="block font-semibold mb-2">Select Job Position</label>
+              <Select value={selectedJob} onValueChange={handleJobSelect}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choose a job position to source candidates for..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {dummyJobs.map((job) => (
+                    <SelectItem key={job.id} value={job.id}>
+                      <div className="flex items-center justify-between w-full">
+                        <div>
+                          <span className="font-medium">{job.title}</span>
+                          <span className="text-muted-foreground ml-2">@ {job.company}</span>
+                        </div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-semibold mb-2">Key Requirements</label>
-                <Textarea
-                  value={requirements}
-                  onChange={(e) => setRequirements(e.target.value)}
-                  placeholder="e.g., 5+ years Python, Machine Learning, AWS experience"
-                  className="min-h-24"
-                />
-              </div>
-              <div>
-                <label className="block font-semibold mb-2">Preferred Location</label>
-                <Input
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="e.g., San Francisco, Remote, Nationwide"
-                />
-              </div>
-            </div>
+            {selectedJobData && (
+              <Card className="p-4 bg-muted/50">
+                <h3 className="font-semibold mb-2">Selected Job Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="w-4 h-4" />
+                    <span>{selectedJobData.title} at {selectedJobData.company}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    <span>{selectedJobData.location}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    <span>{selectedJobData.experience} experience</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">Skills:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {selectedJobData.skills.slice(0, 3).map((skill) => (
+                        <Badge key={skill} variant="outline" className="text-xs">
+                          {skill}
+                        </Badge>
+                      ))}
+                      {selectedJobData.skills.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{selectedJobData.skills.length - 3} more
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
 
             <Button 
-              type="submit" 
-              disabled={isSearching || !jobDescription.trim()}
+              onClick={handleStartSourcing}
+              disabled={isSearching || !selectedJob}
               className="w-full bg-primary text-white"
             >
-              {isSearching ? "Sourcing Candidates..." : "Start AI Sourcing"}
+              {isSearching ? (
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 animate-spin" />
+                  Scraping profiles across the internet...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Target className="w-4 h-4" />
+                  Start AI Sourcing (8.5+ Fit Score)
+                </div>
+              )}
             </Button>
-          </form>
+          </div>
 
           {candidates.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-4">Sourced Candidates ({candidates.length})</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">High-Fit Candidates ({candidates.length})</h3>
+                <Badge variant="outline" className="text-green-600 border-green-600">
+                  8.5+ Fit Score Only
+                </Badge>
+              </div>
               <div className="grid gap-4">
                 {candidates.map((candidate) => (
                   <Card key={candidate.id} className="p-6">
@@ -133,9 +225,14 @@ export default function SourcingAgent() {
                           <p className="text-muted-foreground">{candidate.title}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Star className="w-4 h-4 text-yellow-500" />
-                        <span className="font-semibold">{candidate.fit}</span>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <Star className="w-4 h-4 text-yellow-500" />
+                          <span className="font-semibold text-green-600">{candidate.fit}</span>
+                        </div>
+                        <Badge variant="secondary" className="text-xs">
+                          {candidate.source}
+                        </Badge>
                       </div>
                     </div>
 
@@ -169,10 +266,10 @@ export default function SourcingAgent() {
                         Add to Pipeline
                       </Button>
                       <Button size="sm" variant="outline">
-                        View Profile
+                        View Full Profile
                       </Button>
                       <Button size="sm" variant="outline">
-                        Contact
+                        Start Outreach
                       </Button>
                     </div>
                   </Card>
