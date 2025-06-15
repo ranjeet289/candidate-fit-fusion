@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye, CheckCircle, Clock, Star, ArrowRight, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { useEffect } from "react";
 
 const candidatesFromPipeline = [
   {
@@ -125,6 +126,13 @@ export default function OutreachAgent() {
   const [subject, setSubject] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isPersonalizing, setIsPersonalizing] = useState(false);
+  const [automationEnabled, setAutomationEnabled] = useState(false);
+  const [automationConfig, setAutomationConfig] = useState({
+    method: "email", // or "linkedin"
+    frequency: "immediate", // later you could have options like "scheduled"
+    recruiterEmail: "",
+    linkedinProfile: "",
+  });
   const { toast } = useToast();
 
   const handleTemplateSelect = (templateId: string) => {
@@ -181,6 +189,30 @@ export default function OutreachAgent() {
     }, 1500);
   };
 
+  // For demonstration, simulate "auto-send" on pipeline add (mocked)
+  useEffect(() => {
+    if (!automationEnabled) return;
+    // Find candidates that should get an automated message (mock logic)
+    const newCandidates = candidatesFromPipeline.filter(
+      (c) => c.status === "new_lead"
+    );
+    if (newCandidates.length) {
+      newCandidates.forEach((candidate) => {
+        // Here, send "automated" message
+        console.log(
+          `[Automation] Sent ${automationConfig.method === "email" ? "email" : "LinkedIn DM"} to ${candidate.name} from ${automationConfig.method === "email" ? automationConfig.recruiterEmail : automationConfig.linkedinProfile || "your account"}`
+        );
+        toast({
+          title: "Automated Outreach Sent",
+          description: `Sent ${automationConfig.method === "email" ? "email" : "LinkedIn DM"} to ${candidate.name} automatically.`,
+        });
+        // Would normally update status/history in backend here
+      });
+    }
+    // Prevent multiple triggers unless candidate status changes
+    // eslint-disable-next-line
+  }, [automationEnabled, automationConfig.method, automationConfig.recruiterEmail, automationConfig.linkedinProfile]);
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="flex items-center px-10 py-6 border-b">
@@ -188,6 +220,140 @@ export default function OutreachAgent() {
         <h1 className="text-2xl font-bold tracking-tight">Outreach Agent</h1>
         <Badge variant="secondary" className="ml-3">Premium</Badge>
       </header>
+
+      {/* Automation panel at top */}
+      <div className="max-w-6xl mx-auto w-full px-4 pt-4">
+        <Card className="p-6 mb-6 bg-amber-50 border-yellow-400 border">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h2 className="font-bold text-lg flex items-center gap-2">
+                Automate Outreach
+                <Badge variant="outline" className="uppercase text-yellow-700 border-yellow-500 bg-yellow-100">Beta</Badge>
+              </h2>
+              <div className="text-muted-foreground text-sm mt-1">
+                When enabled, all new candidates added to the pipeline will automatically receive your outreach via email or LinkedIn DMs using your recruiter account.
+              </div>
+            </div>
+            <div className="flex items-center gap-4 mt-3 md:mt-0">
+              <Switch
+                checked={automationEnabled}
+                onCheckedChange={setAutomationEnabled}
+                id="automation-toggle"
+                className="mr-2"
+                aria-label="Enable automate outreach"
+              />
+              <label htmlFor="automation-toggle" className="font-semibold">
+                {automationEnabled ? "Enabled" : "Disabled"}
+              </label>
+            </div>
+          </div>
+
+          {/* Automation Config */}
+          {automationEnabled && (
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6"
+            >
+              <div>
+                <label className="block font-semibold mb-1">Send Method</label>
+                <select
+                  value={automationConfig.method}
+                  onChange={(e) =>
+                    setAutomationConfig((c) => ({
+                      ...c,
+                      method: e.target.value,
+                    }))
+                  }
+                  className="block w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="email">Email (from your recruiter email)</option>
+                  <option value="linkedin">LinkedIn DM (from your LinkedIn)</option>
+                </select>
+              </div>
+              {automationConfig.method === "email" && (
+                <div>
+                  <label className="block font-semibold mb-1">Recruiter Email</label>
+                  <input
+                    type="email"
+                    value={automationConfig.recruiterEmail}
+                    onChange={(e) =>
+                      setAutomationConfig((c) => ({
+                        ...c,
+                        recruiterEmail: e.target.value,
+                      }))
+                    }
+                    className="block w-full px-3 py-2 border rounded-md"
+                    placeholder="your@email.com"
+                    required
+                  />
+                </div>
+              )}
+              {automationConfig.method === "linkedin" && (
+                <div>
+                  <label className="block font-semibold mb-1">
+                    LinkedIn Profile Link
+                  </label>
+                  <input
+                    type="url"
+                    value={automationConfig.linkedinProfile}
+                    onChange={(e) =>
+                      setAutomationConfig((c) => ({
+                        ...c,
+                        linkedinProfile: e.target.value,
+                      }))
+                    }
+                    className="block w-full px-3 py-2 border rounded-md"
+                    placeholder="https://linkedin.com/in/yourprofile"
+                    required
+                  />
+                </div>
+              )}
+              <div>
+                <label className="block font-semibold mb-1">Timing</label>
+                <select
+                  value={automationConfig.frequency}
+                  onChange={(e) =>
+                    setAutomationConfig((c) => ({
+                      ...c,
+                      frequency: e.target.value,
+                    }))
+                  }
+                  className="block w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="immediate">Send Immediately</option>
+                  <option value="daily">Batch Daily</option>
+                  {/* More options can be added */}
+                </select>
+              </div>
+            </form>
+          )}
+
+          {automationEnabled && (
+            <div className="mt-4 text-green-700 text-sm flex flex-col gap-1">
+              <span>
+                <strong>Status:</strong>{" "}
+                Automation enabled for {automationConfig.method === "email" ? "Email" : "LinkedIn"} outreach.
+              </span>
+              {automationConfig.method === "email" && automationConfig.recruiterEmail && (
+                <span>
+                  <strong>Sender:</strong> {automationConfig.recruiterEmail}
+                </span>
+              )}
+              {automationConfig.method === "linkedin" && automationConfig.linkedinProfile && (
+                <span>
+                  <strong>Sender:</strong> {automationConfig.linkedinProfile}
+                </span>
+              )}
+              <span>
+                <strong>When:</strong>{" "}
+                {automationConfig.frequency === "immediate"
+                  ? "On pipeline add"
+                  : "Batch daily"}
+              </span>
+            </div>
+          )}
+        </Card>
+      </div>
 
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
