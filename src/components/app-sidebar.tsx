@@ -1,5 +1,5 @@
 
-import { Users, Briefcase, Home, Search, Target, Send, MessageSquare } from "lucide-react";
+import { Users, Briefcase, Home, Search, Target, Send, MessageSquare, New } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -14,16 +14,17 @@ import {
 // Premium badge for premium features
 function PremiumBadge() {
   return (
-    <span className="ml-auto bg-primary text-primary-foreground text-xs font-semibold px-2 py-0.5 rounded select-none">
+    <span className="ml-2 bg-primary text-primary-foreground text-xs font-semibold px-2 py-0.5 rounded select-none flex items-center">
       Premium
     </span>
   );
 }
 
-// New badge for new features
+// New badge with icon for new features
 function NewBadge() {
   return (
-    <span className="ml-auto bg-gradient-to-r from-green-400 to-green-600 text-xs text-white font-semibold px-2 py-0.5 rounded select-none">
+    <span className="ml-auto flex items-center gap-1 bg-muted text-muted-foreground text-xs font-semibold px-2 py-0.5 rounded select-none">
+      <New className="w-3.5 h-3.5" />
       New
     </span>
   );
@@ -48,8 +49,15 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
         <SidebarGroup>
-          <SidebarGroupLabel>AI Agents</SidebarGroupLabel>
+          {/* "AI Agents" are all premium, so "Premium" label next to header */}
+          <SidebarGroupLabel>
+            <span className="flex items-center">
+              AI Agents
+              <PremiumBadge />
+            </span>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -57,7 +65,6 @@ export function AppSidebar() {
                   <a href="/sourcing-agent">
                     <Target className="mr-2" size={18} />
                     <span>Sourcing Agent</span>
-                    <PremiumBadge />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -66,7 +73,6 @@ export function AppSidebar() {
                   <a href="/outreach-agent">
                     <MessageSquare className="mr-2" size={18} />
                     <span>Outreach Agent</span>
-                    <PremiumBadge />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -75,7 +81,6 @@ export function AppSidebar() {
                   <a href="/submission-agent">
                     <Send className="mr-2" size={18} />
                     <span>Submission Agent</span>
-                    <PremiumBadge />
                     <NewBadge />
                   </a>
                 </SidebarMenuButton>
@@ -83,6 +88,7 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
         <SidebarGroup>
           <SidebarGroupLabel>Recruitment</SidebarGroupLabel>
           <SidebarGroupContent>
