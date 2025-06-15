@@ -28,6 +28,11 @@ import {
   ArrowRight
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import CandidateSelector from "./submission-agent/CandidateSelector";
+import JobMultiSelect from "./submission-agent/JobMultiSelect";
+import CoverLetterSection from "./submission-agent/CoverLetterSection";
+import SubmissionHistory from "./submission-agent/SubmissionHistory";
+import SmartMatches from "./submission-agent/SmartMatches";
 
 const candidatesFromPipeline = [
   { id: "C001", name: "Sarah Chen", title: "Senior AI Engineer", fit: 9.2, source: "Sourcing Agent", skills: ["Python", "TensorFlow", "AWS"] },
@@ -259,7 +264,6 @@ AI Recruitment Team`;
         <h1 className="text-2xl font-bold tracking-tight">Submission Agent</h1>
         <Badge variant="secondary" className="ml-3">Premium</Badge>
       </header>
-
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="submit" className="space-y-6">
@@ -268,7 +272,6 @@ AI Recruitment Team`;
               <TabsTrigger value="smart-match">Smart Matches</TabsTrigger>
               <TabsTrigger value="history">Submission History</TabsTrigger>
             </TabsList>
-
             <TabsContent value="submit">
               <Card className="p-8 bg-background shadow-xl">
                 <div className="mb-6">
@@ -277,154 +280,34 @@ AI Recruitment Team`;
                     AI-powered candidate-job matching with automated submission and tracking.
                   </p>
                 </div>
-
                 <form onSubmit={handleSubmission} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block font-semibold mb-2">Select Candidate from Pipeline</label>
-                      <Select value={selectedCandidate} onValueChange={(value) => setSelectedCandidate(value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose a candidate..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {candidatesFromPipeline.map((candidate) => (
-                            <SelectItem key={candidate.id} value={candidate.id}>
-                              <div className="flex items-center justify-between w-full">
-                                <div className="flex items-center gap-2">
-                                  <User className="w-4 h-4" />
-                                  <span>{candidate.name} - {candidate.title}</span>
-                                </div>
-                                <Badge variant="outline" className="ml-2">
-                                  Fit: {candidate.fit}
-                                </Badge>
-                              </div>
-                            </SelectItem>
-                          ))}
-                          <SelectItem value="manual">
-                            <div className="flex items-center gap-2">
-                              <User className="w-4 h-4" />
-                              <span>Manually Add Candidate</span>
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {showManualForm && (
-                        <div className="mt-4 bg-muted rounded p-4 flex flex-col gap-3 border">
-                          <div>
-                            <label className="text-sm font-semibold mb-1 block">Full Name</label>
-                            <input
-                              type="text"
-                              className="w-full px-2 py-1 border rounded"
-                              value={manualCandidate.name}
-                              onChange={e =>
-                                setManualCandidate((prev) => ({ ...prev, name: e.target.value }))
-                              }
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-semibold mb-1 block">Title</label>
-                            <input
-                              type="text"
-                              className="w-full px-2 py-1 border rounded"
-                              value={manualCandidate.title}
-                              onChange={e =>
-                                setManualCandidate((prev) => ({ ...prev, title: e.target.value }))
-                              }
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-semibold mb-1 block">Fit Score (1-10)</label>
-                            <input
-                              type="number"
-                              min="1"
-                              max="10"
-                              step="0.1"
-                              className="w-full px-2 py-1 border rounded"
-                              value={manualCandidate.fit}
-                              onChange={e =>
-                                setManualCandidate((prev) => ({ ...prev, fit: e.target.value }))
-                              }
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-semibold mb-1 block">Skills (comma separated)</label>
-                            <input
-                              type="text"
-                              className="w-full px-2 py-1 border rounded"
-                              value={manualCandidate.skills}
-                              onChange={e =>
-                                setManualCandidate((prev) => ({ ...prev, skills: e.target.value }))
-                              }
-                              placeholder="E.g., Python, NLP, SQL"
-                              required
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block font-semibold mb-2">Select Job(s)</label>
-                      <div className="flex flex-col gap-2">
-                        {availableJobs.map(job => (
-                          <label
-                            key={job.id}
-                            className={`flex items-center gap-2 cursor-pointer rounded border px-3 py-2 transition ${
-                              selectedJobs.includes(job.id)
-                                ? "bg-primary/10 border-primary"
-                                : "hover:bg-muted"
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedJobs.includes(job.id)}
-                              onChange={() => toggleJob(job.id)}
-                              className="accent-primary"
-                            />
-                            <div className="flex items-center gap-2 flex-1">
-                              <Briefcase className="w-4 h-4" />
-                              <span>{job.title} at {job.company}</span>
-                              <Badge
-                                variant={job.urgency === 'High' ? 'destructive' : 'outline'}
-                                className="text-xs ml-2"
-                              >
-                                {job.urgency}
-                              </Badge>
-                              <Badge variant="outline">{job.fit}</Badge>
-                            </div>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block font-semibold mb-2">AI-Generated Cover Letter</label>
-                    <Textarea
-                      value={coverLetter}
-                      onChange={(e) => setCoverLetter(e.target.value)}
-                      placeholder="Click 'Generate AI Cover Letter' to create a personalized cover letter based on the candidate and job match..."
-                      className="min-h-48"
+                    <CandidateSelector
+                      candidatesFromPipeline={candidatesFromPipeline}
+                      selectedCandidate={selectedCandidate}
+                      setSelectedCandidate={setSelectedCandidate}
+                      showManualForm={showManualForm}
+                      manualCandidate={manualCandidate}
+                      setManualCandidate={setManualCandidate}
                     />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="mt-2"
-                      disabled={
-                        !selectedCandidate ||
-                        selectedJobs.length === 0 ||
-                        isGeneratingCover ||
-                        (selectedCandidate === "manual" && !manualCandidateIsValid)
-                      }
-                      onClick={handleGenerateCoverLetter}
-                    >
-                      {isGeneratingCover ? "Generating..." : "Generate AI Cover Letter"}
-                    </Button>
+                    <JobMultiSelect
+                      availableJobs={availableJobs}
+                      selectedJobs={selectedJobs}
+                      toggleJob={toggleJob}
+                    />
                   </div>
-
+                  <CoverLetterSection
+                    coverLetter={coverLetter}
+                    setCoverLetter={setCoverLetter}
+                    isGeneratingCover={isGeneratingCover}
+                    handleGenerateCoverLetter={handleGenerateCoverLetter}
+                    disabled={
+                      !selectedCandidate ||
+                      selectedJobs.length === 0 ||
+                      isGeneratingCover ||
+                      (selectedCandidate === "manual" && !manualCandidateIsValid)
+                    }
+                  />
                   <Button
                     type="submit"
                     disabled={
@@ -440,125 +323,18 @@ AI Recruitment Team`;
                 </form>
               </Card>
             </TabsContent>
-
             <TabsContent value="smart-match">
-              <Card className="p-8 bg-background shadow-xl">
-                <div className="mb-6">
-                  <h2 className="text-xl font-semibold mb-2">AI Smart Matches</h2>
-                  <p className="text-muted-foreground">
-                    AI-identified perfect candidate-job matches from your pipeline.
-                  </p>
-                </div>
-                
-                <div className="space-y-4">
-                  {smartMatches.map((match) => (
-                    <Card key={`${match.candidateId}-${match.jobId}`} className="p-6 border-2 border-green-200">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                            <Star className="w-6 h-6 text-green-600" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-lg">{match.candidateName}</h4>
-                            <p className="text-muted-foreground">{match.jobTitle}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <Badge variant="default" className="bg-green-100 text-green-800 border-green-300 mb-2">
-                            {match.matchScore} Match Score
-                          </Badge>
-                          <p className="text-xs text-muted-foreground">AI Recommended</p>
-                        </div>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <p className="text-sm font-medium mb-2">Match Reasons:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {match.reasons.map((reason, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {reason}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <div className="flex gap-2">
-                        <Button 
-                          size="sm" 
-                          className="bg-green-600 text-white hover:bg-green-700"
-                          onClick={() => handleSmartSubmission(match.candidateId, match.jobId)}
-                        >
-                          <Send className="w-4 h-4 mr-1" />
-                          Smart Submit
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          View Details
-                        </Button>
-                      </div>
-                    </Card>
-                  ))}
-                  
-                  {smartMatches.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Star className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                      <p>No smart matches found. Add more candidates to your pipeline from the Sourcing Agent.</p>
-                      <Button variant="outline" className="mt-4" asChild>
-                        <a href="/sourcing-agent">
-                          <ArrowRight className="w-4 h-4 mr-2" />
-                          Go to Sourcing Agent
-                        </a>
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </Card>
+              <SmartMatches
+                smartMatches={smartMatches}
+                handleSmartSubmission={handleSmartSubmission}
+              />
             </TabsContent>
-
             <TabsContent value="history">
-              <Card className="p-8 bg-background shadow-xl">
-                <h3 className="text-lg font-semibold mb-4">Recent Submissions</h3>
-                <div className="space-y-4">
-                  {recentSubmissions.map((submission) => (
-                    <div key={submission.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                          <User className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="font-medium">{submission.candidate}</p>
-                          <p className="text-sm text-muted-foreground">{submission.job}</p>
-                          <div className="flex items-center gap-4 mt-1">
-                            <span className="text-xs text-muted-foreground">
-                              Candidate Fit: {submission.candidateFit}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              Job Fit: {submission.jobFit}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(submission.status)}
-                            <span className="text-sm font-medium">{getStatusText(submission.status)}</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground">{submission.submittedAt}</p>
-                        </div>
-                        
-                        <Badge variant="outline">
-                          Overall: {submission.fit}
-                        </Badge>
-                        
-                        <Button size="sm" variant="outline">
-                          View Details
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+              <SubmissionHistory
+                recentSubmissions={recentSubmissions}
+                getStatusIcon={getStatusIcon}
+                getStatusText={getStatusText}
+              />
             </TabsContent>
           </Tabs>
         </div>
