@@ -1,4 +1,5 @@
-import { Users, Briefcase, Home, Search, UserPlus, Target, Send, MessageSquare, Star } from "lucide-react";
+
+import { Users, Briefcase, Home, Search, UserPlus, Target, Send, MessageSquare } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -9,6 +10,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
+function PremiumBadge() {
+  return (
+    <span className="ml-auto bg-gradient-to-r from-yellow-400 to-yellow-600 text-xs text-white font-semibold px-2 py-0.5 rounded select-none">
+      Premium
+    </span>
+  );
+}
 
 export function AppSidebar() {
   return (
@@ -38,7 +47,7 @@ export function AppSidebar() {
                   <a href="/sourcing-agent">
                     <Target className="mr-2" size={18} />
                     <span>Sourcing Agent</span>
-                    <Star className="ml-auto text-yellow-500" size={14} />
+                    <PremiumBadge />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -47,7 +56,7 @@ export function AppSidebar() {
                   <a href="/outreach-agent">
                     <MessageSquare className="mr-2" size={18} />
                     <span>Outreach Agent</span>
-                    <Star className="ml-auto text-yellow-500" size={14} />
+                    <PremiumBadge />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -56,7 +65,7 @@ export function AppSidebar() {
                   <a href="/submission-agent">
                     <Send className="mr-2" size={18} />
                     <span>Submission Agent</span>
-                    <Star className="ml-auto text-yellow-500" size={14} />
+                    <PremiumBadge />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
