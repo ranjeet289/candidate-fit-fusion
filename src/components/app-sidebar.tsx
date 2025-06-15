@@ -1,5 +1,4 @@
-
-import { Users, Briefcase, Home, Search, Target, Send, MessageSquare, New } from "lucide-react";
+import { Users, Briefcase, Home, Search, Target, Send, MessageSquare, Sparkles } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -24,7 +23,7 @@ function PremiumBadge() {
 function NewBadge() {
   return (
     <span className="ml-auto flex items-center gap-1 bg-muted text-muted-foreground text-xs font-semibold px-2 py-0.5 rounded select-none">
-      <New className="w-3.5 h-3.5" />
+      <Sparkles className="w-3.5 h-3.5" />
       New
     </span>
   );
