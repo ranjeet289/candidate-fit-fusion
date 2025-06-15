@@ -2,10 +2,31 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Send, User, Briefcase, CheckCircle, Clock, AlertCircle, Star, MapPin, ArrowRight } from "lucide-react";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent
+} from "@/components/ui/tabs";
+import {
+  Send,
+  User,
+  Briefcase,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  Star,
+  MapPin,
+  ArrowRight
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const candidatesFromPipeline = [
@@ -73,53 +94,115 @@ const smartMatches = [
 ];
 
 export default function SubmissionAgent() {
-  const [selectedCandidate, setSelectedCandidate] = useState("");
-  const [selectedJob, setSelectedJob] = useState("");
+  const [selectedCandidate, setSelectedCandidate] = useState(""); // Candidate id, or "manual"
+  const [manualCandidate, setManualCandidate] = useState({
+    name: "",
+    title: "",
+    fit: "",
+    skills: "",
+  });
+  const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
   const [coverLetter, setCoverLetter] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingCover, setIsGeneratingCover] = useState(false);
   const { toast } = useToast();
 
+  // Collect all candidates: pipeline + manual (if filled)
+  const manualCandidateIsValid = manualCandidate.name && manualCandidate.title && manualCandidate.fit && manualCandidate.skills;
+  const showManualForm = selectedCandidate === "manual";
+
+  // For display and cover letter: combine both candidates lists for lookup
+  const allCandidates = [
+    ...candidatesFromPipeline,
+    ...(manualCandidateIsValid
+      ? [{
+          id: "manual",
+          name: manualCandidate.name,
+          title: manualCandidate.title,
+          fit: manualCandidate.fit,
+          source: "Manual",
+          skills: manualCandidate.skills.split(",").map(s => s.trim()),
+        }]
+      : [])
+  ];
+
+  function getChosenCandidate() {
+    if (selectedCandidate === "manual" && manualCandidateIsValid) {
+      return allCandidates.find(c => c.id === "manual");
+    } else {
+      return allCandidates.find(c => c.id === selectedCandidate);
+    }
+  }
+
+  // Multiple job select (we'll do a simple custom UI)
+  function toggleJob(id: string) {
+    setSelectedJobs(sel =>
+      sel.includes(id) ? sel.filter(jid => jid !== id) : [...sel, id]
+    );
+  }
+
   const handleSubmission = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedCandidate || selectedJobs.length === 0) {
+      toast({
+        title: "Selection Required",
+        description: "Please select a candidate and at least one job",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (selectedCandidate === "manual" && !manualCandidateIsValid) {
+      toast({
+        title: "Fill Manual Candidate",
+        description: "Please fill out all fields for the manual candidate",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
       setSelectedCandidate("");
-      setSelectedJob("");
+      setManualCandidate({ name: "", title: "", fit: "", skills: "" });
+      setSelectedJobs([]);
       setCoverLetter("");
       toast({
         title: "Submission Successful",
-        description: "Candidate has been submitted to the job successfully",
+        description: `Candidate has been submitted to selected job(s) successfully`,
       });
     }, 1500);
   };
 
   const handleGenerateCoverLetter = () => {
-    if (!selectedCandidate || !selectedJob) {
+    const candidate = getChosenCandidate();
+    if (!candidate || selectedJobs.length === 0) {
       toast({
         title: "Selection Required",
-        description: "Please select both a candidate and job first",
+        description: "Please select a candidate and at least one job",
         variant: "destructive"
       });
       return;
     }
-    
+
     setIsGeneratingCover(true);
     setTimeout(() => {
-      const candidate = candidatesFromPipeline.find(c => c.id === selectedCandidate);
-      const job = availableJobs.find(j => j.id === selectedJob);
-      
+      const firstJob = availableJobs.find(j => j.id === selectedJobs[0]);
+      let jobsInfo = selectedJobs.map(jid => {
+        const job = availableJobs.find(j => j.id === jid);
+        return job ? `${job.title} at ${job.company}` : "";
+      }).filter(Boolean).join(", ");
       const generatedLetter = `Dear Hiring Manager,
 
-I am excited to submit ${candidate?.name} for the ${job?.title} position at ${job?.company}. With a fit score of ${candidate?.fit}, ${candidate?.name} brings exceptional expertise in ${candidate?.skills.join(", ")}.
+I am excited to submit ${candidate.name} for the ${jobsInfo}${
+        selectedJobs.length > 1 ? " positions" : " position"
+      }. With a fit score of ${candidate.fit}, ${candidate.name} brings exceptional expertise in ${candidate.skills.join(", ")}.
 
 Key highlights:
 • 5+ years of relevant experience
-• Strong background in ${candidate?.skills[0]} and ${candidate?.skills[1]}
-• Proven track record in ${candidate?.title.toLowerCase()} roles
+• Strong background in ${candidate.skills[0]}${candidate.skills[1] ? " and " + candidate.skills[1] : ""}
+• Proven track record in ${candidate.title.toLowerCase()} roles
 
-${candidate?.name} would be an excellent addition to your team and I believe this role aligns perfectly with their career goals and technical expertise.
+${candidate.name} would be an excellent addition to your team and I believe these role(s) align perfectly with their career goals and technical expertise.
 
 Best regards,
 AI Recruitment Team`;
@@ -199,7 +282,7 @@ AI Recruitment Team`;
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block font-semibold mb-2">Select Candidate from Pipeline</label>
-                      <Select value={selectedCandidate} onValueChange={setSelectedCandidate}>
+                      <Select value={selectedCandidate} onValueChange={(value) => setSelectedCandidate(value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Choose a candidate..." />
                         </SelectTrigger>
@@ -217,37 +300,104 @@ AI Recruitment Team`;
                               </div>
                             </SelectItem>
                           ))}
+                          <SelectItem value="manual">
+                            <div className="flex items-center gap-2">
+                              <User className="w-4 h-4" />
+                              <span>Manually Add Candidate</span>
+                            </div>
+                          </SelectItem>
                         </SelectContent>
                       </Select>
+                      {showManualForm && (
+                        <div className="mt-4 bg-muted rounded p-4 flex flex-col gap-3 border">
+                          <div>
+                            <label className="text-sm font-semibold mb-1 block">Full Name</label>
+                            <input
+                              type="text"
+                              className="w-full px-2 py-1 border rounded"
+                              value={manualCandidate.name}
+                              onChange={e =>
+                                setManualCandidate((prev) => ({ ...prev, name: e.target.value }))
+                              }
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="text-sm font-semibold mb-1 block">Title</label>
+                            <input
+                              type="text"
+                              className="w-full px-2 py-1 border rounded"
+                              value={manualCandidate.title}
+                              onChange={e =>
+                                setManualCandidate((prev) => ({ ...prev, title: e.target.value }))
+                              }
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="text-sm font-semibold mb-1 block">Fit Score (1-10)</label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="10"
+                              step="0.1"
+                              className="w-full px-2 py-1 border rounded"
+                              value={manualCandidate.fit}
+                              onChange={e =>
+                                setManualCandidate((prev) => ({ ...prev, fit: e.target.value }))
+                              }
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="text-sm font-semibold mb-1 block">Skills (comma separated)</label>
+                            <input
+                              type="text"
+                              className="w-full px-2 py-1 border rounded"
+                              value={manualCandidate.skills}
+                              onChange={e =>
+                                setManualCandidate((prev) => ({ ...prev, skills: e.target.value }))
+                              }
+                              placeholder="E.g., Python, NLP, SQL"
+                              required
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div>
-                      <label className="block font-semibold mb-2">Select Job</label>
-                      <Select value={selectedJob} onValueChange={setSelectedJob}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose a job..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableJobs.map((job) => (
-                            <SelectItem key={job.id} value={job.id}>
-                              <div className="flex items-center justify-between w-full">
-                                <div className="flex items-center gap-2">
-                                  <Briefcase className="w-4 h-4" />
-                                  <span>{job.title} at {job.company}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <Badge variant={job.urgency === 'High' ? 'destructive' : 'outline'} className="text-xs">
-                                    {job.urgency}
-                                  </Badge>
-                                  <Badge variant="outline">
-                                    {job.fit}
-                                  </Badge>
-                                </div>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <label className="block font-semibold mb-2">Select Job(s)</label>
+                      <div className="flex flex-col gap-2">
+                        {availableJobs.map(job => (
+                          <label
+                            key={job.id}
+                            className={`flex items-center gap-2 cursor-pointer rounded border px-3 py-2 transition ${
+                              selectedJobs.includes(job.id)
+                                ? "bg-primary/10 border-primary"
+                                : "hover:bg-muted"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedJobs.includes(job.id)}
+                              onChange={() => toggleJob(job.id)}
+                              className="accent-primary"
+                            />
+                            <div className="flex items-center gap-2 flex-1">
+                              <Briefcase className="w-4 h-4" />
+                              <span>{job.title} at {job.company}</span>
+                              <Badge
+                                variant={job.urgency === 'High' ? 'destructive' : 'outline'}
+                                className="text-xs ml-2"
+                              >
+                                {job.urgency}
+                              </Badge>
+                              <Badge variant="outline">{job.fit}</Badge>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
@@ -259,20 +409,30 @@ AI Recruitment Team`;
                       placeholder="Click 'Generate AI Cover Letter' to create a personalized cover letter based on the candidate and job match..."
                       className="min-h-48"
                     />
-                    <Button 
-                      type="button" 
-                      variant="outline" 
+                    <Button
+                      type="button"
+                      variant="outline"
                       className="mt-2"
-                      disabled={!selectedCandidate || !selectedJob || isGeneratingCover}
+                      disabled={
+                        !selectedCandidate ||
+                        selectedJobs.length === 0 ||
+                        isGeneratingCover ||
+                        (selectedCandidate === "manual" && !manualCandidateIsValid)
+                      }
                       onClick={handleGenerateCoverLetter}
                     >
                       {isGeneratingCover ? "Generating..." : "Generate AI Cover Letter"}
                     </Button>
                   </div>
 
-                  <Button 
+                  <Button
                     type="submit"
-                    disabled={isSubmitting || !selectedCandidate || !selectedJob}
+                    disabled={
+                      isSubmitting ||
+                      !selectedCandidate ||
+                      selectedJobs.length === 0 ||
+                      (selectedCandidate === "manual" && !manualCandidateIsValid)
+                    }
                     className="w-full bg-primary text-white"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Candidate"}
