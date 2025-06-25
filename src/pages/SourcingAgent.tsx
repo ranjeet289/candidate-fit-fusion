@@ -326,17 +326,17 @@ export default function SourcingAgent() {
                         </div>
                       </div>
                     </div>
-                    <div className="grid gap-4">
+                    <div className="grid gap-3">
                       {candidates.map((candidate) => (
-                        <Card key={candidate.id} className="p-6">
-                          <div className="flex items-start justify-between mb-4">
+                        <Card key={candidate.id} className="p-4">
+                          <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                                <User className="w-6 h-6 text-primary" />
+                              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                <User className="w-5 h-5 text-primary" />
                               </div>
                               <div>
-                                <h4 className="font-semibold text-lg">{candidate.name}</h4>
-                                <p className="text-muted-foreground">{candidate.title}</p>
+                                <h4 className="font-semibold">{candidate.name}</h4>
+                                <p className="text-sm text-muted-foreground">{candidate.title}</p>
                               </div>
                               {candidate.inPipeline && (
                                 <Badge variant="default" className="bg-green-100 text-green-800 border-green-300">
@@ -345,8 +345,8 @@ export default function SourcingAgent() {
                                 </Badge>
                               )}
                             </div>
-                            <div className="flex items-center gap-4">
-                              <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-1">
                                 <Star className="w-4 h-4 text-yellow-500" />
                                 <span className="font-semibold text-green-600">{candidate.fit}</span>
                               </div>
@@ -356,25 +356,21 @@ export default function SourcingAgent() {
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <MapPin className="w-4 h-4" />
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <MapPin className="w-3 h-3" />
                               {candidate.location}
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Briefcase className="w-4 h-4" />
+                            <div className="flex items-center gap-2">
+                              <Briefcase className="w-3 h-3" />
                               {candidate.experience}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {candidate.email}
                             </div>
                           </div>
 
-                          <div className="mb-4">
-                            <p className="text-sm font-medium mb-2">Skills:</p>
-                            <div className="flex flex-wrap gap-2">
+                          <div className="mb-3">
+                            <div className="flex flex-wrap gap-1">
                               {candidate.skills.map((skill) => (
-                                <Badge key={skill} variant="outline" className="text-xs">
+                                <Badge key={skill} variant="outline" className="text-xs py-0 px-2 h-5">
                                   {skill}
                                 </Badge>
                               ))}
@@ -382,7 +378,7 @@ export default function SourcingAgent() {
                           </div>
 
                           {candidate.fitBreakdown && (
-                            <div className="mb-4 p-4 bg-muted/50 rounded-lg">
+                            <div className="mb-3 p-3 bg-muted/50 rounded-lg">
                               <FitScoreBreakdown 
                                 fitBreakdown={candidate.fitBreakdown} 
                                 overallFit={candidate.fit}
@@ -394,25 +390,25 @@ export default function SourcingAgent() {
                             {!candidate.inPipeline ? (
                               <Button 
                                 size="sm" 
-                                className="bg-primary text-white"
+                                className="bg-primary text-white h-8 text-xs"
                                 onClick={() => handleAddToPipeline(candidate.id)}
                               >
-                                <Plus className="w-4 h-4 mr-1" />
+                                <Plus className="w-3 h-3 mr-1" />
                                 Add to Pipeline
                               </Button>
                             ) : (
-                              <Button size="sm" variant="outline" asChild>
+                              <Button size="sm" variant="outline" className="h-8 text-xs" asChild>
                                 <a href="/outreach-agent">
-                                  <ArrowRight className="w-4 h-4 mr-1" />
+                                  <ArrowRight className="w-3 h-3 mr-1" />
                                   Go to Outreach
                                 </a>
                               </Button>
                             )}
-                            <Button size="sm" variant="outline">
-                              View Full Profile
+                            <Button size="sm" variant="outline" className="h-8 text-xs">
+                              View Profile
                             </Button>
-                            <Button size="sm" variant="outline">
-                              Quick Contact
+                            <Button size="sm" variant="outline" className="h-8 text-xs">
+                              Contact
                             </Button>
                           </div>
                         </Card>
