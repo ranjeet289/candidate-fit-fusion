@@ -3,15 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { Briefcase } from "lucide-react";
 import { useEntities } from "@/context/EntityContext";
 
-interface Job {
-  id: string;
-  title: string;
-  company: string;
-  fit: number;
-  urgency: "High" | "Medium" | "Low" | string;
-  location: string;
-}
-
 interface Props {
   selectedJobs: string[];
   toggleJob: (id: string) => void;

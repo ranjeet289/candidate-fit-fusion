@@ -304,7 +304,6 @@ AI Recruitment Team`;
                 <form onSubmit={handleSubmission} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CandidateSelector
-                      candidatesFromPipeline={candidates}
                       selectedCandidate={selectedCandidate}
                       setSelectedCandidate={setSelectedCandidate}
                       showManualForm={showManualForm}
@@ -312,7 +311,6 @@ AI Recruitment Team`;
                       setManualCandidate={setManualCandidate}
                     />
                     <JobMultiSelect
-                      availableJobs={jobs}
                       selectedJobs={selectedJobs}
                       toggleJob={toggleJob}
                     />

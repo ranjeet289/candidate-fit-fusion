@@ -4,10 +4,14 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useEntities } from "@/context/EntityContext";
+import FitScoreBreakdown from "@/components/FitScoreBreakdown";
 
 export default function JobsPage() {
   const { jobs, addJob, removeJob } = useEntities();
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [form, setForm] = useState({ title: "", company: "", fit: "", urgency: "Medium", location: "" });
 
   const onSubmit = (e: any) => {
@@ -24,8 +28,18 @@ export default function JobsPage() {
     setForm({ title: "", company: "", fit: "", urgency: "Medium", location: "" });
   };
 
+  const toggleExpanded = (jobId: string) => {
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(jobId)) {
+      newExpanded.delete(jobId);
+    } else {
+      newExpanded.add(jobId);
+    }
+    setExpandedRows(newExpanded);
+  };
+
   return (
-    <div className="px-8 py-6 max-w-3xl mx-auto">
+    <div className="px-8 py-6 max-w-5xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Jobs</h2>
       <Card className="mb-8 p-6">
         <form className="flex flex-wrap gap-4" onSubmit={onSubmit}>
@@ -42,32 +56,53 @@ export default function JobsPage() {
         </form>
       </Card>
       <Card>
-        <table className="min-w-full">
-          <thead>
-            <tr>
-              <th className="p-2 text-left">Title</th>
-              <th className="p-2 text-left">Company</th>
-              <th className="p-2">Fit</th>
-              <th className="p-2">Urgency</th>
-              <th className="p-2">Location</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {jobs.map(j => (
-              <tr key={j.id} className="border-b last:border-none">
-                <td className="p-2">{j.title}</td>
-                <td className="p-2">{j.company}</td>
-                <td className="p-2"><Badge>{j.fit}</Badge></td>
-                <td className="p-2"><Badge variant={j.urgency === "High" ? "destructive" : "outline"}>{j.urgency}</Badge></td>
-                <td className="p-2">{j.location}</td>
-                <td className="p-2">
+        <div className="space-y-4 p-4">
+          {jobs.map(j => (
+            <div key={j.id} className="border-b last:border-none pb-4 last:pb-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleExpanded(j.id)}
+                    className="p-1"
+                  >
+                    {expandedRows.has(j.id) ? 
+                      <ChevronDown className="w-4 h-4" /> : 
+                      <ChevronRight className="w-4 h-4" />
+                    }
+                  </Button>
+                  <div>
+                    <p className="font-medium">{j.title}</p>
+                    <p className="text-sm text-muted-foreground">{j.company}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Badge>{j.fit}</Badge>
+                  <Badge variant={j.urgency === "High" ? "destructive" : "outline"}>{j.urgency}</Badge>
+                  <span className="text-sm">{j.location}</span>
                   <Button size="sm" variant="ghost" onClick={() => removeJob(j.id)}>Remove</Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+              <Collapsible open={expandedRows.has(j.id)}>
+                <CollapsibleContent className="mt-4 pl-8">
+                  {j.fitBreakdown ? (
+                    <div className="max-w-md">
+                      <FitScoreBreakdown 
+                        fitBreakdown={j.fitBreakdown} 
+                        overallFit={j.fit} 
+                      />
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Fit score breakdown not available for manually added jobs.
+                    </p>
+                  )}
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+          ))}
+        </div>
       </Card>
     </div>
   )
