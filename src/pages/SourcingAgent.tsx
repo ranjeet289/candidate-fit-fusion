@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import FitScoreBreakdown from "@/components/FitScoreBreakdown";
 
 const dummyJobs = [
   {
@@ -50,7 +50,8 @@ const dummyCandidates = [
     linkedin: "linkedin.com/in/sarahchen",
     email: "sarah.chen@email.com",
     source: "LinkedIn",
-    inPipeline: false
+    inPipeline: false,
+    fitBreakdown: { education: 9.5, experience: 9.0, skills: 9.8, culture: 8.5, location: 9.2 }
   },
   {
     id: "C002", 
@@ -63,7 +64,8 @@ const dummyCandidates = [
     linkedin: "linkedin.com/in/marcusjohnson",
     email: "m.johnson@email.com",
     source: "GitHub",
-    inPipeline: false
+    inPipeline: false,
+    fitBreakdown: { education: 9.8, experience: 8.5, skills: 9.2, culture: 8.0, location: 8.5 }
   },
   {
     id: "C003",
@@ -76,7 +78,8 @@ const dummyCandidates = [
     linkedin: "linkedin.com/in/priyapatel",
     email: "priya.patel@email.com",
     source: "AngelList",
-    inPipeline: false
+    inPipeline: false,
+    fitBreakdown: { education: 8.0, experience: 8.8, skills: 8.9, culture: 9.0, location: 7.8 }
   },
   {
     id: "C004",
@@ -89,7 +92,8 @@ const dummyCandidates = [
     linkedin: "linkedin.com/in/alexrodriguez",
     email: "alex.rodriguez@email.com",
     source: "Indeed",
-    inPipeline: false
+    inPipeline: false,
+    fitBreakdown: { education: 8.2, experience: 9.0, skills: 8.8, culture: 8.5, location: 8.5 }
   }
 ];
 
@@ -164,7 +168,8 @@ export default function SourcingAgent() {
         linkedin: "linkedin.com/in/emmathompson",
         email: "emma.thompson@email.com",
         source: "AngelList",
-        inPipeline: false
+        inPipeline: false,
+        fitBreakdown: { education: 9.0, experience: 8.8, skills: 9.2, culture: 8.5, location: 9.0 }
       };
       newCandidates.push(additionalCandidate);
       setCandidates(newCandidates);
@@ -375,6 +380,15 @@ export default function SourcingAgent() {
                               ))}
                             </div>
                           </div>
+
+                          {candidate.fitBreakdown && (
+                            <div className="mb-4 p-4 bg-muted/50 rounded-lg">
+                              <FitScoreBreakdown 
+                                fitBreakdown={candidate.fitBreakdown} 
+                                overallFit={candidate.fit}
+                              />
+                            </div>
+                          )}
 
                           <div className="flex gap-2">
                             {!candidate.inPipeline ? (
