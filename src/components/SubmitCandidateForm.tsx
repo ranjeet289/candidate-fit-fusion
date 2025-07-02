@@ -113,12 +113,12 @@ export default function SubmitCandidateForm({ onClose }: SubmitCandidateFormProp
             />
           </div>
           <div>
-            <Label htmlFor="noticeperiod">Notice Period</Label>
+            <Label htmlFor="noticePeriod">Notice Period</Label>
             <Input
-              id="noticeperiod"
+              id="noticePeriod"
               placeholder="Notice Period"
-              value={formData.noticeperiod}
-              onChange={(e) => handleInputChange('noticeperiod', e.target.value)}
+              value={formData.noticePeriod}
+              onChange={(e) => handleInputChange('noticePeriod', e.target.value)}
               className="mt-1"
             />
           </div>
