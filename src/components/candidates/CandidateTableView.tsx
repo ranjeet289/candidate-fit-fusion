@@ -26,15 +26,15 @@ interface CandidateTableViewProps {
 export default function CandidateTableView({ candidates, onViewProfile }: CandidateTableViewProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Active': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Submitted to AM': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'Submitted to Client': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'Sendout': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'Next Interview': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Final Interview': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      case 'Offer': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'Rejected': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'Active': return 'bg-green-100 text-green-700 border-green-200';
+      case 'Submitted to AM': return 'bg-blue-100 text-blue-700 border-blue-200';
+      case 'Submitted to Client': return 'bg-purple-100 text-purple-700 border-purple-200';
+      case 'Sendout': return 'bg-orange-100 text-orange-700 border-orange-200';
+      case 'Next Interview': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+      case 'Final Interview': return 'bg-indigo-100 text-indigo-700 border-indigo-200';
+      case 'Offer': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+      case 'Rejected': return 'bg-red-100 text-red-700 border-red-200';
+      default: return 'bg-gray-100 text-gray-700 border-gray-200';
     }
   };
 
@@ -46,81 +46,82 @@ export default function CandidateTableView({ candidates, onViewProfile }: Candid
   };
 
   return (
-    <Card className="overflow-x-auto">
-      <TableComponent>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Candidate</TableHead>
-            <TableHead className="hidden sm:table-cell">Job Title</TableHead>
-            <TableHead className="hidden md:table-cell">Recruiter</TableHead>
-            <TableHead className="hidden lg:table-cell">Job ID</TableHead>
-            <TableHead>Fit Score</TableHead>
-            <TableHead>Stage</TableHead>
-            <TableHead className="hidden sm:table-cell">Date Added</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {candidates.map((candidate) => (
-            <TableRow key={candidate.id}>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-primary" />
-                  </div>
-                  <div>
-                    <div className="font-medium">{candidate.name}</div>
-                    <div className="text-sm text-muted-foreground sm:hidden">{candidate.title}</div>
-                    <div className="text-sm text-muted-foreground">{candidate.location}</div>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell className="hidden sm:table-cell">
-                <div>
-                  <div className="font-medium">{candidate.title}</div>
-                  <div className="text-sm text-muted-foreground">{candidate.experience}</div>
-                </div>
-              </TableCell>
-              <TableCell className="hidden md:table-cell font-medium">{candidate.recruiter}</TableCell>
-              <TableCell className="hidden lg:table-cell font-mono text-sm">{candidate.jobId}</TableCell>
-              <TableCell>
-                <span className={getFitScoreColor(candidate.fitScore)}>
-                  {candidate.fitScore}/10
-                </span>
-              </TableCell>
-              <TableCell>
-                <Badge className={`${getStatusColor(candidate.stage)} text-xs`}>
-                  {candidate.stage}
-                </Badge>
-              </TableCell>
-              <TableCell className="hidden sm:table-cell text-sm">{candidate.dateAdded}</TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-background border shadow-lg">
-                    <DropdownMenuItem onClick={() => onViewProfile(candidate)}>
-                      <Eye className="w-4 h-4 mr-2" />
-                      View Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Linkedin className="w-4 h-4 mr-2" />
-                      LinkedIn
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copy Details
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
+    <Card className="bg-white border border-gray-200">
+      <div className="overflow-x-auto">
+        <TableComponent>
+          <TableHeader>
+            <TableRow className="border-gray-200">
+              <TableHead className="text-gray-600 font-medium">Candidate</TableHead>
+              <TableHead className="text-gray-600 font-medium">Job Title</TableHead>
+              <TableHead className="text-gray-600 font-medium">Recruiter</TableHead>
+              <TableHead className="text-gray-600 font-medium">Job ID</TableHead>
+              <TableHead className="text-gray-600 font-medium">Fit Score</TableHead>
+              <TableHead className="text-gray-600 font-medium">Stage</TableHead>
+              <TableHead className="text-gray-600 font-medium">Date Added</TableHead>
+              <TableHead className="text-gray-600 font-medium">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </TableComponent>
+          </TableHeader>
+          <TableBody>
+            {candidates.map((candidate) => (
+              <TableRow key={candidate.id} className="border-gray-200 hover:bg-gray-50">
+                <TableCell className="py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900">{candidate.name}</div>
+                      <div className="text-sm text-gray-500">{candidate.location}</div>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="py-4">
+                  <div>
+                    <div className="font-medium text-gray-900">{candidate.title}</div>
+                    <div className="text-sm text-gray-500">{candidate.experience}</div>
+                  </div>
+                </TableCell>
+                <TableCell className="py-4 text-gray-900">{candidate.recruiter}</TableCell>
+                <TableCell className="py-4 font-mono text-sm text-gray-700">{candidate.jobId}</TableCell>
+                <TableCell className="py-4">
+                  <span className={getFitScoreColor(candidate.fitScore)}>
+                    {candidate.fitScore}/10
+                  </span>
+                </TableCell>
+                <TableCell className="py-4">
+                  <Badge className={`${getStatusColor(candidate.stage)} text-xs px-2 py-1`}>
+                    {candidate.stage}
+                  </Badge>
+                </TableCell>
+                <TableCell className="py-4 text-sm text-gray-600">{candidate.dateAdded}</TableCell>
+                <TableCell className="py-4">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-white border shadow-lg">
+                      <DropdownMenuItem onClick={() => onViewProfile(candidate)}>
+                        <Eye className="w-4 h-4 mr-2" />
+                        View Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Linkedin className="w-4 h-4 mr-2" />
+                        LinkedIn
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy Details
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </TableComponent>
+      </div>
     </Card>
   );
 }

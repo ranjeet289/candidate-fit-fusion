@@ -16,7 +16,7 @@ function App() {
   return (
     <Router>
       <SidebarProvider>
-        <div className="flex min-h-screen bg-gray-50 w-full">
+        <div className="flex min-h-screen bg-white w-full">
           <AppSidebar />
           <main className="flex-1 overflow-auto">
             <Routes>
