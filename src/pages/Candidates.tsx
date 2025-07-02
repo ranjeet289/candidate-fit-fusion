@@ -5,107 +5,225 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, Filter, Table, List, Plus, MoreHorizontal, Eye, Copy, Linkedin } from "lucide-react";
 import { useEntities } from "@/context/EntityContext";
 import FitScoreBreakdown from "@/components/FitScoreBreakdown";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import {
+  Table as TableComponent,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import CandidateProfile from "@/components/CandidateProfile";
+import SubmitCandidateForm from "@/components/SubmitCandidateForm";
 
 export default function CandidatesPage() {
   const { candidates, addCandidate, updateCandidate, removeCandidate } = useEntities();
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
+  const [showSubmitForm, setShowSubmitForm] = useState(false);
 
-  // Manage add candidate modal (or inline for brevity)
-  const [form, setForm] = useState({ name: "", title: "", fit: "", skills: "" });
+  // Filter candidates based on search term
+  const filteredCandidates = candidates.filter(candidate => 
+    candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    candidate.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    candidate.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
-  const onSubmit = (e:any) => {
-    e.preventDefault();
-    if (!(form.name && form.title && form.fit && form.skills)) return;
-    addCandidate({
-      id: String(Date.now()),
-      name: form.name,
-      title: form.title,
-      fit: Number(form.fit),
-      source: "Manual",
-      skills: form.skills.split(",").map(s => s.trim()),
-    });
-    setForm({ name: "", title: "", fit: "", skills: "" });
-  };
-
-  const toggleExpanded = (candidateId: string) => {
-    const newExpanded = new Set(expandedRows);
-    if (newExpanded.has(candidateId)) {
-      newExpanded.delete(candidateId);
-    } else {
-      newExpanded.add(candidateId);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Active': return 'bg-green-100 text-green-800';
+      case 'Submitted to AM': return 'bg-blue-100 text-blue-800';
+      case 'Submitted to Client': return 'bg-purple-100 text-purple-800';
+      case 'Sendout': return 'bg-orange-100 text-orange-800';
+      case 'Next Interview': return 'bg-yellow-100 text-yellow-800';
+      case 'Final Interview': return 'bg-indigo-100 text-indigo-800';
+      case 'Offer': return 'bg-emerald-100 text-emerald-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
-    setExpandedRows(newExpanded);
   };
 
   return (
-    <div className="px-8 py-6 max-w-5xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Candidates</h2>
-      <Card className="mb-8 p-6">
-        <form className="flex flex-wrap gap-4" onSubmit={onSubmit}>
-          <Input required placeholder="Name" value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} />
-          <Input required placeholder="Title" value={form.title} onChange={e => setForm(f => ({...f, title: e.target.value}))} />
-          <Input required placeholder="Fit" type="number" min="0" max="10" step="0.1" value={form.fit} onChange={e => setForm(f => ({...f, fit: e.target.value}))} />
-          <Input required placeholder="Skills (comma separated)" value={form.skills} onChange={e => setForm(f => ({...f, skills: e.target.value}))} />
-          <Button type="submit">Add</Button>
-        </form>
-      </Card>
-      <Card>
-        <div className="space-y-4 p-4">
-          {candidates.map(c => (
-            <div key={c.id} className="border-b last:border-none pb-4 last:pb-0">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleExpanded(c.id)}
-                    className="p-1"
-                  >
-                    {expandedRows.has(c.id) ? 
-                      <ChevronDown className="w-4 h-4" /> : 
-                      <ChevronRight className="w-4 h-4" />
-                    }
-                  </Button>
-                  <div>
-                    <p className="font-medium">{c.name}</p>
-                    <p className="text-sm text-muted-foreground">{c.title}</p>
-                  </div>
+    <div className="px-6 py-4 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold text-gray-900">Candidates</h1>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-gray-600"
+          >
+            <Search className="w-4 h-4 mr-2" />
+            Search
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-gray-600"
+          >
+            <Filter className="w-4 h-4 mr-2" />
+            Filters
+          </Button>
+          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            <Button
+              variant={viewMode === 'table' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('table')}
+              className="text-xs"
+            >
+              <Table className="w-4 h-4 mr-1" />
+              Table
+            </Button>
+            <Button
+              variant={viewMode === 'card' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('card')}
+              className="text-xs"
+            >
+              <List className="w-4 h-4 mr-1" />
+              List
+            </Button>
+          </div>
+          <Sheet open={showSubmitForm} onOpenChange={setShowSubmitForm}>
+            <SheetTrigger asChild>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Plus className="w-4 h-4 mr-2" />
+                Submit Candidate
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-[600px] sm:max-w-[600px]">
+              <SheetHeader>
+                <SheetTitle>Submit a New Candidate</SheetTitle>
+              </SheetHeader>
+              <SubmitCandidateForm onClose={() => setShowSubmitForm(false)} />
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Input
+            placeholder="Search candidates..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+      </div>
+
+      {/* Content */}
+      {viewMode === 'table' ? (
+        <Card>
+          <TableComponent>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Candidate Name</TableHead>
+                <TableHead>Job Title</TableHead>
+                <TableHead>Candidate Owner</TableHead>
+                <TableHead>Job ID</TableHead>
+                <TableHead>ID</TableHead>
+                <TableHead>Company Name</TableHead>
+                <TableHead>Date Added</TableHead>
+                <TableHead>Stage</TableHead>
+                <TableHead>LinkedIn</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredCandidates.map((candidate) => (
+                <TableRow key={candidate.id}>
+                  <TableCell className="font-medium">{candidate.name}</TableCell>
+                  <TableCell>{candidate.title}</TableCell>
+                  <TableCell>Prashant Gosavi</TableCell>
+                  <TableCell>SRN2025-10615</TableCell>
+                  <TableCell>SRN-2127870</TableCell>
+                  <TableCell>Altios</TableCell>
+                  <TableCell>18 May 2025</TableCell>
+                  <TableCell>
+                    <Badge className={`${getStatusColor('Active')} text-xs`}>
+                      Active
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="sm">
+                      <Linkedin className="w-4 h-4" />
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem onClick={() => setSelectedCandidate(candidate)}>
+                          <Eye className="w-4 h-4 mr-2" />
+                          View Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Copy className="w-4 h-4 mr-2" />
+                          Copy Link
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </TableComponent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCandidates.map((candidate) => (
+            <Card key={candidate.id} className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="font-semibold text-lg">{candidate.name}</h3>
+                  <p className="text-gray-600 text-sm">{candidate.title}</p>
+                  <p className="text-gray-500 text-xs mt-1">Recruited by: Prashant Gosavi</p>
+                  <p className="text-gray-500 text-xs">Company: Altios</p>
+                  <p className="text-gray-500 text-xs">18 May 2025</p>
                 </div>
-                <div className="flex items-center gap-4">
-                  <Badge>{c.fit}</Badge>
-                  {c.source === "Sourcing Agent" ? 
-                    <Badge variant="secondary">AI</Badge> : 
-                    <Badge variant="outline">Manual</Badge>
-                  }
-                  <div className="space-x-1">
-                    {c.skills.map(s => <Badge key={s} variant="outline">{s}</Badge>)}
-                  </div>
-                  <Button size="sm" variant="ghost" onClick={() => removeCandidate(c.id)}>Remove</Button>
-                </div>
+                <Badge className={`${getStatusColor('Active')} text-xs`}>
+                  Active
+                </Badge>
               </div>
-              <Collapsible open={expandedRows.has(c.id)}>
-                <CollapsibleContent className="mt-4 pl-8">
-                  {c.fitBreakdown ? (
-                    <div className="max-w-md">
-                      <FitScoreBreakdown 
-                        fitBreakdown={c.fitBreakdown} 
-                        overallFit={c.fit} 
-                      />
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      Fit score breakdown not available for manually added candidates.
-                    </p>
-                  )}
-                </CollapsibleContent>
-              </Collapsible>
-            </div>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm">
+                  <Linkedin className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="sm">
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
+            </Card>
           ))}
         </div>
-      </Card>
+      )}
+
+      {/* Candidate Profile Sheet */}
+      {selectedCandidate && (
+        <Sheet open={!!selectedCandidate} onOpenChange={() => setSelectedCandidate(null)}>
+          <SheetContent className="w-[600px] sm:max-w-[600px]">
+            <CandidateProfile candidate={selectedCandidate} />
+          </SheetContent>
+        </Sheet>
+      )}
     </div>
-  )
+  );
 }
