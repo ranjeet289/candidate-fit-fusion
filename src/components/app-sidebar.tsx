@@ -15,7 +15,7 @@ import {
 // Premium badge for premium features
 function PremiumBadge() {
   return (
-    <span className="ml-2 bg-primary text-primary-foreground text-xs font-semibold px-2 py-0.5 rounded select-none flex items-center">
+    <span className="ml-2 bg-purple-600 text-white text-xs font-semibold px-2 py-0.5 rounded select-none flex items-center">
       Premium
     </span>
   );
@@ -24,7 +24,7 @@ function PremiumBadge() {
 // New badge with icon for new features
 function NewBadge() {
   return (
-    <span className="ml-auto flex items-center gap-1 bg-muted text-muted-foreground text-xs font-semibold px-2 py-0.5 rounded select-none">
+    <span className="ml-auto flex items-center gap-1 bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded select-none">
       <Sparkles className="w-3.5 h-3.5" />
       New
     </span>
@@ -33,22 +33,22 @@ function NewBadge() {
 
 export function AppSidebar() {
   return (
-    <Sidebar className="border-r border-sidebar-border bg-sidebar">
+    <Sidebar className="border-r border-gray-200 bg-white">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-            <Home className="w-4 h-4 text-primary-foreground" />
+          <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+            <Home className="w-4 h-4 text-white" />
           </div>
-          <span className="font-semibold text-sidebar-foreground">Synapse</span>
+          <span className="font-semibold text-gray-900">Synapse</span>
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/70">Dashboard</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-600">Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
                   <a href="/overview">
                     <BarChart3 className="mr-2" size={18} />
                     <span>Overview</span>
@@ -60,80 +60,8 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/70">Recruitment</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
-                  <a href="/jobs">
-                    <Briefcase className="mr-2" size={18} />
-                    <span>Jobs</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
-                  <a href="/candidates">
-                    <Users className="mr-2" size={18} />
-                    <span>Candidates</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
-                  <a href="/recruiters">
-                    <Users className="mr-2" size={18} />
-                    <span>Recruiters</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
-                  <a href="/trackers">
-                    <Target className="mr-2" size={18} />
-                    <span>Trackers</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/70">Management</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
-                  <a href="/tickets">
-                    <MessageSquare className="mr-2" size={18} />
-                    <span>Tickets</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
-                  <a href="/referrals">
-                    <Send className="mr-2" size={18} />
-                    <span>Referrals</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
-                  <a href="/curated-lists">
-                    <Search className="mr-2" size={18} />
-                    <span>Curated lists</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
           {/* "AI Agents" are all premium, so "Premium" label next to header */}
-          <SidebarGroupLabel className="text-sidebar-foreground/70">
+          <SidebarGroupLabel className="text-gray-600">
             <span className="flex items-center">
               AI Agents
               <PremiumBadge />
@@ -142,7 +70,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
                   <a href="/sourcing-agent">
                     <Target className="mr-2" size={18} />
                     <span>Sourcing Agent</span>
@@ -150,7 +78,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
                   <a href="/outreach-agent">
                     <MessageSquare className="mr-2" size={18} />
                     <span>Outreach Agent</span>
@@ -158,7 +86,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
                   <a href="/submission-agent">
                     <Send className="mr-2" size={18} />
                     <span>Submission Agent</span>
@@ -171,11 +99,83 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/70">Users</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-600">Recruitment</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                  <a href="/jobs">
+                    <Briefcase className="mr-2" size={18} />
+                    <span>Jobs</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                  <a href="/candidates">
+                    <Users className="mr-2" size={18} />
+                    <span>Candidates</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                  <a href="/recruiters">
+                    <Users className="mr-2" size={18} />
+                    <span>Recruiters</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                  <a href="/trackers">
+                    <Target className="mr-2" size={18} />
+                    <span>Trackers</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-gray-600">Management</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                  <a href="/tickets">
+                    <MessageSquare className="mr-2" size={18} />
+                    <span>Tickets</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                  <a href="/referrals">
+                    <Send className="mr-2" size={18} />
+                    <span>Referrals</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                  <a href="/curated-lists">
+                    <Search className="mr-2" size={18} />
+                    <span>Curated lists</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-gray-600">Users</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
                   <a href="/users">
                     <Users className="mr-2" size={18} />
                     <span>Users</span>
@@ -183,7 +183,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
                   <a href="/calendar">
                     <Search className="mr-2" size={18} />
                     <span>Calendar</span>
@@ -191,7 +191,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
                   <a href="/notifications">
                     <MessageSquare className="mr-2" size={18} />
                     <span>Notifications</span>
@@ -203,11 +203,11 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/70">System</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-600">System</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
                   <a href="/update-terms">
                     <Search className="mr-2" size={18} />
                     <span>Update Terms</span>
@@ -215,7 +215,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
                   <a href="/settings">
                     <Search className="mr-2" size={18} />
                     <span>Settings</span>
@@ -223,7 +223,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
                   <a href="/logout">
                     <Search className="mr-2" size={18} />
                     <span>Log Out</span>
