@@ -34,7 +34,7 @@ function NewBadge() {
 export function AppSidebar() {
   return (
     <Sidebar className="border-r border-gray-200 bg-white">
-      <SidebarHeader className="p-4">
+      <SidebarHeader className="p-4 bg-white border-b border-gray-100">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
             <Home className="w-4 h-4 text-white" />
@@ -42,13 +42,13 @@ export function AppSidebar() {
           <span className="font-semibold text-gray-900">Synapse</span>
         </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="bg-white">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-600">Dashboard</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-600 bg-white">Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/overview">
                     <BarChart3 className="mr-2" size={18} />
                     <span>Overview</span>
@@ -61,7 +61,7 @@ export function AppSidebar() {
 
         <SidebarGroup>
           {/* "AI Agents" are all premium, so "Premium" label next to header */}
-          <SidebarGroupLabel className="text-gray-600">
+          <SidebarGroupLabel className="text-gray-600 bg-white">
             <span className="flex items-center">
               AI Agents
               <PremiumBadge />
@@ -70,7 +70,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/sourcing-agent">
                     <Target className="mr-2" size={18} />
                     <span>Sourcing Agent</span>
@@ -78,7 +78,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/outreach-agent">
                     <MessageSquare className="mr-2" size={18} />
                     <span>Outreach Agent</span>
@@ -86,7 +86,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/submission-agent">
                     <Send className="mr-2" size={18} />
                     <span>Submission Agent</span>
@@ -99,11 +99,11 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-600">Recruitment</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-600 bg-white">Recruitment</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/jobs">
                     <Briefcase className="mr-2" size={18} />
                     <span>Jobs</span>
@@ -111,7 +111,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/candidates">
                     <Users className="mr-2" size={18} />
                     <span>Candidates</span>
@@ -119,7 +119,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/recruiters">
                     <Users className="mr-2" size={18} />
                     <span>Recruiters</span>
@@ -127,7 +127,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/trackers">
                     <Target className="mr-2" size={18} />
                     <span>Trackers</span>
@@ -139,11 +139,11 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-600">Management</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-600 bg-white">Management</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/tickets">
                     <MessageSquare className="mr-2" size={18} />
                     <span>Tickets</span>
@@ -151,7 +151,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/referrals">
                     <Send className="mr-2" size={18} />
                     <span>Referrals</span>
@@ -159,7 +159,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/curated-lists">
                     <Search className="mr-2" size={18} />
                     <span>Curated lists</span>
@@ -171,11 +171,11 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-600">Users</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-600 bg-white">Users</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/users">
                     <Users className="mr-2" size={18} />
                     <span>Users</span>
@@ -183,7 +183,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/calendar">
                     <Search className="mr-2" size={18} />
                     <span>Calendar</span>
@@ -191,7 +191,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/notifications">
                     <MessageSquare className="mr-2" size={18} />
                     <span>Notifications</span>
@@ -203,11 +203,11 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-600">System</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-600 bg-white">System</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=title]:text-purple-700">
                   <a href="/update-terms">
                     <Search className="mr-2" size={18} />
                     <span>Update Terms</span>
@@ -215,7 +215,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/settings">
                     <Search className="mr-2" size={18} />
                     <span>Settings</span>
@@ -223,7 +223,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/logout">
                     <Search className="mr-2" size={18} />
                     <span>Log Out</span>
