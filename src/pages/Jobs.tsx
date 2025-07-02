@@ -129,16 +129,16 @@ export default function JobsPage() {
   const statuses = ['all', 'Active', 'On Hold', 'Filled', 'Cancelled'];
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+    <div className="flex-1 space-y-4 md:space-y-6 p-4 md:p-8 pt-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Jobs</h2>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Jobs</h2>
           <p className="text-muted-foreground">
             Manage job postings and track recruitment progress
           </p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button className="bg-primary hover:bg-primary/90 w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           Add New Job
         </Button>
@@ -157,7 +157,7 @@ export default function JobsPage() {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" className="flex items-center gap-2 whitespace-nowrap">
               <Filter className="w-4 h-4" />
               Status: {statusFilter === 'all' ? 'All' : statusFilter}
             </Button>
@@ -177,7 +177,7 @@ export default function JobsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="p-4">
           <div className="flex items-center justify-between space-y-0 pb-2">
             <div className="text-sm font-medium">Total Jobs</div>
@@ -215,17 +215,17 @@ export default function JobsPage() {
       </div>
 
       {/* Jobs Table */}
-      <Card>
+      <Card className="overflow-x-auto">
         <TableComponent>
           <TableHeader>
             <TableRow>
               <TableHead>Job Details</TableHead>
-              <TableHead>Company</TableHead>
-              <TableHead>Assigned Recruiter</TableHead>
-              <TableHead>Candidates</TableHead>
+              <TableHead className="hidden sm:table-cell">Company</TableHead>
+              <TableHead className="hidden md:table-cell">Assigned Recruiter</TableHead>
+              <TableHead className="hidden lg:table-cell">Candidates</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Urgency</TableHead>
-              <TableHead>Posted</TableHead>
+              <TableHead className="hidden sm:table-cell">Urgency</TableHead>
+              <TableHead className="hidden lg:table-cell">Posted</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -235,21 +235,26 @@ export default function JobsPage() {
                 <TableCell>
                   <div>
                     <div className="font-medium">{job.title}</div>
-                    <div className="text-sm text-muted-foreground flex items-center gap-4">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {job.location}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <DollarSign className="w-3 h-3" />
-                        {job.salary}
-                      </span>
+                    <div className="text-sm text-muted-foreground">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          {job.location}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <DollarSign className="w-3 h-3" />
+                          {job.salary}
+                        </span>
+                        <span className="sm:hidden text-xs">
+                          {job.company}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="font-medium">{job.company}</TableCell>
-                <TableCell>{job.assignedRecruiter}</TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell font-medium">{job.company}</TableCell>
+                <TableCell className="hidden md:table-cell">{job.assignedRecruiter}</TableCell>
+                <TableCell className="hidden lg:table-cell">
                   <div className="text-sm">
                     <div>Submitted: {job.candidatesSubmitted}</div>
                     <div className="text-muted-foreground">Pipeline: {job.candidatesInPipeline}</div>
@@ -260,12 +265,12 @@ export default function JobsPage() {
                     {job.status}
                   </Badge>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <Badge variant="outline" className={getUrgencyColor(job.urgency)}>
                     {job.urgency}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-sm">{job.postedDate}</TableCell>
+                <TableCell className="hidden lg:table-cell text-sm">{job.postedDate}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

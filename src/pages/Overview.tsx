@@ -75,17 +75,17 @@ const Overview = () => {
   };
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
+    <div className="flex-1 space-y-4 md:space-y-6 p-4 md:p-8 pt-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Overview</h2>
           <p className="text-muted-foreground">
             Recruitment agency performance dashboard
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full lg:w-auto">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <div className="relative">
               <Input placeholder="Starting Date" className="pr-10" />
               <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -95,65 +95,68 @@ const Overview = () => {
               <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             </div>
           </div>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Download className="w-4 h-4" />
-            Export PDF
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex items-center gap-2 flex-1 sm:flex-none">
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">Export PDF</span>
+              <span className="sm:hidden">Export</span>
+            </Button>
+            <Button variant="outline" className="flex items-center gap-2 flex-1 sm:flex-none">
+              <RefreshCw className="w-4 h-4" />
+              <span className="hidden sm:inline">Refresh</span>
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Main Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {stats.map((stat, index) => (
-          <Card key={index} className="p-6 relative overflow-hidden">
+          <Card key={index} className="p-4 md:p-6 relative overflow-hidden">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <stat.icon className="w-5 h-5 text-white" />
-                  <span className="text-sm font-medium text-muted-foreground">{stat.title}</span>
+                  <stat.icon className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                  <span className="text-xs md:text-sm font-medium text-muted-foreground">{stat.title}</span>
                 </div>
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold">{stat.value}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span className="text-xl md:text-2xl font-bold">{stat.value}</span>
                     {stat.change && (
-                      <Badge variant="secondary" className="text-green-600 bg-green-50 border-green-200">
+                      <Badge variant="secondary" className="text-green-600 bg-green-50 border-green-200 text-xs w-fit">
                         <TrendingUp className="w-3 h-3 mr-1" />
                         {stat.change}
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">{stat.subtitle}</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">{stat.subtitle}</p>
                 </div>
               </div>
             </div>
-            <div className={`absolute top-0 right-0 w-16 h-16 ${stat.color} rounded-bl-full flex items-center justify-center`}>
-              <stat.icon className="w-6 h-6 text-white" />
+            <div className={`absolute top-0 right-0 w-12 h-12 md:w-16 md:h-16 ${stat.color} rounded-bl-full flex items-center justify-center`}>
+              <stat.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
             </div>
           </Card>
         ))}
       </div>
 
       {/* Pipeline and Performance Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
         {/* Recruitment Pipeline */}
-        <Card className="p-6">
+        <Card className="p-4 md:p-6">
           <h3 className="text-lg font-semibold mb-4">Recruitment Pipeline</h3>
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {pipelineStats.map((item, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-8 bg-primary rounded"></div>
-                  <div>
-                    <p className="font-medium">{item.label}</p>
-                    <p className="text-sm text-muted-foreground">{item.percentage} of total</p>
+                  <div className="w-2 h-6 md:h-8 bg-primary rounded"></div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-sm md:text-base truncate">{item.label}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">{item.percentage} of total</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-2xl font-bold">{item.value}</span>
+                <div className="text-right flex-shrink-0">
+                  <span className="text-lg md:text-2xl font-bold">{item.value}</span>
                   <div className={`text-xs ${item.trend === 'up' ? 'text-green-600' : item.trend === 'down' ? 'text-red-600' : 'text-gray-600'}`}>
                     {item.trend === 'up' ? '↗' : item.trend === 'down' ? '↘' : '→'}
                   </div>
@@ -164,23 +167,23 @@ const Overview = () => {
         </Card>
 
         {/* Recruiter Performance */}
-        <Card className="p-6">
+        <Card className="p-4 md:p-6">
           <h3 className="text-lg font-semibold mb-4">Recruiter Performance</h3>
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {recruiterPerformance.map((recruiter, index) => (
               <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                     <UserCheck className="w-4 h-4 text-primary" />
                   </div>
-                  <div>
-                    <p className="font-medium">{recruiter.name}</p>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-sm md:text-base truncate">{recruiter.name}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">
                       {recruiter.candidates} candidates • {recruiter.placements} placements
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right flex-shrink-0">
                   <Badge variant="outline" className="text-xs">
                     Avg Fit: {recruiter.fitRate}
                   </Badge>
@@ -192,17 +195,17 @@ const Overview = () => {
       </div>
 
       {/* Recent Activity */}
-      <Card className="p-6">
+      <Card className="p-4 md:p-6">
         <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           {recentActivity.map((activity, index) => (
             <div key={index} className="flex items-start gap-3 p-3 hover:bg-muted/50 rounded-lg transition-colors">
               {getActivityIcon(activity.type)}
-              <div className="flex-1">
-                <p className="text-sm">{activity.message}</p>
-                <div className="flex items-center gap-2 mt-1">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm md:text-base">{activity.message}</p>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mt-1">
                   <span className="text-xs text-muted-foreground">{activity.time}</span>
-                  <span className="text-xs text-muted-foreground">•</span>
+                  <span className="text-xs text-muted-foreground hidden sm:inline">•</span>
                   <span className="text-xs text-muted-foreground">{activity.recruiter}</span>
                 </div>
               </div>
