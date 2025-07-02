@@ -1,4 +1,5 @@
-import { Users, Briefcase, Home, Search, Target, Send, MessageSquare, Sparkles } from "lucide-react";
+
+import { Users, Briefcase, Home, Search, Target, Send, MessageSquare, Sparkles, BarChart3 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -8,6 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarHeader,
 } from "@/components/ui/sidebar";
 
 // Premium badge for premium features
@@ -31,16 +33,24 @@ function NewBadge() {
 
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar className="border-r border-sidebar-border bg-sidebar">
+      <SidebarHeader className="p-4">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+            <Home className="w-4 h-4 text-primary-foreground" />
+          </div>
+          <span className="font-semibold text-sidebar-foreground">Synapse</span>
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sidebar-foreground/70">Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/">
-                    <Home className="mr-2" size={18} />
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/overview">
+                    <BarChart3 className="mr-2" size={18} />
                     <span>Overview</span>
                   </a>
                 </SidebarMenuButton>
@@ -50,8 +60,80 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
+          <SidebarGroupLabel className="text-sidebar-foreground/70">Recruitment</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/jobs">
+                    <Briefcase className="mr-2" size={18} />
+                    <span>Jobs</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/candidates">
+                    <Users className="mr-2" size={18} />
+                    <span>Candidates</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/recruiters">
+                    <Users className="mr-2" size={18} />
+                    <span>Recruiters</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/trackers">
+                    <Target className="mr-2" size={18} />
+                    <span>Trackers</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-sidebar-foreground/70">Management</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/tickets">
+                    <MessageSquare className="mr-2" size={18} />
+                    <span>Tickets</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/referrals">
+                    <Send className="mr-2" size={18} />
+                    <span>Referrals</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/curated-lists">
+                    <Search className="mr-2" size={18} />
+                    <span>Curated lists</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
           {/* "AI Agents" are all premium, so "Premium" label next to header */}
-          <SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sidebar-foreground/70">
             <span className="flex items-center">
               AI Agents
               <PremiumBadge />
@@ -60,7 +142,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
                   <a href="/sourcing-agent">
                     <Target className="mr-2" size={18} />
                     <span>Sourcing Agent</span>
@@ -68,7 +150,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
                   <a href="/outreach-agent">
                     <MessageSquare className="mr-2" size={18} />
                     <span>Outreach Agent</span>
@@ -76,7 +158,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
                   <a href="/submission-agent">
                     <Send className="mr-2" size={18} />
                     <span>Submission Agent</span>
@@ -89,37 +171,62 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Recruitment</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sidebar-foreground/70">Users</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/candidates">
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/users">
                     <Users className="mr-2" size={18} />
-                    <span>Candidates</span>
+                    <span>Users</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/jobs">
-                    <Briefcase className="mr-2" size={18} />
-                    <span>Jobs</span>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/calendar">
+                    <Search className="mr-2" size={18} />
+                    <span>Calendar</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/notifications">
+                    <MessageSquare className="mr-2" size={18} />
+                    <span>Notifications</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
         <SidebarGroup>
-          <SidebarGroupLabel>System</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sidebar-foreground/70">System</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/faq">
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/update-terms">
                     <Search className="mr-2" size={18} />
-                    <span>FAQ</span>
+                    <span>Update Terms</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/settings">
+                    <Search className="mr-2" size={18} />
+                    <span>Settings</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent">
+                  <a href="/logout">
+                    <Search className="mr-2" size={18} />
+                    <span>Log Out</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
