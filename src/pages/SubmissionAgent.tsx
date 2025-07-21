@@ -85,17 +85,25 @@ const smartMatches = [
     candidateId: "C001",
     candidateName: "Sarah Chen",
     jobId: "J001",
-    jobTitle: "AI Engineer at Inferred Tech Solutions",
+    jobTitle: "AI Engineer at Brex",
     matchScore: 9.4,
-    reasons: ["Python expertise", "AWS experience", "AI/ML background"]
+    reasons: ["Python expertise", "LLM experience", "S-tier startup"]
   },
   {
     candidateId: "C002",
     candidateName: "Marcus Johnson", 
-    jobId: "J003",
-    jobTitle: "NLP Scientist at HealthcareAI",
+    jobId: "J002",
+    jobTitle: "Senior ML Engineer at Stripe",
     matchScore: 9.1,
-    reasons: ["NLP specialization", "Research background", "PyTorch experience"]
+    reasons: ["PyTorch experience", "Fintech background", "Scale expertise"]
+  },
+  {
+    candidateId: "C003",
+    candidateName: "Alex Rodriguez",
+    jobId: "J003", 
+    jobTitle: "AI Research Scientist at OpenAI",
+    matchScore: 9.6,
+    reasons: ["LLM research", "Python mastery", "AI/ML innovation"]
   }
 ];
 
