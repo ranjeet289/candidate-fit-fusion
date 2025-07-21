@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import FitScoreBreakdown from "@/components/FitScoreBreakdown";
 
@@ -196,6 +197,14 @@ export default function SourcingAgent() {
     });
   };
 
+  const handleCopyEmail = (email: string) => {
+    navigator.clipboard.writeText(email);
+    toast({
+      title: "Email Copied",
+      description: "Email address copied to clipboard",
+    });
+  };
+
   const selectedJobData = dummyJobs.find(job => job.id === selectedJob);
 
   return (
@@ -335,7 +344,72 @@ export default function SourcingAgent() {
                                 <User className="w-5 h-5 text-primary" />
                               </div>
                               <div>
-                                <h4 className="font-semibold">{candidate.name}</h4>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <button className="text-left hover:text-primary transition-colors">
+                                      <h4 className="font-semibold cursor-pointer">{candidate.name}</h4>
+                                    </button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-80">
+                                    <div className="space-y-4">
+                                      <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                                          <User className="w-6 h-6 text-primary" />
+                                        </div>
+                                        <div>
+                                          <h4 className="font-semibold">{candidate.name}</h4>
+                                          <p className="text-sm text-muted-foreground">{candidate.title}</p>
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="space-y-2">
+                                        <div className="flex items-center gap-2 text-sm">
+                                          <MapPin className="w-4 h-4" />
+                                          <span>{candidate.location}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm">
+                                          <Briefcase className="w-4 h-4" />
+                                          <span>{candidate.experience}</span>
+                                        </div>
+                                        {candidate.email && (
+                                          <div className="flex items-center gap-2 text-sm">
+                                            <Mail className="w-4 h-4" />
+                                            <span>{candidate.email}</span>
+                                            <Button
+                                              size="sm"
+                                              variant="ghost"
+                                              className="h-6 w-6 p-0"
+                                              onClick={() => handleCopyEmail(candidate.email)}
+                                            >
+                                              <Copy className="w-3 h-3" />
+                                            </Button>
+                                          </div>
+                                        )}
+                                      </div>
+                                      
+                                      <div>
+                                        <p className="text-sm font-medium mb-2">Skills:</p>
+                                        <div className="flex flex-wrap gap-1">
+                                          {candidate.skills.map((skill) => (
+                                            <Badge key={skill} variant="outline" className="text-xs">
+                                              {skill}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      </div>
+                                      
+                                      {candidate.fitBreakdown && (
+                                        <div>
+                                          <p className="text-sm font-medium mb-2">Fit Score Breakdown:</p>
+                                          <FitScoreBreakdown 
+                                            fitBreakdown={candidate.fitBreakdown} 
+                                            overallFit={candidate.fit}
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </PopoverContent>
+                                </Popover>
                                 <p className="text-sm text-muted-foreground">{candidate.title}</p>
                               </div>
                               {candidate.inPipeline && (
@@ -356,7 +430,7 @@ export default function SourcingAgent() {
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 text-sm text-muted-foreground">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3 text-sm text-muted-foreground">
                             <div className="flex items-center gap-2">
                               <MapPin className="w-3 h-3" />
                               {candidate.location}
@@ -365,6 +439,20 @@ export default function SourcingAgent() {
                               <Briefcase className="w-3 h-3" />
                               {candidate.experience}
                             </div>
+                            {candidate.email && (
+                              <div className="flex items-center gap-2">
+                                <Mail className="w-3 h-3" />
+                                <span className="truncate">{candidate.email}</span>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-4 w-4 p-0 ml-1"
+                                  onClick={() => handleCopyEmail(candidate.email)}
+                                >
+                                  <Copy className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            )}
                           </div>
 
                           <div className="mb-3">
@@ -404,9 +492,6 @@ export default function SourcingAgent() {
                                 </a>
                               </Button>
                             )}
-                            <Button size="sm" variant="outline" className="h-8 text-xs">
-                              View Profile
-                            </Button>
                             <Button size="sm" variant="outline" className="h-8 text-xs">
                               Contact
                             </Button>
