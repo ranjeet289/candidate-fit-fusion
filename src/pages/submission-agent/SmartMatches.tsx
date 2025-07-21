@@ -18,6 +18,12 @@ interface Props {
   handleSmartSubmission: (candidateId: string, jobId: string) => void;
 }
 
+// Mock profile images - using the uploaded image for Sarah Chen
+const getProfileImage = (name: string) => {
+  if (name.includes('Sarah')) return '/lovable-uploads/3b58acbc-4f85-4070-8d76-4d27ea06b9b9.png';
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=48`;
+};
+
 const SmartMatches: React.FC<Props> = ({ smartMatches, handleSmartSubmission }) => (
   <Card className="p-8 bg-background shadow-xl">
     <div className="mb-6">
@@ -28,44 +34,56 @@ const SmartMatches: React.FC<Props> = ({ smartMatches, handleSmartSubmission }) 
     </div>
     <div className="space-y-4">
       {smartMatches.map((match) => (
-        <Card key={`${match.candidateId}-${match.jobId}`} className="p-6 border-2 border-green-200">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <Star className="w-6 h-6 text-green-600" />
+        <Card key={`${match.candidateId}-${match.jobId}`} className="p-6 border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start gap-4">
+            <img 
+              src={getProfileImage(match.candidateName)}
+              alt={match.candidateName}
+              className="w-12 h-12 rounded-full object-cover"
+            />
+            
+            <div className="flex-1">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">{match.candidateName}</h3>
+                  <p className="text-gray-600">{match.jobTitle}</p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <Badge className="bg-green-100 text-green-800 border-green-300 font-semibold">
+                    {match.matchScore} Match Score
+                  </Badge>
+                  <span className="text-sm text-gray-500">AI Recommended</span>
+                </div>
               </div>
-              <div>
-                <h4 className="font-semibold text-lg">{match.candidateName}</h4>
-                <p className="text-muted-foreground">{match.jobTitle}</p>
+              
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">Match Reasons:</p>
+                <div className="flex flex-wrap gap-2">
+                  {match.reasons.map((reason, index) => (
+                    <Badge 
+                      key={index} 
+                      variant="outline" 
+                      className="text-gray-600 border-gray-300 bg-gray-50"
+                    >
+                      {reason}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <Button 
+                  onClick={() => handleSmartSubmission(match.candidateId, match.jobId)}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-6"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  Smart Submit
+                </Button>
+                <Button variant="outline" className="text-purple-600 border-purple-200 hover:bg-purple-50">
+                  View Details
+                </Button>
               </div>
             </div>
-            <div className="text-right">
-              <Badge variant="default" className="bg-green-100 text-green-800 border-green-300 mb-2">
-                {match.matchScore} Match Score
-              </Badge>
-              <p className="text-xs text-muted-foreground">AI Recommended</p>
-            </div>
-          </div>
-          <div className="mb-4">
-            <p className="text-sm font-medium mb-2">Match Reasons:</p>
-            <div className="flex flex-wrap gap-2">
-              {match.reasons.map((reason, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {reason}
-                </Badge>
-              ))}
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              className="bg-green-600 text-white hover:bg-green-700"
-              onClick={() => handleSmartSubmission(match.candidateId, match.jobId)}
-            >
-              <Send className="w-4 h-4 mr-1" />
-              Smart Submit
-            </Button>
-            <Button size="sm" variant="outline">View Details</Button>
           </div>
         </Card>
       ))}
