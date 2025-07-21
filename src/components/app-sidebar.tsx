@@ -1,5 +1,5 @@
 
-import { Users, Briefcase, Home, Search, Target, Send, MessageSquare, Sparkles, BarChart3, Settings, LogOut, Calendar, Bell, FileText, HelpCircle, Bot, Zap } from "lucide-react";
+import { Users, Briefcase, BarChart3, Search, Target, Send, MessageSquare, Sparkles, Settings, LogOut, Calendar, Bell, FileText, HelpCircle, Bot, Zap, Grid3X3 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -36,9 +36,11 @@ export function AppSidebar() {
     <Sidebar className="border-r border-gray-200 bg-white w-64">
       <SidebarHeader className="p-4 bg-white border-b border-gray-100">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-            <Home className="w-4 h-4 text-white" />
-          </div>
+          <img 
+            src="/lovable-uploads/c400e8e7-acd7-4e89-85c8-4e16750ece3b.png" 
+            alt="Synapse Logo" 
+            className="w-8 h-8"
+          />
           <span className="font-semibold text-gray-900">Synapse</span>
         </div>
       </SidebarHeader>
@@ -50,7 +52,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/overview">
-                    <BarChart3 className="mr-2" size={18} />
+                    <Grid3X3 className="mr-2" size={18} />
                     <span>Overview</span>
                   </a>
                 </SidebarMenuButton>
