@@ -4,7 +4,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { List, Table } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { List, Table, Bot, Upload, Search, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const dummyJobs = [
@@ -120,9 +121,13 @@ export default function AIRecruiter() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Topbar */}
-      <header className="flex items-center px-10 py-6 border-b">
-        <h1 className="text-2xl font-bold tracking-tight">AI Agents</h1>
-        <div className="ml-auto flex items-center gap-3">
+      <header className="flex items-center justify-between px-10 py-6 border-b">
+        <div className="flex items-center gap-3">
+          <Bot className="w-6 h-6 text-primary" />
+          <h1 className="text-2xl font-bold tracking-tight">AI Recruiter</h1>
+          <Badge variant="secondary" className="ml-3">Premium</Badge>
+        </div>
+        <div className="flex items-center gap-3">
           <Button variant={activeView === "table" ? "secondary" : "ghost"} onClick={() => setActiveView("table")}>
             <Table className="w-4 h-4 mr-2" /> Table
           </Button>
@@ -132,38 +137,95 @@ export default function AIRecruiter() {
         </div>
       </header>
       {/* Main content in card */}
-      <main className="flex-1 flex flex-col items-center py-8 px-2 sm:px-8 bg-muted/40">
-        <Card className="w-full max-w-4xl p-8 bg-background shadow-xl">
-          <Tabs defaultValue="new" className="w-full">
-            <TabsList className="mb-6 flex gap-2">
-              <TabsTrigger value="new" className="flex-1 text-lg">
-                New Candidate
-              </TabsTrigger>
-              <TabsTrigger value="existing" className="flex-1 text-lg">
-                Existing Candidate
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="new">
-              <form className="space-y-4" onSubmit={handleNewCandidate}>
-                <label className="block font-semibold mb-1">Candidate Resume (PDF) or LinkedIn URL</label>
-                <Input
-                  type="file"
-                  accept=".pdf"
-                  className="mb-3"
-                  onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                />
-                <Input
-                  type="url"
-                  value={linkedin}
-                  placeholder="Paste LinkedIn URL"
-                  onChange={(e) => setLinkedin(e.target.value)}
-                  className="mb-3"
-                />
-                <Button type="submit" disabled={isLoading || (!file && !linkedin)} className="w-full bg-primary text-white">
-                  {isLoading ? "Checking Fit..." : "Find Matching Jobs"}
-                </Button>
-              </form>
-              {results.length > 0 && !isLoading && (
+      <main className="flex-1 flex flex-col py-8 px-2 sm:px-8 bg-muted/40">
+        <div className="max-w-6xl mx-auto w-full">
+          
+          {/* Hero Section */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="p-3 rounded-full bg-primary/10">
+                <Bot className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="text-3xl font-bold">AI-Powered Job Matching</h2>
+            </div>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Upload resumes or provide LinkedIn profiles to instantly find the best matching jobs with AI-calculated fit scores
+            </p>
+          </div>
+
+          <Card className="p-8 bg-background shadow-xl">
+            <Tabs defaultValue="new" className="w-full">
+              <TabsList className="mb-6 grid w-full grid-cols-2">
+                <TabsTrigger value="new" className="flex items-center gap-2 text-base">
+                  <Upload className="w-4 h-4" />
+                  New Candidate Analysis
+                </TabsTrigger>
+                <TabsTrigger value="existing" className="flex items-center gap-2 text-base">
+                  <Search className="w-4 h-4" />
+                  Search Existing Database
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="new" className="space-y-6">
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl border">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Zap className="w-5 h-5 text-blue-600" />
+                    <h3 className="font-semibold text-blue-900">AI Resume Analysis</h3>
+                  </div>
+                  <p className="text-sm text-blue-700">
+                    Our AI will analyze the candidate's background and automatically match them with jobs that have 8.5+ fit scores
+                  </p>
+                </div>
+                
+                <form className="space-y-6" onSubmit={handleNewCandidate}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block font-semibold mb-2 text-foreground">Upload Resume (PDF)</label>
+                      <Input
+                        type="file"
+                        accept=".pdf"
+                        className="h-12"
+                        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Max file size: 10MB</p>
+                    </div>
+                    <div className="flex items-center justify-center text-muted-foreground">
+                      <span className="text-sm font-medium">OR</span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block font-semibold mb-2 text-foreground">LinkedIn Profile URL</label>
+                    <Input
+                      type="url"
+                      value={linkedin}
+                      placeholder="https://linkedin.com/in/candidate-profile"
+                      onChange={(e) => setLinkedin(e.target.value)}
+                      className="h-12"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">We'll analyze their public profile information</p>
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    disabled={isLoading || (!file && !linkedin)} 
+                    className="w-full h-12 text-base bg-primary text-white"
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <Bot className="w-5 h-5 animate-pulse" />
+                        AI is analyzing candidate...
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-5 h-5" />
+                        Find Matching Jobs with AI
+                      </div>
+                    )}
+                  </Button>
+                </form>
+                
+                {results.length > 0 && !isLoading && (
                 <div className="mt-8">
                   <div className="mb-2 font-bold text-lg">AI-Recommended Jobs (Fit Score &gt; 8.5)</div>
                   {activeView === "table" ? (
@@ -188,34 +250,73 @@ export default function AIRecruiter() {
                     </ul>
                   )}
                 </div>
-              )}
-            </TabsContent>
-            <TabsContent value="existing">
+                )}
+              </TabsContent>
+            <TabsContent value="existing" className="space-y-6">
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-xl border">
+                <div className="flex items-center gap-3 mb-3">
+                  <Search className="w-5 h-5 text-green-600" />
+                  <h3 className="font-semibold text-green-900">Database Search</h3>
+                </div>
+                <p className="text-sm text-green-700">
+                  Search our existing candidate database and find job matches instantly
+                </p>
+              </div>
+              
               {!existingCandidate ? (
-                <form className="space-y-4" onSubmit={handleExistingCandidate}>
-                  <label className="block font-semibold mb-1">Search Candidate by Name or Email</label>
-                  <Input
-                    type="text"
-                    value={searchExisting}
-                    onChange={(e) => setSearchExisting(e.target.value)}
-                    placeholder="e.g. Muhammad Ali or ali@email.com"
-                    className="mb-3"
-                  />
-                  <Button type="submit" disabled={isLoading || !searchExisting.trim()} className="w-full bg-primary text-white">
-                    {isLoading ? "Searching..." : "Find Jobs"}
+                <form className="space-y-6" onSubmit={handleExistingCandidate}>
+                  <div>
+                    <label className="block font-semibold mb-2 text-foreground">Search Candidate by Name or Email</label>
+                    <Input
+                      type="text"
+                      value={searchExisting}
+                      onChange={(e) => setSearchExisting(e.target.value)}
+                      placeholder="e.g. Muhammad Ali or ali@email.com"
+                      className="h-12"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Search by full name or email address</p>
+                  </div>
+                  <Button 
+                    type="submit" 
+                    disabled={isLoading || !searchExisting.trim()} 
+                    className="w-full h-12 text-base bg-primary text-white"
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <Search className="w-5 h-5 animate-pulse" />
+                        Searching database...
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Search className="w-5 h-5" />
+                        Find Matching Jobs
+                      </div>
+                    )}
                   </Button>
                 </form>
               ) : (
-                <div>
-                  <div className="mb-4">
-                    <span className="font-bold">Candidate: </span>
-                    <span>{existingCandidate}</span>
-                    <Button variant="ghost" className="ml-3 text-sm" onClick={() => {
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                        <Search className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Found Candidate</p>
+                        <p className="text-sm text-muted-foreground">{existingCandidate}</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" onClick={() => {
                       setExistingCandidate(null);
                       setResults([]);
-                    }}>Search Another</Button>
+                      setSearchExisting("");
+                    }}>
+                      Search Another
+                    </Button>
                   </div>
-                  <div className="mb-2 font-bold text-lg">Matched Jobs</div>
+                  
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Matched Jobs for {existingCandidate}</h3>
                   {activeView === "table" ? (
                     <JobResultsTable jobs={results} />
                   ) : (
@@ -236,12 +337,14 @@ export default function AIRecruiter() {
                         </li>
                       ))}
                     </ul>
-                  )}
+                    )}
+                  </div>
                 </div>
               )}
             </TabsContent>
           </Tabs>
         </Card>
+        </div>
       </main>
     </div>
   );

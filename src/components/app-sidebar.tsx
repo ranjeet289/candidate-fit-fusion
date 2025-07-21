@@ -1,5 +1,5 @@
 
-import { Users, Briefcase, Home, Search, Target, Send, MessageSquare, Sparkles, BarChart3, Settings, LogOut, Calendar, Bell, FileText, HelpCircle } from "lucide-react";
+import { Users, Briefcase, Home, Search, Target, Send, MessageSquare, Sparkles, BarChart3, Settings, LogOut, Calendar, Bell, FileText, HelpCircle, Bot, Zap } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -71,6 +71,15 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
+                  <a href="/ai-agents">
+                    <Bot className="mr-2" size={18} />
+                    <span>AI Agents Hub</span>
+                    <NewBadge />
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/sourcing-agent">
                     <Search className="mr-2" size={18} />
                     <span>Sourcing Agent</span>
@@ -90,7 +99,14 @@ export function AppSidebar() {
                   <a href="/submission-agent">
                     <Send className="mr-2" size={18} />
                     <span>Submission Agent</span>
-                    <NewBadge />
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
+                  <a href="/ai-recruiter">
+                    <Zap className="mr-2" size={18} />
+                    <span>AI Recruiter</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>

@@ -11,12 +11,15 @@ import SourcingAgent from './pages/SourcingAgent';
 import OutreachAgent from './pages/OutreachAgent';
 import SubmissionAgent from './pages/SubmissionAgent';
 import AIRecruiter from './pages/AIRecruiter';
+import AIAgentsOverview from './pages/AIAgentsOverview';
 import NotFound from './pages/NotFound';
+import { EntityProvider } from './context/EntityContext';
 
 function App() {
   return (
-    <Router>
-      <SidebarProvider>
+    <EntityProvider>
+      <Router>
+        <SidebarProvider>
         <div className="flex min-h-screen bg-white w-full">
           <AppSidebar />
           <main className="flex-1 overflow-auto">
@@ -49,6 +52,7 @@ function App() {
                 <Route path="/outreach-agent" element={<OutreachAgent />} />
                 <Route path="/submission-agent" element={<SubmissionAgent />} />
                 <Route path="/ai-recruiter" element={<AIRecruiter />} />
+                <Route path="/ai-agents" element={<AIAgentsOverview />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
@@ -56,6 +60,7 @@ function App() {
         </div>
       </SidebarProvider>
     </Router>
+    </EntityProvider>
   );
 }
 
