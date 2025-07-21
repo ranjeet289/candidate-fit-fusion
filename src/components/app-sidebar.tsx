@@ -35,12 +35,13 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-gray-200 bg-white w-64">
       <SidebarHeader className="p-4 bg-white border-b border-gray-100">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center gap-2">
           <img 
-            src="/lovable-uploads/c400e8e7-acd7-4e89-85c8-4e16750ece3b.png" 
+            src="/lovable-uploads/c2c9d1f2-a8bc-4237-8753-bed9000d26fd.png" 
             alt="Synapse Logo" 
             className="w-8 h-8"
           />
+          <span className="font-semibold text-gray-900">Synapse</span>
         </div>
       </SidebarHeader>
       <SidebarContent className="bg-white">
