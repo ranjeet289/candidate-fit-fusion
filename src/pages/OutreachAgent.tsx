@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye, CheckCircle, Clock, Star, ArrowRight, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-import { useEffect } from "react";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 const candidatesFromPipeline = [
   {
@@ -134,6 +134,13 @@ export default function OutreachAgent() {
     linkedinProfile: "",
   });
   const { toast } = useToast();
+  const { setTitle, setIcon, setBadge } = usePageTitle();
+
+  useEffect(() => {
+    setTitle("Outreach Agent");
+    setIcon(<MessageSquare className="w-6 h-6 text-primary" />);
+    setBadge(<Badge variant="secondary" className="ml-3">Premium</Badge>);
+  }, [setTitle, setIcon, setBadge]);
 
   const handleTemplateSelect = (templateId: string) => {
     const template = messageTemplates.find(t => t.id === templateId);
@@ -215,12 +222,6 @@ export default function OutreachAgent() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="flex items-center px-10 py-6 border-b">
-        <MessageSquare className="w-6 h-6 mr-3 text-primary" />
-        <h1 className="text-2xl font-bold tracking-tight">Outreach Agent</h1>
-        <Badge variant="secondary" className="ml-3">Premium</Badge>
-      </header>
-
       {/* Automation panel at top */}
       <div className="max-w-6xl mx-auto w-full px-4 pt-4">
         <Card className="p-6 mb-6 bg-amber-50 border-yellow-400 border">

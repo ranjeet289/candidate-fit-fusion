@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { usePageTitle } from "@/hooks/use-page-title";
 import FitScoreBreakdown from "@/components/FitScoreBreakdown";
 
 const dummyJobs = [
@@ -130,6 +131,13 @@ export default function SourcingAgent() {
   const [isSearching, setIsSearching] = useState(false);
   const [candidates, setCandidates] = useState<typeof dummyCandidates>([]);
   const { toast } = useToast();
+  const { setTitle, setIcon, setBadge } = usePageTitle();
+
+  useEffect(() => {
+    setTitle("Sourcing Agent");
+    setIcon(<Target className="w-6 h-6 text-primary" />);
+    setBadge(<Badge variant="secondary" className="ml-3">Premium</Badge>);
+  }, [setTitle, setIcon, setBadge]);
 
   const handleJobSelect = (jobId: string) => {
     setSelectedJob(jobId);
@@ -209,12 +217,6 @@ export default function SourcingAgent() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="flex items-center px-10 py-6 border-b">
-        <Target className="w-6 h-6 mr-3 text-primary" />
-        <h1 className="text-2xl font-bold tracking-tight">Sourcing Agent</h1>
-        <Badge variant="secondary" className="ml-3">Premium</Badge>
-      </header>
-
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="sourcing" className="space-y-6">

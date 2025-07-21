@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,7 @@ import {
   CheckCircle
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 const agentStats = [
   { label: "Active Candidates", value: "247", trend: "+12%" },
@@ -98,22 +100,16 @@ const recentActivity = [
 ];
 
 export default function AIAgentsOverview() {
+  const { setTitle, setIcon, setBadge } = usePageTitle();
+
+  useEffect(() => {
+    setTitle("AI Recruitment Agents");
+    setIcon(<Bot className="w-6 h-6 text-primary" />);
+    setBadge(<Badge variant="secondary" className="bg-green-100 text-green-800">All Systems Active</Badge>);
+  }, [setTitle, setIcon, setBadge]);
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="flex items-center justify-between px-10 py-6 border-b">
-        <div className="flex items-center gap-3">
-          <Bot className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight">AI Recruitment Agents</h1>
-          <Badge variant="secondary" className="bg-green-100 text-green-800">All Systems Active</Badge>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs">
-            <Zap className="w-3 h-3 mr-1" />
-            Premium Plan
-          </Badge>
-        </div>
-      </header>
-
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-7xl mx-auto space-y-8">
           

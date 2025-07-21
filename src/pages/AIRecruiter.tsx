@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { List, Table, Bot, Upload, Search, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 const dummyJobs = [
   {
@@ -97,6 +98,13 @@ export default function AIRecruiter() {
   const [results, setResults] = useState<typeof dummyJobs>([]);
   const [searchExisting, setSearchExisting] = useState("");
   const [existingCandidate, setExistingCandidate] = useState<string | null>(null);
+  const { setTitle, setIcon, setBadge } = usePageTitle();
+
+  useEffect(() => {
+    setTitle("AI Recruiter");
+    setIcon(<Bot className="w-6 h-6 text-primary" />);
+    setBadge(<Badge variant="secondary" className="ml-3">Premium</Badge>);
+  }, [setTitle, setIcon, setBadge]);
 
   // Simulate AI search
   function handleNewCandidate(e: React.FormEvent) {
@@ -120,22 +128,6 @@ export default function AIRecruiter() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* Topbar */}
-      <header className="flex items-center justify-between px-10 py-6 border-b">
-        <div className="flex items-center gap-3">
-          <Bot className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight">AI Recruiter</h1>
-          <Badge variant="secondary" className="ml-3">Premium</Badge>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant={activeView === "table" ? "secondary" : "ghost"} onClick={() => setActiveView("table")}>
-            <Table className="w-4 h-4 mr-2" /> Table
-          </Button>
-          <Button variant={activeView === "list" ? "secondary" : "ghost"} onClick={() => setActiveView("list")}>
-            <List className="w-4 h-4 mr-2" /> List
-          </Button>
-        </div>
-      </header>
       {/* Main content in card */}
       <main className="flex-1 flex flex-col py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto w-full">
@@ -227,7 +219,17 @@ export default function AIRecruiter() {
                 
                 {results.length > 0 && !isLoading && (
                 <div className="mt-8">
-                  <div className="mb-2 font-bold text-lg">AI-Recommended Jobs (Fit Score &gt; 8.5)</div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="font-bold text-lg">AI-Recommended Jobs (Fit Score &gt; 8.5)</div>
+                    <div className="flex items-center gap-3">
+                      <Button variant={activeView === "table" ? "secondary" : "ghost"} onClick={() => setActiveView("table")}>
+                        <Table className="w-4 h-4 mr-2" /> Table
+                      </Button>
+                      <Button variant={activeView === "list" ? "secondary" : "ghost"} onClick={() => setActiveView("list")}>
+                        <List className="w-4 h-4 mr-2" /> List
+                      </Button>
+                    </div>
+                  </div>
                   {activeView === "table" ? (
                     <JobResultsTable jobs={results} />
                   ) : (
@@ -315,8 +317,17 @@ export default function AIRecruiter() {
                     </Button>
                   </div>
                   
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">Matched Jobs for {existingCandidate}</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">Matched Jobs for {existingCandidate}</h3>
+                    <div className="flex items-center gap-3">
+                      <Button variant={activeView === "table" ? "secondary" : "ghost"} onClick={() => setActiveView("table")}>
+                        <Table className="w-4 h-4 mr-2" /> Table
+                      </Button>
+                      <Button variant={activeView === "list" ? "secondary" : "ghost"} onClick={() => setActiveView("list")}>
+                        <List className="w-4 h-4 mr-2" /> List
+                      </Button>
+                    </div>
+                  </div>
                   {activeView === "table" ? (
                     <JobResultsTable jobs={results} />
                   ) : (
@@ -336,16 +347,15 @@ export default function AIRecruiter() {
                           <Button size="sm" className="ml-6 bg-primary text-white">Apply</Button>
                         </li>
                       ))}
-                    </ul>
-                    )}
-                  </div>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </Card>
-        </div>
-      </main>
-    </div>
-  );
-}
+                     </ul>
+                   )}
+                 </div>
+               )}
+             </TabsContent>
+           </Tabs>
+         </Card>
+         </div>
+       </main>
+     </div>
+   );
+ }

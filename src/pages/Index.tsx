@@ -1,9 +1,19 @@
 
+import { useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Target, Send, MessageSquare, ArrowRight, Star } from "lucide-react";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 const Index = () => {
+  const { setTitle, setIcon, setBadge } = usePageTitle();
+
+  useEffect(() => {
+    setTitle("Synapse Recruitment AI");
+    setIcon(<Star className="w-6 h-6 text-primary" />);
+    setBadge(null);
+  }, [setTitle, setIcon, setBadge]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="max-w-4xl w-full mx-auto px-4">

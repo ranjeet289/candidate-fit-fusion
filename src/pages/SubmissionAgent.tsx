@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +28,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { usePageTitle } from "@/hooks/use-page-title";
 import CandidateSelector from "./submission-agent/CandidateSelector";
 import JobMultiSelect from "./submission-agent/JobMultiSelect";
 import CoverLetterSection from "./submission-agent/CoverLetterSection";
@@ -122,6 +123,13 @@ export default function SubmissionAgent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingCover, setIsGeneratingCover] = useState(false);
   const { toast } = useToast();
+  const { setTitle, setIcon, setBadge } = usePageTitle();
+
+  useEffect(() => {
+    setTitle("Submission Agent");
+    setIcon(<Send className="w-6 h-6 text-primary" />);
+    setBadge(<Badge variant="secondary" className="ml-3">Premium</Badge>);
+  }, [setTitle, setIcon, setBadge]);
 
   // manualCandidateIsValid: all fields must be filled
   const manualCandidateIsValid = manualCandidate.name && manualCandidate.title && manualCandidate.fit && manualCandidate.skills;
@@ -288,11 +296,6 @@ AI Recruitment Team`;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="flex items-center px-10 py-6 border-b">
-        <Send className="w-6 h-6 mr-3 text-primary" />
-        <h1 className="text-2xl font-bold tracking-tight">Submission Agent</h1>
-        <Badge variant="secondary" className="ml-3">Premium</Badge>
-      </header>
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="submit" className="space-y-6">
