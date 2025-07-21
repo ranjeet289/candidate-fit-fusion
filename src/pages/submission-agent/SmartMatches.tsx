@@ -20,7 +20,7 @@ interface Props {
 
 // Mock profile images - using the uploaded image for Sarah Chen
 const getProfileImage = (name: string) => {
-  if (name.includes('Sarah')) return '/lovable-uploads/3b58acbc-4f85-4070-8d76-4d27ea06b9b9.png';
+  if (name.includes('Sarah')) return '/lovable-uploads/96c2974c-b487-4dfb-b02a-23659f7c62f1.png';
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=48`;
 };
 
@@ -74,12 +74,13 @@ const SmartMatches: React.FC<Props> = ({ smartMatches, handleSmartSubmission }) 
               <div className="flex gap-3">
                 <Button 
                   onClick={() => handleSmartSubmission(match.candidateId, match.jobId)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-6"
+                  className="text-white px-6"
+                  style={{ backgroundColor: '#473BBD' }}
                 >
                   <Send className="w-4 h-4 mr-2" />
                   Smart Submit
                 </Button>
-                <Button variant="outline" className="text-purple-600 border-purple-200 hover:bg-purple-50">
+                <Button variant="outline" className="border-gray-300 hover:bg-gray-50" style={{ color: '#473BBD' }}>
                   View Details
                 </Button>
               </div>
