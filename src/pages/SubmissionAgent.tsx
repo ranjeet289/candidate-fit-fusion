@@ -287,46 +287,6 @@ AI Recruitment Team`;
       </header>
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
-          {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-blue-700">Total Submissions</p>
-                  <p className="text-2xl font-bold text-blue-900">67</p>
-                </div>
-                <Send className="w-8 h-8 text-blue-600" />
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-green-700">Approved</p>
-                  <p className="text-2xl font-bold text-green-900">45</p>
-                </div>
-                <CheckCircle className="w-8 h-8 text-green-600" />
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-purple-700">Under Review</p>
-                  <p className="text-2xl font-bold text-purple-900">18</p>
-                </div>
-                <Clock className="w-8 h-8 text-purple-600" />
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl border border-orange-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-orange-700">Success Rate</p>
-                  <p className="text-2xl font-bold text-orange-900">89%</p>
-                </div>
-                <Star className="w-8 h-8 text-orange-600" />
-              </div>
-            </div>
-          </div>
-
           <Tabs defaultValue="submit" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="submit">Submit Candidate</TabsTrigger>
