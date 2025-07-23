@@ -108,6 +108,8 @@ const automatedSequences = [
   {
     id: "SEQ001",
     name: "AI Engineer Sequence",
+    jobTitle: "Senior AI Engineer",
+    company: "TechCorp",
     candidateCount: 3,
     status: "active",
     steps: ["Initial outreach", "Follow-up (Day 3)", "Final follow-up (Day 7)"],
@@ -116,6 +118,8 @@ const automatedSequences = [
   {
     id: "SEQ002",
     name: "ML Scientist Sequence", 
+    jobTitle: "ML Research Scientist",
+    company: "DataInc",
     candidateCount: 2,
     status: "active",
     steps: ["Initial outreach", "Follow-up (Day 5)", "LinkedIn message (Day 10)"],
@@ -541,6 +545,9 @@ export default function OutreachAgent() {
                           <div>
                             <h4 className="font-medium text-lg">{sequence.name}</h4>
                             <p className="text-sm text-muted-foreground">
+                              {sequence.jobTitle} at {sequence.company}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
                               {sequence.candidateCount} candidates • {sequence.responseRate} response rate
                             </p>
                           </div>
