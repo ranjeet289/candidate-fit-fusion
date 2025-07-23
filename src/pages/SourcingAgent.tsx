@@ -587,32 +587,36 @@ export default function SourcingAgent() {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-4">
                         <h3 className="text-lg font-semibold">High-Fit Candidates ({candidates.length})</h3>
-                        <div className="flex items-center gap-2">
-                          <Checkbox 
-                            id="select-all"
-                            checked={candidates.filter(c => !c.inPipeline).length > 0 && selectedCandidates.length === candidates.filter(c => !c.inPipeline).length}
-                            onCheckedChange={handleSelectAll}
-                          />
-                          <label htmlFor="select-all" className="text-sm text-muted-foreground cursor-pointer">
-                            Select All Available
-                          </label>
-                        </div>
+                        {candidates.filter(c => !c.inPipeline).length > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Checkbox 
+                              id="select-all"
+                              checked={selectedCandidates.length === candidates.filter(c => !c.inPipeline).length}
+                              onCheckedChange={handleSelectAll}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="select-all" className="text-xs text-muted-foreground cursor-pointer">
+                              Select All
+                            </label>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3">
                         {selectedCandidates.length > 0 && (
                           <Button 
                             onClick={handleBulkAddToPipeline}
-                            className="bg-primary text-white flex items-center gap-2"
+                            size="sm"
+                            className="h-8 text-xs bg-primary hover:bg-primary/90"
                           >
-                            <Plus className="w-4 h-4" />
-                            Add Selected to Pipeline ({selectedCandidates.length})
+                            <Plus className="w-3 h-3 mr-1" />
+                            Add {selectedCandidates.length} to Pipeline
                           </Button>
                         )}
-                        <Badge variant="outline" className="text-green-600 border-green-600">
+                        <Badge variant="outline" className="text-green-600 border-green-600 text-xs">
                           8.2+ Fit Score Only
                         </Badge>
-                        <div className="text-sm text-muted-foreground">
-                          {candidates.filter(c => c.inPipeline).length} added to pipeline
+                        <div className="text-xs text-muted-foreground">
+                          {candidates.filter(c => c.inPipeline).length} in pipeline
                         </div>
                       </div>
                     </div>
