@@ -53,7 +53,16 @@ const dummyCandidates = [
     email: "sarah.chen@email.com",
     source: "LinkedIn",
     inPipeline: false,
-    fitBreakdown: { education: 9.5, experience: 9.0, skills: 9.8, culture: 8.5, location: 9.2 }
+    fitBreakdown: { 
+      education: 7.0, 
+      careerTrajectory: 7.5, 
+      companyRelevance: 6.0, 
+      tenureStability: 7.0, 
+      mostImportantSkills: 7.0, 
+      bonusSignals: 3.0, 
+      redFlags: 0.0, 
+      location: 0.0 
+    }
   },
   {
     id: "C002", 
@@ -67,7 +76,16 @@ const dummyCandidates = [
     email: "m.johnson@email.com",
     source: "GitHub",
     inPipeline: false,
-    fitBreakdown: { education: 9.8, experience: 8.5, skills: 9.2, culture: 8.0, location: 8.5 }
+    fitBreakdown: { 
+      education: 8.0, 
+      careerTrajectory: 8.5, 
+      companyRelevance: 7.5, 
+      tenureStability: 8.0, 
+      mostImportantSkills: 8.5, 
+      bonusSignals: 4.0, 
+      redFlags: 0.0, 
+      location: 2.0 
+    }
   },
   {
     id: "C003",
@@ -81,7 +99,16 @@ const dummyCandidates = [
     email: "priya.patel@email.com",
     source: "AngelList",
     inPipeline: false,
-    fitBreakdown: { education: 8.0, experience: 8.8, skills: 8.9, culture: 9.0, location: 7.8 }
+    fitBreakdown: { 
+      education: 7.5, 
+      careerTrajectory: 8.0, 
+      companyRelevance: 8.5, 
+      tenureStability: 7.5, 
+      mostImportantSkills: 9.0, 
+      bonusSignals: 5.0, 
+      redFlags: 0.0, 
+      location: 8.0 
+    }
   },
   {
     id: "C004",
@@ -95,7 +122,16 @@ const dummyCandidates = [
     email: "alex.rodriguez@email.com",
     source: "Indeed",
     inPipeline: false,
-    fitBreakdown: { education: 8.2, experience: 9.0, skills: 8.8, culture: 8.5, location: 8.5 }
+    fitBreakdown: { 
+      education: 8.0, 
+      careerTrajectory: 9.0, 
+      companyRelevance: 7.0, 
+      tenureStability: 8.5, 
+      mostImportantSkills: 8.5, 
+      bonusSignals: 3.5, 
+      redFlags: 0.0, 
+      location: 6.0 
+    }
   }
 ];
 
@@ -178,7 +214,16 @@ export default function SourcingAgent() {
         email: "emma.thompson@email.com",
         source: "AngelList",
         inPipeline: false,
-        fitBreakdown: { education: 9.0, experience: 8.8, skills: 9.2, culture: 8.5, location: 9.0 }
+        fitBreakdown: { 
+          education: 9.0, 
+          careerTrajectory: 8.5, 
+          companyRelevance: 8.0, 
+          tenureStability: 9.0, 
+          mostImportantSkills: 9.5, 
+          bonusSignals: 6.0, 
+          redFlags: 0.0, 
+          location: 5.0 
+        }
       };
       newCandidates.push(additionalCandidate);
       setCandidates(newCandidates);

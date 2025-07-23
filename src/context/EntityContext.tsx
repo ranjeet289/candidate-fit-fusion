@@ -4,9 +4,12 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 // Subcategories for fit score breakdown
 export interface FitScoreBreakdown {
   education: number;
-  experience: number;
-  skills: number;
-  culture: number;
+  careerTrajectory: number;
+  companyRelevance: number;
+  tenureStability: number;
+  mostImportantSkills: number;
+  bonusSignals: number;
+  redFlags: number;
   location: number;
 }
 
@@ -53,7 +56,7 @@ const defaultCandidates: Candidate[] = [
     fit: 9.2, 
     source: "Sourcing Agent", 
     skills: ["Python", "TensorFlow", "AWS"],
-    fitBreakdown: { education: 9.5, experience: 9.0, skills: 9.8, culture: 8.5, location: 9.2 }
+    fitBreakdown: { education: 9.5, careerTrajectory: 9.0, companyRelevance: 9.8, tenureStability: 8.5, mostImportantSkills: 9.2, bonusSignals: 8.0, redFlags: 0.0, location: 9.2 }
   },
   { 
     id: "C002", 
@@ -62,7 +65,7 @@ const defaultCandidates: Candidate[] = [
     fit: 8.8, 
     source: "Sourcing Agent", 
     skills: ["PyTorch", "NLP", "Computer Vision"],
-    fitBreakdown: { education: 9.8, experience: 8.5, skills: 9.2, culture: 8.0, location: 8.5 }
+    fitBreakdown: { education: 9.8, careerTrajectory: 8.5, companyRelevance: 9.2, tenureStability: 8.0, mostImportantSkills: 8.5, bonusSignals: 7.5, redFlags: 0.0, location: 8.5 }
   },
   { 
     id: "C003", 
@@ -71,7 +74,7 @@ const defaultCandidates: Candidate[] = [
     fit: 8.5, 
     source: "Sourcing Agent", 
     skills: ["Machine Learning", "SQL", "R"],
-    fitBreakdown: { education: 8.0, experience: 8.8, skills: 8.9, culture: 9.0, location: 7.8 }
+    fitBreakdown: { education: 8.0, careerTrajectory: 8.8, companyRelevance: 8.9, tenureStability: 9.0, mostImportantSkills: 7.8, bonusSignals: 6.0, redFlags: 0.0, location: 7.8 }
   }
 ];
 
@@ -83,7 +86,7 @@ const defaultJobs: Job[] = [
     fit: 9.1, 
     urgency: "High", 
     location: "San Francisco, CA",
-    fitBreakdown: { education: 9.0, experience: 9.5, skills: 9.8, culture: 8.5, location: 8.7 }
+    fitBreakdown: { education: 9.0, careerTrajectory: 9.5, companyRelevance: 9.8, tenureStability: 8.5, mostImportantSkills: 8.7, bonusSignals: 8.0, redFlags: 0.0, location: 8.7 }
   },
   { 
     id: "J002", 
@@ -92,7 +95,7 @@ const defaultJobs: Job[] = [
     fit: 8.7, 
     urgency: "Medium", 
     location: "Remote",
-    fitBreakdown: { education: 8.2, experience: 9.0, skills: 9.2, culture: 8.8, location: 8.3 }
+    fitBreakdown: { education: 8.2, careerTrajectory: 9.0, companyRelevance: 9.2, tenureStability: 8.8, mostImportantSkills: 8.3, bonusSignals: 7.0, redFlags: 0.0, location: 8.3 }
   },
   { 
     id: "J003", 
@@ -101,7 +104,7 @@ const defaultJobs: Job[] = [
     fit: 9.3, 
     urgency: "High", 
     location: "Boston, MA",
-    fitBreakdown: { education: 9.8, experience: 9.0, skills: 9.5, culture: 9.2, location: 9.0 }
+    fitBreakdown: { education: 9.8, careerTrajectory: 9.0, companyRelevance: 9.5, tenureStability: 9.2, mostImportantSkills: 9.0, bonusSignals: 8.5, redFlags: 0.0, location: 9.0 }
   }
 ];
 
