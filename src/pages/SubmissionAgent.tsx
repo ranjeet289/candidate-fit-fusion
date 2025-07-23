@@ -275,6 +275,16 @@ AI Recruitment Team`;
     }, 2000);
   };
 
+  const handleAddToOutreach = (candidateId: string, jobId: string) => {
+    const candidate = allCandidates.find(c => c.id === candidateId);
+    const job = jobs.find(j => j.id === jobId);
+    
+    toast({
+      title: "Added to Outreach Pipeline",
+      description: `${candidate?.name} has been added to outreach pipeline for ${job?.title}`,
+    });
+  };
+
   const handleSmartSubmission = (candidateId: string, jobId: string) => {
     const candidate = candidatesFromPipeline.find(c => c.id === candidateId);
     const job = availableJobs.find(j => j.id === jobId);
@@ -377,6 +387,7 @@ AI Recruitment Team`;
                 selectedCandidateId={selectedCandidate !== "manual" ? selectedCandidate : undefined}
                 selectedCandidateName={getChosenCandidate()?.name}
                 handleSmartSubmission={handleSmartSubmission}
+                handleAddToOutreach={handleAddToOutreach}
               />
             </TabsContent>
             <TabsContent value="history">
