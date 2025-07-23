@@ -33,7 +33,8 @@ import CandidateSelector from "./submission-agent/CandidateSelector";
 import JobMultiSelect from "./submission-agent/JobMultiSelect";
 import CoverLetterSection from "./submission-agent/CoverLetterSection";
 import SubmissionHistory from "./submission-agent/SubmissionHistory";
-import SmartMatches from "./submission-agent/SmartMatches";
+import JobMatches from "@/components/smart-matches/JobMatches";
+import CandidateMatches from "@/components/smart-matches/CandidateMatches";
 import { useEntities } from "@/context/EntityContext";
 
 const candidatesFromPipeline = [
@@ -325,18 +326,22 @@ AI Recruitment Team`;
     <div className="flex flex-col min-h-screen bg-background">
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
-          <Tabs defaultValue="smart-match" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2 h-10 bg-muted rounded-md p-1">
-              <TabsTrigger value="smart-match" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Smart Matches</TabsTrigger>
+          <Tabs defaultValue="smart-jd" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3 h-10 bg-muted rounded-md p-1">
+              <TabsTrigger value="smart-jd" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Smart JD Matches</TabsTrigger>
+              <TabsTrigger value="smart-candidate" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Smart Candidate Matches</TabsTrigger>
               <TabsTrigger value="history" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Submission History</TabsTrigger>
             </TabsList>
-            <TabsContent value="smart-match">
-              <SmartMatches
+            <TabsContent value="smart-jd">
+              <JobMatches
                 smartMatches={smartMatches}
-                candidateJobMatches={selectedCandidate && selectedCandidate !== "manual" ? getCandidateJobMatches(selectedCandidate) : undefined}
-                selectedCandidateId={selectedCandidate !== "manual" ? selectedCandidate : undefined}
-                selectedCandidateName={getChosenCandidate()?.name}
                 handleSmartSubmission={handleSmartSubmission}
+              />
+            </TabsContent>
+            <TabsContent value="smart-candidate">
+              <CandidateMatches
+                candidateJobMatches={selectedCandidate && selectedCandidate !== "manual" ? getCandidateJobMatches(selectedCandidate) : undefined}
+                selectedCandidateName={getChosenCandidate()?.name}
                 handleAddToOutreach={handleAddToOutreach}
               />
             </TabsContent>
