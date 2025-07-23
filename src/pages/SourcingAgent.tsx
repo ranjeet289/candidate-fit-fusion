@@ -172,7 +172,7 @@ export default function SourcingAgent() {
 
   useEffect(() => {
     setTitle("Sourcing Agent");
-    setIcon(<Target className="w-6 h-6 text-primary" />);
+    setIcon(null);
     setBadge(<Badge variant="secondary" className="ml-3">Premium</Badge>);
   }, [setTitle, setIcon, setBadge]);
 

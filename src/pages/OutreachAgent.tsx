@@ -145,7 +145,7 @@ export default function OutreachAgent() {
 
   useEffect(() => {
     setTitle("Outreach Agent");
-    setIcon(<MessageSquare className="w-6 h-6 text-primary" />);
+    setIcon(null);
     setBadge(<Badge variant="secondary" className="ml-3">Premium</Badge>);
   }, [setTitle, setIcon, setBadge]);
 

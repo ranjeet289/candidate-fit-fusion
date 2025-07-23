@@ -127,7 +127,7 @@ export default function SubmissionAgent() {
 
   useEffect(() => {
     setTitle("Submission Agent");
-    setIcon(<Send className="w-6 h-6 text-primary" />);
+    setIcon(null);
     setBadge(<Badge variant="secondary" className="ml-3">Premium</Badge>);
   }, [setTitle, setIcon, setBadge]);
 

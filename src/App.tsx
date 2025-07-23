@@ -65,12 +65,6 @@ function HeaderWithTitle() {
         <button className="p-2 text-muted-foreground hover:text-primary hover:bg-accent rounded-lg transition-colors">
           <Bell className="w-5 h-5" />
         </button>
-        <button className="p-2 text-muted-foreground hover:text-primary hover:bg-accent rounded-lg transition-colors">
-          <Search className="w-5 h-5" />
-        </button>
-        <button className="p-2 text-muted-foreground hover:text-primary hover:bg-accent rounded-lg transition-colors">
-          <Settings className="w-5 h-5" />
-        </button>
         <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center ml-2">
           <span className="text-white text-sm font-medium">U</span>
         </div>

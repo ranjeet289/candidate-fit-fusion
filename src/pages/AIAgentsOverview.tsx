@@ -104,7 +104,7 @@ export default function AIAgentsOverview() {
 
   useEffect(() => {
     setTitle("AI Recruitment Agents");
-    setIcon(<Bot className="w-6 h-6 text-primary" />);
+    setIcon(null);
     setBadge(<Badge variant="secondary" className="bg-green-100 text-green-800">All Systems Active</Badge>);
   }, [setTitle, setIcon, setBadge]);
 

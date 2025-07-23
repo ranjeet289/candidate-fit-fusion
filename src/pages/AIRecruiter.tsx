@@ -102,7 +102,7 @@ export default function AIRecruiter() {
 
   useEffect(() => {
     setTitle("AI Recruiter");
-    setIcon(<Bot className="w-6 h-6 text-primary" />);
+    setIcon(null);
     setBadge(<Badge variant="secondary" className="ml-3">Premium</Badge>);
   }, [setTitle, setIcon, setBadge]);
 
