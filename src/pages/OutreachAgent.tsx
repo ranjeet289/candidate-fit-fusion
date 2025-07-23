@@ -5,7 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye, CheckCircle, Clock, Star, ArrowRight, Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye, CheckCircle, Clock, Star, ArrowRight, Plus, Edit3, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { usePageTitle } from "@/hooks/use-page-title";
@@ -127,6 +130,9 @@ export default function OutreachAgent() {
   const [isSending, setIsSending] = useState(false);
   const [isPersonalizing, setIsPersonalizing] = useState(false);
   const [automationEnabled, setAutomationEnabled] = useState(false);
+  const [isCreatingSequence, setIsCreatingSequence] = useState(false);
+  const [editingSequence, setEditingSequence] = useState<string | null>(null);
+  const [newSequenceName, setNewSequenceName] = useState("");
   const [automationConfig, setAutomationConfig] = useState({
     method: "email", // or "linkedin"
     frequency: "immediate", // later you could have options like "scheduled"
@@ -219,6 +225,28 @@ export default function OutreachAgent() {
     // Prevent multiple triggers unless candidate status changes
     // eslint-disable-next-line
   }, [automationEnabled, automationConfig.method, automationConfig.recruiterEmail, automationConfig.linkedinProfile]);
+
+  const handleCreateSequence = () => {
+    if (!newSequenceName.trim()) return;
+    
+    toast({
+      title: "Sequence Created",
+      description: `New sequence "${newSequenceName}" has been created successfully`,
+    });
+    setIsCreatingSequence(false);
+    setNewSequenceName("");
+  };
+
+  const handleEditSequence = (sequenceId: string) => {
+    setEditingSequence(sequenceId);
+  };
+
+  const handleDeleteSequence = (sequenceId: string) => {
+    toast({
+      title: "Sequence Deleted",
+      description: "Automated sequence has been deleted",
+    });
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -358,131 +386,25 @@ export default function OutreachAgent() {
 
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
-          <Tabs defaultValue="compose" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="compose">Compose Message</TabsTrigger>
+          <Tabs defaultValue="pipeline" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="pipeline">Pipeline ({candidatesFromPipeline.length})</TabsTrigger>
               <TabsTrigger value="sequences">Auto Sequences</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
-
-            <TabsContent value="compose">
-              <Card className="p-8 bg-background shadow-xl">
-                <div className="mb-6">
-                  <h2 className="text-xl font-semibold mb-2">AI-Powered Outreach</h2>
-                  <p className="text-muted-foreground">
-                    Create personalized outreach messages with AI assistance and automated follow-ups.
-                  </p>
-                </div>
-
-                <form onSubmit={handleSendMessage} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block font-semibold mb-2">Select Candidate from Pipeline</label>
-                      <Select value={selectedCandidate} onValueChange={setSelectedCandidate}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose a candidate..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {candidatesFromPipeline.map((candidate) => (
-                            <SelectItem key={candidate.id} value={candidate.id}>
-                              <div className="flex items-center justify-between w-full">
-                                <div className="flex items-center gap-2">
-                                  <User className="w-4 h-4" />
-                                  <span>{candidate.name} - {candidate.title}</span>
-                                </div>
-                                <Badge variant="outline" className="ml-2">
-                                  Fit: {candidate.fit}
-                                </Badge>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <label className="block font-semibold mb-2">Message Template</label>
-                      <Select value={selectedTemplate} onValueChange={handleTemplateSelect}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose a template..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {messageTemplates.map((template) => (
-                            <SelectItem key={template.id} value={template.id}>
-                              {template.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block font-semibold mb-2">Subject Line</label>
-                    <input
-                      type="text"
-                      value={subject}
-                      onChange={(e) => setSubject(e.target.value)}
-                      className="w-full px-3 py-2 border rounded-md"
-                      placeholder="Enter email subject..."
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-semibold mb-2">Message Content</label>
-                    <Textarea
-                      value={messageContent}
-                      onChange={(e) => setMessageContent(e.target.value)}
-                      placeholder="Your personalized message here..."
-                      className="min-h-48"
-                    />
-                    <div className="flex gap-2 mt-2">
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        size="sm"
-                        onClick={handleAIPersonalize}
-                        disabled={isPersonalizing || !selectedCandidate}
-                      >
-                        {isPersonalizing ? "Personalizing..." : "AI Personalize"}
-                      </Button>
-                      <Button type="button" variant="outline" size="sm">
-                        Preview
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4">
-                    <Button 
-                      type="submit"
-                      disabled={isSending || !selectedCandidate || !messageContent.trim()}
-                      className="bg-primary text-white"
-                    >
-                      <Send className="w-4 h-4 mr-2" />
-                      {isSending ? "Sending..." : "Send Message"}
-                    </Button>
-                    <Button type="button" variant="outline">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      Schedule Send
-                    </Button>
-                  </div>
-                </form>
-              </Card>
-            </TabsContent>
 
             <TabsContent value="pipeline">
               <Card className="p-8 bg-background shadow-xl">
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-2">Candidate Pipeline</h3>
                   <p className="text-muted-foreground">
-                    Candidates added from the Sourcing Agent, ready for outreach.
+                    Candidates from your sourcing agent ready for outreach.
                   </p>
                 </div>
                 
                 <div className="space-y-4">
                   {candidatesFromPipeline.map((candidate) => (
-                    <div key={candidate.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div key={candidate.id} className="flex items-center justify-between p-6 border rounded-lg hover:bg-muted/50 transition-colors">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                           <User className="w-6 h-6 text-primary" />
@@ -548,31 +470,153 @@ export default function OutreachAgent() {
 
             <TabsContent value="sequences">
               <Card className="p-8 bg-background shadow-xl">
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-2">Automated Sequences</h3>
-                  <p className="text-muted-foreground">
-                    Set up automated outreach sequences for different candidate types.
-                  </p>
+                <div className="mb-6 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Automated Sequences</h3>
+                    <p className="text-muted-foreground">
+                      Manage your automated outreach sequences and assigned candidates.
+                    </p>
+                  </div>
+                  <Dialog open={isCreatingSequence} onOpenChange={setIsCreatingSequence}>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create New Sequence
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Create New Sequence</DialogTitle>
+                        <DialogDescription>
+                          Set up a new automated outreach sequence for your candidates.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div>
+                          <Label htmlFor="sequence-name">Sequence Name</Label>
+                          <Input
+                            id="sequence-name"
+                            value={newSequenceName}
+                            onChange={(e) => setNewSequenceName(e.target.value)}
+                            placeholder="e.g., Senior Engineer Outreach"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="sequence-steps">Number of Steps</Label>
+                          <Select defaultValue="3">
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select steps" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="2">2 Steps</SelectItem>
+                              <SelectItem value="3">3 Steps</SelectItem>
+                              <SelectItem value="4">4 Steps</SelectItem>
+                              <SelectItem value="5">5 Steps</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsCreatingSequence(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={handleCreateSequence}>
+                          Create Sequence
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {automatedSequences.map((sequence) => (
-                    <Card key={sequence.id} className="p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <h4 className="font-medium">{sequence.name}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {sequence.candidateCount} candidates • {sequence.responseRate} response rate
-                          </p>
+                    <Card key={sequence.id} className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div>
+                            <h4 className="font-medium text-lg">{sequence.name}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {sequence.candidateCount} candidates • {sequence.responseRate} response rate
+                            </p>
+                          </div>
                         </div>
-                        <Badge variant={sequence.status === 'active' ? 'default' : 'outline'}>
-                          {sequence.status}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={sequence.status === 'active' ? 'default' : 'outline'}>
+                            {sequence.status}
+                          </Badge>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button size="sm" variant="outline">
+                                <Edit3 className="w-4 h-4 mr-1" />
+                                Edit
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Edit Sequence: {sequence.name}</DialogTitle>
+                                <DialogDescription>
+                                  Modify your automated outreach sequence settings.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4 py-4">
+                                <div>
+                                  <Label htmlFor="edit-sequence-name">Sequence Name</Label>
+                                  <Input
+                                    id="edit-sequence-name"
+                                    defaultValue={sequence.name}
+                                    placeholder="Sequence name"
+                                  />
+                                </div>
+                                <div>
+                                  <Label>Sequence Steps</Label>
+                                  <div className="space-y-2 mt-2">
+                                    {sequence.steps.map((step, index) => (
+                                      <div key={index} className="flex items-center gap-2">
+                                        <Input defaultValue={step} placeholder={`Step ${index + 1}`} />
+                                        <Button size="sm" variant="outline">
+                                          <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                    <Button size="sm" variant="outline" className="w-full">
+                                      <Plus className="w-4 h-4 mr-2" />
+                                      Add Step
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div>
+                                  <Label htmlFor="sequence-status">Status</Label>
+                                  <Select defaultValue={sequence.status}>
+                                    <SelectTrigger>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="active">Active</SelectItem>
+                                      <SelectItem value="paused">Paused</SelectItem>
+                                      <SelectItem value="draft">Draft</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                              <DialogFooter>
+                                <Button variant="outline">Cancel</Button>
+                                <Button>Save Changes</Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => handleDeleteSequence(sequence.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                       
-                      <div className="mb-3">
-                        <p className="text-sm font-medium mb-1">Sequence Steps:</p>
-                        <div className="flex flex-wrap gap-1">
+                      <div className="mb-4">
+                        <p className="text-sm font-medium mb-2">Sequence Steps:</p>
+                        <div className="flex flex-wrap gap-2">
                           {sequence.steps.map((step, index) => (
                             <Badge key={index} variant="outline" className="text-xs">
                               {step}
@@ -580,22 +624,39 @@ export default function OutreachAgent() {
                           ))}
                         </div>
                       </div>
-                      
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          Edit Sequence
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          View Analytics
-                        </Button>
+
+                      {/* Show candidates in this sequence */}
+                      <div>
+                        <p className="text-sm font-medium mb-3">Candidates in Sequence:</p>
+                        <div className="space-y-2">
+                          {candidatesFromPipeline.slice(0, sequence.candidateCount).map((candidate) => (
+                            <div key={candidate.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                                  <User className="w-4 h-4 text-primary" />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-sm">{candidate.name}</p>
+                                  <p className="text-xs text-muted-foreground">{candidate.title}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-xs">
+                                  Step 1
+                                </Badge>
+                                <Badge 
+                                  variant={candidate.status === 'responded' ? 'default' : 'secondary'}
+                                  className="text-xs"
+                                >
+                                  {candidate.status.replace('_', ' ')}
+                                </Badge>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </Card>
                   ))}
-                  
-                  <Button className="w-full" variant="outline">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create New Sequence
-                  </Button>
                 </div>
               </Card>
             </TabsContent>
