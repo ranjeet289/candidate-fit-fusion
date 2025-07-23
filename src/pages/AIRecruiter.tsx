@@ -147,7 +147,7 @@ export default function AIRecruiter() {
 
           <Card className="p-8 bg-background shadow-xl">
             <Tabs defaultValue="new" className="w-full">
-              <TabsList className="mb-6 grid w-full grid-cols-2">
+              <TabsList className="mb-6 grid w-full grid-cols-2 h-10 bg-muted rounded-md p-1">
                 <TabsTrigger value="new" className="flex items-center gap-2 text-base">
                   <Upload className="w-4 h-4" />
                   New Candidate Analysis

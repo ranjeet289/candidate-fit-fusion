@@ -388,7 +388,7 @@ export default function OutreachAgent() {
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="pipeline" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-3 h-10 bg-muted rounded-md p-1">
               <TabsTrigger value="pipeline">Pipeline ({candidatesFromPipeline.length})</TabsTrigger>
               <TabsTrigger value="sequences">Auto Sequences</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>

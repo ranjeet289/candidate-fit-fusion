@@ -299,7 +299,7 @@ AI Recruitment Team`;
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="submit" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-3 h-10 bg-muted rounded-md p-1">
               <TabsTrigger value="submit">Submit Candidate</TabsTrigger>
               <TabsTrigger value="smart-match">Smart Matches</TabsTrigger>
               <TabsTrigger value="history">Submission History</TabsTrigger>

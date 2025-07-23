@@ -266,16 +266,16 @@ export default function SourcingAgent() {
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="sourcing" className="space-y-6">
-            <TabsList className="flex space-x-8 border-b border-gray-200 mb-6 bg-transparent h-auto p-0">
+            <TabsList className="grid w-full grid-cols-2 h-10 bg-muted rounded-md p-1">
               <TabsTrigger 
                 value="sourcing" 
-                className="pb-3 px-1 border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-purple-600 text-gray-500 hover:text-gray-700 font-medium bg-transparent"
+                className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
               >
                 AI Sourcing
               </TabsTrigger>
               <TabsTrigger 
                 value="history" 
-                className="pb-3 px-1 border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-purple-600 text-gray-500 hover:text-gray-700 font-medium bg-transparent"
+                className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
               >
                 Sourcing History
               </TabsTrigger>
