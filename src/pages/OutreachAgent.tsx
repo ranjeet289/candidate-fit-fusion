@@ -382,8 +382,9 @@ export default function OutreachAgent() {
               </span>
             </div>
           )}
+        </Card>
+      </div>
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
-        <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="pipeline" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3 bg-muted p-1 h-10 rounded-md">
               <TabsTrigger 
@@ -392,18 +393,8 @@ export default function OutreachAgent() {
               >
                 Candidate Pipeline
               </TabsTrigger>
-              <TabsTrigger 
-                value="sequences"
-                className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-              >
-                Auto Sequences
-              </TabsTrigger>
-              <TabsTrigger 
-                value="history"
-                className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-              >
-                Outreach History
-              </TabsTrigger>
+              <TabsTrigger value="sequences">Auto Sequences</TabsTrigger>
+              <TabsTrigger value="history">Outreach History</TabsTrigger>
             </TabsList>
 
             <TabsContent value="pipeline">
@@ -720,10 +711,7 @@ export default function OutreachAgent() {
               </Card>
             </TabsContent>
           </Tabs>
-        </div>
-      </main>
-        </div>
-      </main>
+        </main>
     </div>
   );
 }
