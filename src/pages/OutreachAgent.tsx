@@ -675,7 +675,7 @@ export default function OutreachAgent() {
             </TabsContent>
 
             <TabsContent value="history">
-              <Card className="p-8 bg-background shadow-xl">
+              <Card className="p-8 bg-card shadow-xl border">
                 <h3 className="text-lg font-semibold mb-4">Outreach History</h3>
                 <div className="space-y-4">
                   {outreachHistory.map((outreach) => (
