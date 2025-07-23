@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
@@ -143,7 +144,42 @@ const sourcingHistory = [
     company: "TechCorp",
     date: "2024-01-15",
     candidatesFound: 8,
-    candidatesInPipeline: 3
+    candidatesInPipeline: 3,
+    candidates: [
+      {
+        id: "C001",
+        name: "Sarah Chen",
+        title: "Senior AI Engineer",
+        location: "San Francisco, CA",
+        fit: 9.2,
+        email: "sarah.chen@email.com",
+        linkedin: "linkedin.com/in/sarahchen",
+        inPipeline: true,
+        skills: ["Python", "TensorFlow", "AWS", "Docker"]
+      },
+      {
+        id: "C006",
+        name: "David Kim",
+        title: "AI Engineer",
+        location: "San Jose, CA",
+        fit: 8.9,
+        email: "david.kim@email.com",
+        linkedin: "linkedin.com/in/davidkim",
+        inPipeline: true,
+        skills: ["Python", "PyTorch", "GCP", "Kubernetes"]
+      },
+      {
+        id: "C007",
+        name: "Lisa Wang",
+        title: "Machine Learning Engineer",
+        location: "Palo Alto, CA",
+        fit: 8.7,
+        email: "lisa.wang@email.com",
+        linkedin: "linkedin.com/in/lisawang",
+        inPipeline: true,
+        skills: ["Python", "Scikit-learn", "AWS", "Docker"]
+      }
+    ]
   },
   {
     id: "H002",
@@ -151,7 +187,31 @@ const sourcingHistory = [
     company: "InnovateLabs",
     date: "2024-01-10",
     candidatesFound: 12,
-    candidatesInPipeline: 5
+    candidatesInPipeline: 5,
+    candidates: [
+      {
+        id: "C002",
+        name: "Marcus Johnson",
+        title: "ML Research Scientist",
+        location: "Boston, MA",
+        fit: 8.8,
+        email: "m.johnson@email.com",
+        linkedin: "linkedin.com/in/marcusjohnson",
+        inPipeline: true,
+        skills: ["PyTorch", "NLP", "Computer Vision", "Python"]
+      },
+      {
+        id: "C008",
+        name: "Jennifer Lopez",
+        title: "Research Scientist",
+        location: "Cambridge, MA",
+        fit: 9.1,
+        email: "jennifer.lopez@email.com",
+        linkedin: "linkedin.com/in/jenniferlopez",
+        inPipeline: true,
+        skills: ["TensorFlow", "Deep Learning", "Python", "R"]
+      }
+    ]
   },
   {
     id: "H003",
@@ -159,7 +219,31 @@ const sourcingHistory = [
     company: "DataFlow Inc",
     date: "2024-01-08",
     candidatesFound: 6,
-    candidatesInPipeline: 2
+    candidatesInPipeline: 2,
+    candidates: [
+      {
+        id: "C003",
+        name: "Priya Patel",
+        title: "Data Scientist",
+        location: "Remote",
+        fit: 8.7,
+        email: "priya.patel@email.com",
+        linkedin: "linkedin.com/in/priyapatel",
+        inPipeline: true,
+        skills: ["Machine Learning", "SQL", "R", "Statistics"]
+      },
+      {
+        id: "C009",
+        name: "Michael Chen",
+        title: "Senior Data Analyst",
+        location: "Chicago, IL",
+        fit: 8.5,
+        email: "michael.chen@email.com",
+        linkedin: "linkedin.com/in/michaelchen",
+        inPipeline: true,
+        skills: ["SQL", "Python", "Tableau", "Statistics"]
+      }
+    ]
   }
 ];
 
@@ -591,9 +675,99 @@ export default function SourcingAgent() {
                           <div className="text-lg font-semibold text-green-600">{session.candidatesInPipeline}</div>
                           <div className="text-xs text-muted-foreground">In Pipeline</div>
                         </div>
-                        <Button size="sm" variant="outline">
-                          View Candidates
-                        </Button>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button size="sm" variant="outline">
+                              View Candidates
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                              <DialogTitle>{session.jobTitle} at {session.company}</DialogTitle>
+                              <DialogDescription>
+                                Candidates found on {session.date} ({session.candidatesFound} total, {session.candidatesInPipeline} in pipeline)
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4 mt-4">
+                              {session.candidates?.map((candidate) => (
+                                <Card key={candidate.id} className="p-4">
+                                  <div className="flex items-start justify-between">
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                        <User className="w-5 h-5 text-primary" />
+                                      </div>
+                                      <div>
+                                        <h4 className="font-semibold">{candidate.name}</h4>
+                                        <p className="text-sm text-muted-foreground">{candidate.title}</p>
+                                        <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
+                                          <span className="flex items-center gap-1">
+                                            <MapPin className="w-3 h-3" />
+                                            {candidate.location}
+                                          </span>
+                                          <span className="flex items-center gap-1">
+                                            <Mail className="w-3 h-3" />
+                                            {candidate.email}
+                                            <Button
+                                              size="sm"
+                                              variant="ghost"
+                                              className="h-4 w-4 p-0 ml-1"
+                                              onClick={() => handleCopyEmail(candidate.email)}
+                                            >
+                                              <Copy className="w-3 h-3" />
+                                            </Button>
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-4">
+                                      <div className="text-right">
+                                        <Badge variant="secondary" className="text-sm font-bold">
+                                          {candidate.fit}/10
+                                        </Badge>
+                                        <p className="text-xs text-muted-foreground mt-1">Fit Score</p>
+                                      </div>
+                                      {candidate.inPipeline && (
+                                        <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+                                          <CheckCircle className="w-3 h-3 mr-1" />
+                                          In Pipeline
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="mt-3">
+                                    <p className="text-sm font-medium mb-2">Skills:</p>
+                                    <div className="flex flex-wrap gap-1">
+                                      {candidate.skills.map((skill) => (
+                                        <Badge key={skill} variant="outline" className="text-xs">
+                                          {skill}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="flex gap-2 mt-4">
+                                    <Button size="sm" variant="outline" asChild>
+                                      <a href={`https://${candidate.linkedin}`} target="_blank" rel="noopener noreferrer">
+                                        <Globe className="w-3 h-3 mr-1" />
+                                        LinkedIn
+                                      </a>
+                                    </Button>
+                                    {candidate.inPipeline && (
+                                      <Button size="sm" variant="outline" asChild>
+                                        <a href="/outreach-agent">
+                                          <ArrowRight className="w-3 h-3 mr-1" />
+                                          View in Outreach
+                                        </a>
+                                      </Button>
+                                    )}
+                                  </div>
+                                </Card>
+                              ))}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </div>
                   ))}
