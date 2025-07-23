@@ -19,12 +19,14 @@ interface Props {
   recentSubmissions: Submission[];
   getStatusIcon: (status: string) => React.ReactNode;
   getStatusText: (status: string) => string;
+  onCandidateClick?: (submission: Submission) => void;
 }
 
 const SubmissionHistory: React.FC<Props> = ({
   recentSubmissions,
   getStatusIcon,
-  getStatusText
+  getStatusText,
+  onCandidateClick
 }) => (
   <Card className="p-8 bg-white shadow-xl border">
     <h3 className="text-lg font-semibold mb-4">Recent Submissions</h3>
@@ -36,7 +38,12 @@ const SubmissionHistory: React.FC<Props> = ({
               <User className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="font-medium">{submission.candidate}</p>
+              <button 
+                onClick={() => onCandidateClick?.(submission)}
+                className="font-medium text-primary hover:underline cursor-pointer text-left"
+              >
+                {submission.candidate}
+              </button>
               <p className="text-sm text-muted-foreground">{submission.job}</p>
               <div className="flex items-center gap-4 mt-1">
                 <span className="text-xs text-muted-foreground">
@@ -57,7 +64,6 @@ const SubmissionHistory: React.FC<Props> = ({
               <p className="text-xs text-muted-foreground">{submission.submittedAt}</p>
             </div>
             <Badge variant="outline">Overall: {submission.fit}</Badge>
-            <Button size="sm" variant="outline">View Details</Button>
           </div>
         </div>
       ))}
