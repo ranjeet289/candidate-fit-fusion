@@ -386,12 +386,9 @@ export default function OutreachAgent() {
       </div>
 
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
-        <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="pipeline" className="space-y-6">
                 className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-              <TabsTrigger value="pipeline">Pipeline ({candidatesFromPipeline.length})</TabsTrigger>
               <TabsTrigger value="sequences">Auto Sequences</TabsTrigger>
-                className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
             </TabsList>
 
             <TabsContent value="pipeline">
