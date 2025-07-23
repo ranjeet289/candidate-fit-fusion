@@ -381,7 +381,6 @@ export default function OutreachAgent() {
                   : "Batch daily"}
               </span>
             </div>
-      </div>
           )}
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
