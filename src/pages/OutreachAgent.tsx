@@ -6,9 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye, CheckCircle, Clock, Star, ArrowRight, Plus, Edit3, Trash2 } from "lucide-react";
+import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye, CheckCircle, Clock, Star, ArrowRight, Plus, Edit3, Trash2, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { usePageTitle } from "@/hooks/use-page-title";
@@ -547,8 +548,7 @@ export default function OutreachAgent() {
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button size="sm" variant="outline">
-                                <Edit3 className="w-4 h-4 mr-1" />
-                                Edit
+                                <Edit3 className="w-4 h-4" />
                               </Button>
                             </DialogTrigger>
                             <DialogContent>
@@ -626,35 +626,40 @@ export default function OutreachAgent() {
                       </div>
 
                       {/* Show candidates in this sequence */}
-                      <div>
-                        <p className="text-sm font-medium mb-3">Candidates in Sequence:</p>
-                        <div className="space-y-2">
-                          {candidatesFromPipeline.slice(0, sequence.candidateCount).map((candidate) => (
-                            <div key={candidate.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                                  <User className="w-4 h-4 text-primary" />
+                      <Collapsible>
+                        <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
+                          <ChevronDown className="w-4 h-4" />
+                          Candidates in Sequence ({sequence.candidateCount})
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-3">
+                          <div className="space-y-2">
+                            {candidatesFromPipeline.slice(0, sequence.candidateCount).map((candidate) => (
+                              <div key={candidate.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <User className="w-4 h-4 text-primary" />
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-sm">{candidate.name}</p>
+                                    <p className="text-xs text-muted-foreground">{candidate.title}</p>
+                                  </div>
                                 </div>
-                                <div>
-                                  <p className="font-medium text-sm">{candidate.name}</p>
-                                  <p className="text-xs text-muted-foreground">{candidate.title}</p>
+                                <div className="flex items-center gap-2">
+                                  <Badge variant="outline" className="text-xs">
+                                    Step 1
+                                  </Badge>
+                                  <Badge 
+                                    variant={candidate.status === 'responded' ? 'default' : 'secondary'}
+                                    className="text-xs"
+                                  >
+                                    {candidate.status.replace('_', ' ')}
+                                  </Badge>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="text-xs">
-                                  Step 1
-                                </Badge>
-                                <Badge 
-                                  variant={candidate.status === 'responded' ? 'default' : 'secondary'}
-                                  className="text-xs"
-                                >
-                                  {candidate.status.replace('_', ' ')}
-                                </Badge>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                            ))}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
                     </Card>
                   ))}
                 </div>
