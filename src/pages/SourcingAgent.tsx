@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import FitScoreBreakdown from "@/components/FitScoreBreakdown";
@@ -513,12 +514,18 @@ export default function SourcingAgent() {
                           </div>
 
                           {candidate.fitBreakdown && (
-                            <div className="mb-3 p-3 bg-muted/50 rounded-lg">
-                              <FitScoreBreakdown 
-                                fitBreakdown={candidate.fitBreakdown} 
-                                overallFit={candidate.fit}
-                              />
-                            </div>
+                            <Collapsible className="mb-3">
+                              <CollapsibleTrigger className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                                <ChevronDown className="w-3 h-3" />
+                                View Fit Score Details
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="mt-2 p-3 bg-muted/50 rounded-lg">
+                                <FitScoreBreakdown 
+                                  fitBreakdown={candidate.fitBreakdown} 
+                                  overallFit={candidate.fit}
+                                />
+                              </CollapsibleContent>
+                            </Collapsible>
                           )}
 
                           <div className="flex gap-2">
