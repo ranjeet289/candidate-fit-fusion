@@ -305,7 +305,7 @@ AI Recruitment Team`;
               <TabsTrigger value="history" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Submission History</TabsTrigger>
             </TabsList>
             <TabsContent value="submit">
-              <Card className="p-8 bg-background shadow-xl">
+              <Card className="p-8 bg-card shadow-xl border">
                 <div className="mb-6">
                   <h2 className="text-xl font-semibold mb-2">Submit Candidate to Job</h2>
                   <p className="text-muted-foreground">

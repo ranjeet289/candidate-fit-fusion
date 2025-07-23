@@ -399,7 +399,7 @@ export default function OutreachAgent() {
             </TabsList>
 
             <TabsContent value="pipeline">
-              <Card className="p-8 bg-background shadow-xl">
+              <Card className="p-8 bg-card shadow-xl border">
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-2">Candidate Pipeline</h3>
                   <p className="text-muted-foreground">
