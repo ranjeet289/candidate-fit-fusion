@@ -26,7 +26,7 @@ const SubmissionHistory: React.FC<Props> = ({
   getStatusIcon,
   getStatusText
 }) => (
-  <Card className="p-8 bg-background shadow-xl">
+  <Card className="p-8 bg-white shadow-xl border">
     <h3 className="text-lg font-semibold mb-4">Recent Submissions</h3>
     <div className="space-y-4">
       {recentSubmissions.map((submission) => (
