@@ -1,5 +1,5 @@
 
-import { Users, Briefcase, BarChart3, Search, Target, Send, MessageSquare, Sparkles, Settings, LogOut, Calendar, Bell, FileText, HelpCircle, Bot, Zap, Grid3X3, CircleHelp, List, Activity, Home, Zap as ZapIcon, MessageCircle, Plane as PaperPlane, Folder, User, HelpCircle as Help, LifeBuoy } from "lucide-react";
+import { Users, Briefcase, BarChart3, Search, Target, Send, MessageSquare, Sparkles, Settings, LogOut, Calendar, Bell, FileText, HelpCircle, Bot, Zap, Grid3X3, CircleHelp, List, Activity, Home, Zap as ZapIcon, MessageCircle, Plane as PaperPlane, Folder, User, HelpCircle as Help, LifeBuoy, BarChart2, UserCheck, Ticket, UserPlus, FolderOpen, Users2, Settings2, Power } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -52,7 +52,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/overview">
-                    <Home className="mr-2" size={18} />
+                    <BarChart2 className="mr-2" size={18} />
                     <span>Overview</span>
                   </a>
                 </SidebarMenuButton>
@@ -74,7 +74,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/sourcing-agent">
-                    <Search className="mr-2" size={18} />
+                    <Target className="mr-2" size={18} />
                     <span>Sourcing Agent</span>
                   </a>
                 </SidebarMenuButton>
@@ -82,7 +82,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/outreach-agent">
-                    <MessageCircle className="mr-2" size={18} />
+                    <Send className="mr-2" size={18} />
                     <span>Outreach Agent</span>
                   </a>
                 </SidebarMenuButton>
@@ -90,7 +90,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/submission-agent">
-                    <PaperPlane className="mr-2" size={18} />
+                    <MessageSquare className="mr-2" size={18} />
                     <span>Submission Agent</span>
                   </a>
                 </SidebarMenuButton>
@@ -114,7 +114,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/candidates">
-                    <User className="mr-2" size={18} />
+                    <Users className="mr-2" size={18} />
                     <span>Candidates</span>
                   </a>
                 </SidebarMenuButton>
@@ -122,7 +122,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/recruiters">
-                    <User className="mr-2" size={18} />
+                    <UserCheck className="mr-2" size={18} />
                     <span>Recruiters</span>
                   </a>
                 </SidebarMenuButton>
@@ -146,7 +146,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/tickets">
-                    <CircleHelp className="mr-2" size={18} />
+                    <Ticket className="mr-2" size={18} />
                     <span>Tickets</span>
                   </a>
                 </SidebarMenuButton>
@@ -154,7 +154,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/referrals">
-                    <Users className="mr-2" size={18} />
+                    <UserPlus className="mr-2" size={18} />
                     <span>Referrals</span>
                   </a>
                 </SidebarMenuButton>
@@ -162,7 +162,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/curated-lists">
-                    <Folder className="mr-2" size={18} />
+                    <FolderOpen className="mr-2" size={18} />
                     <span>Curated lists</span>
                   </a>
                 </SidebarMenuButton>
@@ -178,7 +178,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/users">
-                    <User className="mr-2" size={18} />
+                    <Users2 className="mr-2" size={18} />
                     <span>Users</span>
                   </a>
                 </SidebarMenuButton>
@@ -210,7 +210,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/update-terms">
-                    <Help className="mr-2" size={18} />
+                    <FileText className="mr-2" size={18} />
                     <span>Update Terms</span>
                   </a>
                 </SidebarMenuButton>
@@ -218,7 +218,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/settings">
-                    <Settings className="mr-2" size={18} />
+                    <Settings2 className="mr-2" size={18} />
                     <span>Settings</span>
                   </a>
                 </SidebarMenuButton>
@@ -226,7 +226,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
                   <a href="/logout">
-                    <LogOut className="mr-2" size={18} />
+                    <Power className="mr-2" size={18} />
                     <span>Log Out</span>
                   </a>
                 </SidebarMenuButton>
