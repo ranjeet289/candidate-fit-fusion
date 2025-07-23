@@ -1,5 +1,5 @@
 
-import { Users, Briefcase, BarChart3, Search, Target, Send, MessageSquare, Sparkles, Settings, LogOut, Calendar, Bell, FileText, HelpCircle, Bot, Zap, Grid3X3, CircleHelp, List, Activity, Home, Zap as ZapIcon, MessageCircle, PaperPlane, Folder, User, HelpCircle as Help, LifeBuoy } from "lucide-react";
+import { Users, Briefcase, BarChart3, Search, Target, Send, MessageSquare, Sparkles, Settings, LogOut, Calendar, Bell, FileText, HelpCircle, Bot, Zap, Grid3X3, CircleHelp, List, Activity, Home, Zap as ZapIcon, MessageCircle, Plane as PaperPlane, Folder, User, HelpCircle as Help, LifeBuoy } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
