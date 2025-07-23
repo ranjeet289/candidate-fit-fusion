@@ -413,6 +413,17 @@ export default function SourcingAgent() {
           linkedin: "linkedin.com/in/emmawilson",
           inPipeline: false,
           skills: ["Python", "Django", "PostgreSQL", "Docker"]
+        },
+        {
+          id: `C${Date.now()}3`,
+          name: "James Martinez",
+          title: `Lead ${sessionData?.jobTitle || 'Engineer'}`,
+          location: "Seattle, WA",
+          fit: 9.1,
+          email: "james.martinez@email.com",
+          linkedin: "linkedin.com/in/jamesmartinez",
+          inPipeline: false,
+          skills: ["Java", "Spring Boot", "Microservices", "Kubernetes"]
         }
       ];
 
