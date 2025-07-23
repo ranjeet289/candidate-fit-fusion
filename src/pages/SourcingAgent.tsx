@@ -350,11 +350,12 @@ export default function SourcingAgent() {
     setRescrapeLoading(sessionId);
     
     setTimeout(() => {
+      const sessionData = history.find(s => s.id === sessionId);
       const newCandidates = [
         {
           id: `C${Date.now()}1`,
           name: "Oliver Smith",
-          title: "Senior Software Engineer",
+          title: `${sessionData?.jobTitle || 'Software Engineer'}`,
           location: "New York, NY",
           fit: 8.6,
           email: "oliver.smith@email.com",
@@ -365,7 +366,7 @@ export default function SourcingAgent() {
         {
           id: `C${Date.now()}2`,
           name: "Emma Wilson",
-          title: "Full Stack Developer",
+          title: `Senior ${sessionData?.jobTitle || 'Developer'}`,
           location: "Austin, TX",
           fit: 8.4,
           email: "emma.wilson@email.com",
@@ -389,9 +390,35 @@ export default function SourcingAgent() {
       setRescrapeLoading(null);
       toast({
         title: "Rescraping Complete",
-        description: `Found ${newCandidates.length} new candidates with 8.2+ fit score`,
+        description: `Found ${newCandidates.length} new candidates with 8.2+ fit score for ${sessionData?.jobTitle}`,
       });
     }, 2500);
+  };
+
+  const handleMoveToPipeline = (candidateId: string, sessionId: string) => {
+    setHistory(prev => prev.map(session => {
+      if (session.id === sessionId) {
+        return {
+          ...session,
+          candidatesInPipeline: session.candidatesInPipeline + 1,
+          candidates: session.candidates?.map(candidate => 
+            candidate.id === candidateId 
+              ? { ...candidate, inPipeline: true }
+              : candidate
+          )
+        };
+      }
+      return session;
+    }));
+    
+    const candidate = history
+      .find(s => s.id === sessionId)
+      ?.candidates?.find(c => c.id === candidateId);
+    
+    toast({
+      title: "Added to Pipeline",
+      description: `${candidate?.name} has been added to the Outreach Agent pipeline`,
+    });
   };
 
   const selectedJobData = dummyJobs.find(job => job.id === selectedJob);
@@ -825,12 +852,21 @@ export default function SourcingAgent() {
                                         LinkedIn
                                       </a>
                                     </Button>
-                                    {candidate.inPipeline && (
+                                    {candidate.inPipeline ? (
                                       <Button size="sm" variant="outline" asChild>
                                         <a href="/outreach-agent">
                                           <ArrowRight className="w-3 h-3 mr-1" />
                                           View in Outreach
                                         </a>
+                                      </Button>
+                                    ) : (
+                                      <Button 
+                                        size="sm" 
+                                        className="bg-primary text-white"
+                                        onClick={() => handleMoveToPipeline(candidate.id, session.id)}
+                                      >
+                                        <Plus className="w-3 h-3 mr-1" />
+                                        Add to Pipeline
                                       </Button>
                                     )}
                                   </div>
