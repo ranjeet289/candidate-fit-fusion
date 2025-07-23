@@ -251,6 +251,8 @@ export default function SourcingAgent() {
   const [selectedJob, setSelectedJob] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [candidates, setCandidates] = useState<typeof dummyCandidates>([]);
+  const [history, setHistory] = useState(sourcingHistory);
+  const [rescrapeLoading, setRescrapeLoading] = useState<string | null>(null);
   const { toast } = useToast();
   const { setTitle, setIcon, setBadge } = usePageTitle();
 
@@ -341,6 +343,54 @@ export default function SourcingAgent() {
       title: "Email Copied",
       description: "Email address copied to clipboard",
     });
+  };
+
+  const handleHistoryRescrape = (sessionId: string) => {
+    setRescrapeLoading(sessionId);
+    
+    setTimeout(() => {
+      const newCandidates = [
+        {
+          id: `C${Date.now()}1`,
+          name: "Oliver Smith",
+          title: "Senior Software Engineer",
+          location: "New York, NY",
+          fit: 8.6,
+          email: "oliver.smith@email.com",
+          linkedin: "linkedin.com/in/oliversmith",
+          inPipeline: false,
+          skills: ["JavaScript", "React", "Node.js", "AWS"]
+        },
+        {
+          id: `C${Date.now()}2`,
+          name: "Emma Wilson",
+          title: "Full Stack Developer",
+          location: "Austin, TX",
+          fit: 8.4,
+          email: "emma.wilson@email.com",
+          linkedin: "linkedin.com/in/emmawilson",
+          inPipeline: false,
+          skills: ["Python", "Django", "PostgreSQL", "Docker"]
+        }
+      ];
+
+      setHistory(prev => prev.map(session => {
+        if (session.id === sessionId) {
+          return {
+            ...session,
+            candidatesFound: session.candidatesFound + newCandidates.length,
+            candidates: [...(session.candidates || []), ...newCandidates]
+          };
+        }
+        return session;
+      }));
+      
+      setRescrapeLoading(null);
+      toast({
+        title: "Rescraping Complete",
+        description: `Found ${newCandidates.length} new candidates with 8.2+ fit score`,
+      });
+    }, 2500);
   };
 
   const selectedJobData = dummyJobs.find(job => job.id === selectedJob);
@@ -653,7 +703,7 @@ export default function SourcingAgent() {
               <Card className="p-8 bg-card shadow-sm border">
                 <h3 className="text-lg font-semibold mb-4">Sourcing History</h3>
                 <div className="space-y-4">
-                  {sourcingHistory.map((session) => (
+                  {history.map((session) => (
                     <div key={session.id} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
@@ -675,7 +725,27 @@ export default function SourcingAgent() {
                           <div className="text-lg font-semibold text-green-600">{session.candidatesInPipeline}</div>
                           <div className="text-xs text-muted-foreground">In Pipeline</div>
                         </div>
-                        <Dialog>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleHistoryRescrape(session.id)}
+                            disabled={rescrapeLoading === session.id}
+                            className="flex items-center gap-2"
+                          >
+                            {rescrapeLoading === session.id ? (
+                              <>
+                                <Globe className="w-3 h-3 animate-spin" />
+                                Rescraping...
+                              </>
+                            ) : (
+                              <>
+                                <RotateCcw className="w-3 h-3" />
+                                Rescrape
+                              </>
+                            )}
+                          </Button>
+                          <Dialog>
                           <DialogTrigger asChild>
                             <Button size="sm" variant="outline">
                               View Candidates
@@ -768,6 +838,7 @@ export default function SourcingAgent() {
                             </div>
                           </DialogContent>
                         </Dialog>
+                        </div>
                       </div>
                     </div>
                   ))}
