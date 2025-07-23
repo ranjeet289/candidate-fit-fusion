@@ -15,6 +15,7 @@ import AIAgentsOverview from './pages/AIAgentsOverview';
 import NotFound from './pages/NotFound';
 import { EntityProvider } from './context/EntityContext';
 import { PageTitleProvider, usePageTitle } from './hooks/use-page-title';
+import { Toaster } from './components/ui/toaster';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
             </div>
           </main>
         </div>
+        <Toaster />
       </SidebarProvider>
     </Router>
     </PageTitleProvider>
