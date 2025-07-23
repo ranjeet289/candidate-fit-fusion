@@ -110,10 +110,11 @@ export default function CandidateMatches({
               
               <Button
                 onClick={() => handleAddToOutreach(candidate.candidateId, candidate.jobId)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 min-w-[140px]"
+                size="sm"
               >
-                Add to Outreach
                 <UserPlus className="w-4 h-4" />
+                Add to Pipeline
               </Button>
             </div>
           </div>

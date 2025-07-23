@@ -124,18 +124,20 @@ export default function JobMatches({ smartMatches, handleSmartSubmission }: JobM
                   <div className="flex flex-col gap-2">
                     <Button
                       onClick={() => handleSmartSubmission(selectedCandidateId, match.jobId)}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 min-w-[140px]"
+                      size="sm"
                     >
-                      Submit
                       <ArrowRight className="w-4 h-4" />
+                      Submit Now
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => handleAddToPipeline(selectedCandidateId, match.jobId)}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 min-w-[140px]"
+                      size="sm"
                     >
-                      Add to Pipeline
                       <UserPlus className="w-4 h-4" />
+                      Add to Pipeline
                     </Button>
                   </div>
                 </div>
