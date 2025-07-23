@@ -26,101 +26,95 @@ export default function CandidateMatches({
 }: CandidateMatchesProps) {
   const { candidates, jobs } = useEntities();
 
-  // Generate best candidates for each job
-  const getBestCandidatesForJobs = () => {
-    return jobs.map(job => {
-      const jobCandidates = candidates.map(candidate => ({
-        candidateId: candidate.id,
-        candidateName: candidate.name,
-        candidateTitle: candidate.title,
-        jobId: job.id,
-        jobTitle: job.title,
-        companyName: job.company,
-        matchScore: candidate.fit, // Using candidate fit as match score
-        reasons: [
-          "Technical skills alignment",
-          "Experience level match",
-          "Industry background",
-          "Cultural fit indicators"
-        ]
-      })).sort((a, b) => b.matchScore - a.matchScore).slice(0, 3); // Top 3 candidates per job
+  // Get best 10 candidates overall
+  const getBest10Candidates = () => {
+    return candidates
+      .sort((a, b) => b.fit - a.fit)
+      .slice(0, 10)
+      .map(candidate => {
+        // Find best matching job for this candidate
+        const bestJob = jobs
+          .sort((a, b) => b.fit - a.fit)
+          .find(job => job.fit >= 7) || jobs[0]; // Get high-fit job or fallback to first
 
-      return {
-        job,
-        topCandidates: jobCandidates
-      };
-    });
+        return {
+          candidateId: candidate.id,
+          candidateName: candidate.name,
+          candidateTitle: candidate.title,
+          jobId: bestJob.id,
+          jobTitle: bestJob.title,
+          companyName: bestJob.company,
+          matchScore: candidate.fit,
+          reasons: [
+            "Technical skills alignment",
+            "Experience level match", 
+            "Industry background",
+            "Cultural fit indicators"
+          ]
+        };
+      });
   };
 
-  const jobCandidateMatches = getBestCandidatesForJobs();
+  const topCandidates = getBest10Candidates();
 
   return (
     <Card className="p-8 bg-card shadow-xl border">
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-2">Smart Candidate Matches</h3>
         <p className="text-muted-foreground">
-          Best candidate matches for available job positions
+          Top 10 candidates across all positions
         </p>
       </div>
       
-      <div className="space-y-6">
-        {jobCandidateMatches.map(({ job, topCandidates }) => (
-          <div key={job.id} className="border rounded-lg p-6">
-            <div className="mb-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Briefcase className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-lg">{job.title}</h4>
-                  <p className="text-sm text-muted-foreground">{job.company}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              <p className="text-sm font-medium">Top Candidate Matches:</p>
-              {topCandidates.map((match) => (
-                <div key={match.candidateId} className="p-4 bg-muted/30 rounded-lg">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-8 h-8 bg-secondary/50 rounded-full flex items-center justify-center">
-                          <User className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h5 className="font-medium">{match.candidateName}</h5>
-                          <p className="text-xs text-muted-foreground">{match.candidateTitle}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 mb-2">
-                        <Badge variant="secondary" className="flex items-center gap-1 text-xs">
-                          <Star className="w-3 h-3" />
-                          {match.matchScore.toFixed(1)}/10 Match
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex flex-wrap gap-1">
-                        {match.reasons.slice(0, 2).map((reason, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {reason}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <Button
-                      size="sm"
-                      onClick={() => handleAddToOutreach(match.candidateId, match.jobId)}
-                      className="flex items-center gap-1"
-                    >
-                      Add to Outreach
-                      <UserPlus className="w-3 h-3" />
-                    </Button>
+      <div className="space-y-4">
+        {topCandidates.map((candidate) => (
+          <div key={candidate.candidateId} className="p-6 border rounded-lg hover:bg-muted/50 transition-colors">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <User className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-lg">{candidate.candidateName}</h4>
+                    <p className="text-sm text-muted-foreground">{candidate.candidateTitle}</p>
                   </div>
                 </div>
-              ))}
+                
+                <div className="flex items-center gap-4 mb-4">
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    <Star className="w-3 h-3" />
+                    {candidate.matchScore.toFixed(1)}/10 Overall Score
+                  </Badge>
+                </div>
+                
+                <div className="mb-4 p-3 bg-muted/30 rounded-lg">
+                  <p className="text-sm font-medium mb-1">Best Match Position:</p>
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm">{candidate.jobTitle} at {candidate.companyName}</span>
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <p className="text-sm font-medium mb-2">Strengths:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {candidate.reasons.map((reason, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {reason}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <Button
+                onClick={() => handleAddToOutreach(candidate.candidateId, candidate.jobId)}
+                className="flex items-center gap-2"
+              >
+                Add to Outreach
+                <UserPlus className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         ))}
