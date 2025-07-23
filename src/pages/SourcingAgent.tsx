@@ -272,7 +272,7 @@ export default function SourcingAgent() {
             </TabsList>
 
             <TabsContent value="sourcing">
-              <Card className="p-8 bg-background shadow-xl">
+              <Card className="p-8 bg-card shadow-sm border">
                 <div className="mb-8">
                   <h2 className="text-xl font-semibold mb-2">AI-Powered Candidate Sourcing</h2>
                   <p className="text-muted-foreground">
@@ -303,7 +303,7 @@ export default function SourcingAgent() {
                   </div>
 
                   {selectedJobData && (
-                    <Card className="p-4 bg-muted/50">
+                    <Card className="p-4 bg-muted/30 border">
                       <h3 className="font-semibold mb-2">Selected Job Details</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div className="flex items-center gap-2">
@@ -341,8 +341,7 @@ export default function SourcingAgent() {
                     <Button 
                       onClick={handleStartSourcing}
                       disabled={isSearching || !selectedJob}
-                      className="flex-1 text-white"
-                      style={{ backgroundColor: '#6366f1' }}
+                      className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                       {isSearching ? (
                         <div className="flex items-center gap-2">
@@ -557,7 +556,7 @@ export default function SourcingAgent() {
             </TabsContent>
 
             <TabsContent value="history">
-              <Card className="p-8 bg-background shadow-xl">
+              <Card className="p-8 bg-card shadow-sm border">
                 <h3 className="text-lg font-semibold mb-4">Sourcing History</h3>
                 <div className="space-y-4">
                   {sourcingHistory.map((session) => (
