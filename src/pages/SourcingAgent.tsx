@@ -269,13 +269,13 @@ export default function SourcingAgent() {
             <TabsList className="grid w-full grid-cols-2 h-10 bg-muted rounded-md p-1">
               <TabsTrigger 
                 value="sourcing" 
-                className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
               >
                 AI Sourcing
               </TabsTrigger>
               <TabsTrigger 
                 value="history" 
-                className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
               >
                 Sourcing History
               </TabsTrigger>

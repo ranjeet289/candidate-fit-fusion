@@ -300,9 +300,9 @@ AI Recruitment Team`;
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="submit" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3 h-10 bg-muted rounded-md p-1">
-              <TabsTrigger value="submit">Submit Candidate</TabsTrigger>
-              <TabsTrigger value="smart-match">Smart Matches</TabsTrigger>
-              <TabsTrigger value="history">Submission History</TabsTrigger>
+              <TabsTrigger value="submit" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Submit Candidate</TabsTrigger>
+              <TabsTrigger value="smart-match" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Smart Matches</TabsTrigger>
+              <TabsTrigger value="history" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Submission History</TabsTrigger>
             </TabsList>
             <TabsContent value="submit">
               <Card className="p-8 bg-background shadow-xl">
