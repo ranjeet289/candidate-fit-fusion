@@ -382,9 +382,6 @@ export default function OutreachAgent() {
               </span>
             </div>
           )}
-                className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-      </div>
-
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
           <Tabs defaultValue="pipeline" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3 bg-muted p-1 h-10 rounded-md">
