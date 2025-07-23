@@ -156,7 +156,8 @@ const sourcingHistory = [
         email: "sarah.chen@email.com",
         linkedin: "linkedin.com/in/sarahchen",
         inPipeline: true,
-        skills: ["Python", "TensorFlow", "AWS", "Docker"]
+        skills: ["Python", "TensorFlow", "AWS", "Docker"],
+        scrapedAt: undefined
       },
       {
         id: "C006",
@@ -167,7 +168,8 @@ const sourcingHistory = [
         email: "david.kim@email.com",
         linkedin: "linkedin.com/in/davidkim",
         inPipeline: true,
-        skills: ["Python", "PyTorch", "GCP", "Kubernetes"]
+        skills: ["Python", "PyTorch", "GCP", "Kubernetes"],
+        scrapedAt: undefined
       },
       {
         id: "C007",
@@ -178,7 +180,8 @@ const sourcingHistory = [
         email: "lisa.wang@email.com",
         linkedin: "linkedin.com/in/lisawang",
         inPipeline: true,
-        skills: ["Python", "Scikit-learn", "AWS", "Docker"]
+        skills: ["Python", "Scikit-learn", "AWS", "Docker"],
+        scrapedAt: undefined
       }
     ]
   },
@@ -199,7 +202,8 @@ const sourcingHistory = [
         email: "m.johnson@email.com",
         linkedin: "linkedin.com/in/marcusjohnson",
         inPipeline: true,
-        skills: ["PyTorch", "NLP", "Computer Vision", "Python"]
+        skills: ["PyTorch", "NLP", "Computer Vision", "Python"],
+        scrapedAt: undefined
       },
       {
         id: "C008",
@@ -210,7 +214,8 @@ const sourcingHistory = [
         email: "jennifer.lopez@email.com",
         linkedin: "linkedin.com/in/jenniferlopez",
         inPipeline: true,
-        skills: ["TensorFlow", "Deep Learning", "Python", "R"]
+        skills: ["TensorFlow", "Deep Learning", "Python", "R"],
+        scrapedAt: undefined
       }
     ]
   },
@@ -231,7 +236,8 @@ const sourcingHistory = [
         email: "priya.patel@email.com",
         linkedin: "linkedin.com/in/priyapatel",
         inPipeline: true,
-        skills: ["Machine Learning", "SQL", "R", "Statistics"]
+        skills: ["Machine Learning", "SQL", "R", "Statistics"],
+        scrapedAt: undefined
       },
       {
         id: "C009",
@@ -242,7 +248,8 @@ const sourcingHistory = [
         email: "michael.chen@email.com",
         linkedin: "linkedin.com/in/michaelchen",
         inPipeline: true,
-        skills: ["SQL", "Python", "Tableau", "Statistics"]
+        skills: ["SQL", "Python", "Tableau", "Statistics"],
+        scrapedAt: undefined
       }
     ]
   }
@@ -256,6 +263,7 @@ export default function SourcingAgent() {
   const [rescrapeLoading, setRescrapeLoading] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("sourcing");
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
+  const [openDialog, setOpenDialog] = useState<string | null>(null);
   const { toast } = useToast();
   const { setTitle, setIcon, setBadge } = usePageTitle();
 
@@ -391,9 +399,10 @@ export default function SourcingAgent() {
     
     setTimeout(() => {
       const sessionData = history.find(s => s.id === sessionId);
+      const currentTime = Date.now();
       const newCandidates = [
         {
-          id: `C${Date.now()}1`,
+          id: `C${currentTime}1`,
           name: "Oliver Smith",
           title: `${sessionData?.jobTitle || 'Software Engineer'}`,
           location: "New York, NY",
@@ -401,10 +410,11 @@ export default function SourcingAgent() {
           email: "oliver.smith@email.com",
           linkedin: "linkedin.com/in/oliversmith",
           inPipeline: false,
-          skills: ["JavaScript", "React", "Node.js", "AWS"]
+          skills: ["JavaScript", "React", "Node.js", "AWS"],
+          scrapedAt: currentTime
         },
         {
-          id: `C${Date.now()}2`,
+          id: `C${currentTime}2`,
           name: "Emma Wilson",
           title: `Senior ${sessionData?.jobTitle || 'Developer'}`,
           location: "Austin, TX",
@@ -412,10 +422,11 @@ export default function SourcingAgent() {
           email: "emma.wilson@email.com",
           linkedin: "linkedin.com/in/emmawilson",
           inPipeline: false,
-          skills: ["Python", "Django", "PostgreSQL", "Docker"]
+          skills: ["Python", "Django", "PostgreSQL", "Docker"],
+          scrapedAt: currentTime
         },
         {
-          id: `C${Date.now()}3`,
+          id: `C${currentTime}3`,
           name: "James Martinez",
           title: `Lead ${sessionData?.jobTitle || 'Engineer'}`,
           location: "Seattle, WA",
@@ -423,7 +434,8 @@ export default function SourcingAgent() {
           email: "james.martinez@email.com",
           linkedin: "linkedin.com/in/jamesmartinez",
           inPipeline: false,
-          skills: ["Java", "Spring Boot", "Microservices", "Kubernetes"]
+          skills: ["Java", "Spring Boot", "Microservices", "Kubernetes"],
+          scrapedAt: currentTime
         }
       ];
 
@@ -439,6 +451,7 @@ export default function SourcingAgent() {
       }));
       
       setRescrapeLoading(null);
+      setOpenDialog(sessionId); // Auto-open the dialog
       toast({
         title: "Rescraping Complete",
         description: `Found ${newCandidates.length} new candidates with 8.2+ fit score for ${sessionData?.jobTitle}`,
@@ -855,7 +868,7 @@ export default function SourcingAgent() {
                               </>
                             )}
                           </Button>
-                          <Dialog>
+                          <Dialog open={openDialog === session.id} onOpenChange={(open) => setOpenDialog(open ? session.id : null)}>
                           <DialogTrigger asChild>
                             <Button size="sm" variant="outline">
                               View Candidates
@@ -869,15 +882,24 @@ export default function SourcingAgent() {
                               </DialogDescription>
                             </DialogHeader>
                             <div className="space-y-4 mt-4">
-                              {session.candidates?.map((candidate) => (
-                                <Card key={candidate.id} className="p-4">
+                              {session.candidates
+                                ?.sort((a, b) => (b.scrapedAt || 0) - (a.scrapedAt || 0)) // Sort by scrapedAt, newest first
+                                ?.map((candidate, index) => (
+                                <Card key={candidate.id} className={`p-4 ${candidate.scrapedAt ? 'border-primary bg-primary/5' : ''}`}>
                                   <div className="flex items-start justify-between">
                                     <div className="flex items-center gap-3">
                                       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                                         <User className="w-5 h-5 text-primary" />
                                       </div>
                                       <div>
-                                        <h4 className="font-semibold">{candidate.name}</h4>
+                                        <div className="flex items-center gap-2">
+                                          <h4 className="font-semibold">{candidate.name}</h4>
+                                          {candidate.scrapedAt && (
+                                            <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200">
+                                              New
+                                            </Badge>
+                                          )}
+                                        </div>
                                         <p className="text-sm text-muted-foreground">{candidate.title}</p>
                                         <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
                                           <span className="flex items-center gap-1">
