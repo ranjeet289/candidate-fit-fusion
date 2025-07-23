@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
@@ -254,6 +255,7 @@ export default function SourcingAgent() {
   const [history, setHistory] = useState(sourcingHistory);
   const [rescrapeLoading, setRescrapeLoading] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("sourcing");
+  const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const { toast } = useToast();
   const { setTitle, setIcon, setBadge } = usePageTitle();
 
@@ -276,6 +278,7 @@ export default function SourcingAgent() {
       const candidatesWithPipelineStatus = dummyCandidates.filter(candidate => candidate.fit >= 8.2)
         .map(candidate => ({ ...candidate, inPipeline: false }));
       setCandidates(candidatesWithPipelineStatus);
+      setSelectedCandidates([]);
       setIsSearching(false);
       toast({
         title: "Sourcing Complete",
@@ -331,11 +334,48 @@ export default function SourcingAgent() {
           : candidate
       )
     );
+    setSelectedCandidates(prev => prev.filter(id => id !== candidateId));
     const candidate = candidates.find(c => c.id === candidateId);
     toast({
       title: "Added to Pipeline",
       description: `${candidate?.name} has been added to the Outreach Agent pipeline`,
     });
+  };
+
+  const handleBulkAddToPipeline = () => {
+    const candidateNames = selectedCandidates.map(id => 
+      candidates.find(c => c.id === id)?.name
+    ).filter(Boolean);
+    
+    setCandidates(prev => 
+      prev.map(candidate => 
+        selectedCandidates.includes(candidate.id)
+          ? { ...candidate, inPipeline: true }
+          : candidate
+      )
+    );
+    setSelectedCandidates([]);
+    
+    toast({
+      title: "Added to Pipeline",
+      description: `${candidateNames.length} candidates have been added to the Outreach Agent pipeline`,
+    });
+  };
+
+  const handleSelectCandidate = (candidateId: string, checked: boolean) => {
+    setSelectedCandidates(prev => 
+      checked 
+        ? [...prev, candidateId]
+        : prev.filter(id => id !== candidateId)
+    );
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedCandidates(
+      checked 
+        ? candidates.filter(c => !c.inPipeline).map(c => c.id)
+        : []
+    );
   };
 
   const handleCopyEmail = (email: string) => {
@@ -545,8 +585,29 @@ export default function SourcingAgent() {
                 {candidates.length > 0 && (
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">High-Fit Candidates ({candidates.length})</h3>
                       <div className="flex items-center gap-4">
+                        <h3 className="text-lg font-semibold">High-Fit Candidates ({candidates.length})</h3>
+                        <div className="flex items-center gap-2">
+                          <Checkbox 
+                            id="select-all"
+                            checked={candidates.filter(c => !c.inPipeline).length > 0 && selectedCandidates.length === candidates.filter(c => !c.inPipeline).length}
+                            onCheckedChange={handleSelectAll}
+                          />
+                          <label htmlFor="select-all" className="text-sm text-muted-foreground cursor-pointer">
+                            Select All Available
+                          </label>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        {selectedCandidates.length > 0 && (
+                          <Button 
+                            onClick={handleBulkAddToPipeline}
+                            className="bg-primary text-white flex items-center gap-2"
+                          >
+                            <Plus className="w-4 h-4" />
+                            Add Selected to Pipeline ({selectedCandidates.length})
+                          </Button>
+                        )}
                         <Badge variant="outline" className="text-green-600 border-green-600">
                           8.2+ Fit Score Only
                         </Badge>
@@ -557,9 +618,15 @@ export default function SourcingAgent() {
                     </div>
                     <div className="grid gap-3">
                       {candidates.map((candidate) => (
-                        <Card key={candidate.id} className="p-4">
+                        <Card key={candidate.id} className={`p-4 ${selectedCandidates.includes(candidate.id) ? 'ring-2 ring-primary bg-primary/5' : ''}`}>
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-3">
+                              {!candidate.inPipeline && (
+                                <Checkbox 
+                                  checked={selectedCandidates.includes(candidate.id)}
+                                  onCheckedChange={(checked) => handleSelectCandidate(candidate.id, checked as boolean)}
+                                />
+                              )}
                               <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                                 <User className="w-5 h-5 text-primary" />
                               </div>
