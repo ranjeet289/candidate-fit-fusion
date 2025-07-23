@@ -13,7 +13,7 @@ const Overview = () => {
       change: "+12%",
       subtitle: "Increased since last month",
       icon: Briefcase,
-      color: "bg-blue-500"
+      color: "bg-purple-500"
     },
     {
       title: "Active Candidates", 
@@ -21,7 +21,7 @@ const Overview = () => {
       change: "+8%",
       subtitle: "In recruitment pipeline",
       icon: Users,
-      color: "bg-green-500"
+      color: "bg-blue-500"
     },
     {
       title: "Active Recruiters",
@@ -37,7 +37,7 @@ const Overview = () => {
       change: "+20%",
       subtitle: "Successfully filled positions",
       icon: Target,
-      color: "bg-orange-500"
+      color: "bg-green-500"
     }
   ];
 

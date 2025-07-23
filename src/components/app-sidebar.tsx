@@ -1,5 +1,5 @@
 
-import { Users, Briefcase, BarChart3, Search, Target, Send, MessageSquare, Sparkles, Settings, LogOut, Calendar, Bell, FileText, HelpCircle, Bot, Zap, Grid3X3 } from "lucide-react";
+import { Users, Briefcase, BarChart3, Search, Target, Send, MessageSquare, Sparkles, Settings, LogOut, Calendar, Bell, FileText, HelpCircle, Bot, Zap, Grid3X3, CircleHelp, List } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -52,7 +52,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/overview">
-                    <Grid3X3 className="mr-2" size={18} />
+                    <BarChart3 className="mr-2" size={18} />
                     <span>Overview</span>
                   </a>
                 </SidebarMenuButton>
@@ -74,7 +74,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/sourcing-agent">
-                    <Search className="mr-2" size={18} />
+                    <Target className="mr-2" size={18} />
                     <span>Sourcing Agent</span>
                   </a>
                 </SidebarMenuButton>
@@ -82,7 +82,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/outreach-agent">
-                    <MessageSquare className="mr-2" size={18} />
+                    <Send className="mr-2" size={18} />
                     <span>Outreach Agent</span>
                   </a>
                 </SidebarMenuButton>
@@ -90,7 +90,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/submission-agent">
-                    <Send className="mr-2" size={18} />
+                    <MessageSquare className="mr-2" size={18} />
                     <span>Submission Agent</span>
                   </a>
                 </SidebarMenuButton>
@@ -130,7 +130,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/trackers">
-                    <Target className="mr-2" size={18} />
+                    <BarChart3 className="mr-2" size={18} />
                     <span>Trackers</span>
                   </a>
                 </SidebarMenuButton>
@@ -146,7 +146,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/tickets">
-                    <HelpCircle className="mr-2" size={18} />
+                    <CircleHelp className="mr-2" size={18} />
                     <span>Tickets</span>
                   </a>
                 </SidebarMenuButton>
@@ -154,7 +154,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/referrals">
-                    <Send className="mr-2" size={18} />
+                    <Users className="mr-2" size={18} />
                     <span>Referrals</span>
                   </a>
                 </SidebarMenuButton>
@@ -162,7 +162,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-gray-700 hover:bg-purple-50 hover:text-purple-700 data-[active=true]:bg-purple-100 data-[active=true]:text-purple-700">
                   <a href="/curated-lists">
-                    <FileText className="mr-2" size={18} />
+                    <List className="mr-2" size={18} />
                     <span>Curated lists</span>
                   </a>
                 </SidebarMenuButton>

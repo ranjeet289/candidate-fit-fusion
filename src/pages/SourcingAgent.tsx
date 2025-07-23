@@ -341,7 +341,8 @@ export default function SourcingAgent() {
                     <Button 
                       onClick={handleStartSourcing}
                       disabled={isSearching || !selectedJob}
-                      className="flex-1 bg-primary text-white"
+                      className="flex-1 text-white"
+                      style={{ backgroundColor: '#6366f1' }}
                     >
                       {isSearching ? (
                         <div className="flex items-center gap-2">
@@ -351,7 +352,7 @@ export default function SourcingAgent() {
                       ) : (
                         <div className="flex items-center gap-2">
                           <Target className="w-4 h-4" />
-                          Start AI Sourcing (8.5+ Fit Score)
+                          Start AI Sourcing
                         </div>
                       )}
                     </Button>
