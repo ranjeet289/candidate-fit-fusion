@@ -186,13 +186,13 @@ export default function SourcingAgent() {
     
     setIsSearching(true);
     setTimeout(() => {
-      const candidatesWithPipelineStatus = dummyCandidates.filter(candidate => candidate.fit >= 8.5)
+      const candidatesWithPipelineStatus = dummyCandidates.filter(candidate => candidate.fit >= 8.2)
         .map(candidate => ({ ...candidate, inPipeline: false }));
       setCandidates(candidatesWithPipelineStatus);
       setIsSearching(false);
       toast({
         title: "Sourcing Complete",
-        description: `Found ${candidatesWithPipelineStatus.length} candidates with 8.5+ fit score`,
+        description: `Found ${candidatesWithPipelineStatus.length} candidates with 8.2+ fit score`,
       });
     }, 3000);
   };
@@ -231,7 +231,7 @@ export default function SourcingAgent() {
       setIsSearching(false);
       toast({
         title: "Rescraping Complete",
-        description: "Found 1 new candidate with 8.5+ fit score",
+        description: "Found 1 new candidate with 8.2+ fit score",
       });
     }, 2000);
   };
@@ -386,7 +386,7 @@ export default function SourcingAgent() {
                       <h3 className="text-lg font-semibold">High-Fit Candidates ({candidates.length})</h3>
                       <div className="flex items-center gap-4">
                         <Badge variant="outline" className="text-green-600 border-green-600">
-                          8.5+ Fit Score Only
+                          8.2+ Fit Score Only
                         </Badge>
                         <div className="text-sm text-muted-foreground">
                           {candidates.filter(c => c.inPipeline).length} added to pipeline
