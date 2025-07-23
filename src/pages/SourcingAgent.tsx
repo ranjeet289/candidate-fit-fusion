@@ -253,6 +253,7 @@ export default function SourcingAgent() {
   const [candidates, setCandidates] = useState<typeof dummyCandidates>([]);
   const [history, setHistory] = useState(sourcingHistory);
   const [rescrapeLoading, setRescrapeLoading] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("sourcing");
   const { toast } = useToast();
   const { setTitle, setIcon, setBadge } = usePageTitle();
 
@@ -399,7 +400,7 @@ export default function SourcingAgent() {
     <div className="flex flex-col min-h-screen bg-background">
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
-          <Tabs defaultValue="sourcing" className="space-y-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList className="grid w-full grid-cols-2 h-10 bg-muted rounded-md p-1">
               <TabsTrigger 
                 value="sourcing" 
