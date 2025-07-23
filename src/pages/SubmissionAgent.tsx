@@ -325,61 +325,11 @@ AI Recruitment Team`;
     <div className="flex flex-col min-h-screen bg-background">
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
-          <Tabs defaultValue="submit" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3 h-10 bg-muted rounded-md p-1">
-              <TabsTrigger value="submit" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Submit Candidate</TabsTrigger>
+          <Tabs defaultValue="smart-match" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2 h-10 bg-muted rounded-md p-1">
               <TabsTrigger value="smart-match" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Smart Matches</TabsTrigger>
               <TabsTrigger value="history" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Submission History</TabsTrigger>
             </TabsList>
-            <TabsContent value="submit">
-              <Card className="p-8 bg-card shadow-xl border">
-                <div className="mb-6">
-                  <h2 className="text-xl font-semibold mb-2">Submit Candidate to Job</h2>
-                  <p className="text-muted-foreground">
-                    AI-powered candidate-job matching with automated submission and tracking.
-                  </p>
-                </div>
-                <form onSubmit={handleSubmission} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <CandidateSelector
-                      selectedCandidate={selectedCandidate}
-                      setSelectedCandidate={setSelectedCandidate}
-                      showManualForm={showManualForm}
-                      manualCandidate={manualCandidate}
-                      setManualCandidate={setManualCandidate}
-                    />
-                    <JobMultiSelect
-                      selectedJobs={selectedJobs}
-                      toggleJob={toggleJob}
-                    />
-                  </div>
-                  <CoverLetterSection
-                    coverLetter={coverLetter}
-                    setCoverLetter={setCoverLetter}
-                    isGeneratingCover={isGeneratingCover}
-                    handleGenerateCoverLetter={handleGenerateCoverLetter}
-                    disabled={
-                      !selectedCandidate ||
-                      selectedJobs.length === 0 ||
-                      isGeneratingCover ||
-                      (selectedCandidate === "manual" && !manualCandidateIsValid)
-                    }
-                  />
-                  <Button
-                    type="submit"
-                    disabled={
-                      isSubmitting ||
-                      !selectedCandidate ||
-                      selectedJobs.length === 0 ||
-                      (selectedCandidate === "manual" && !manualCandidateIsValid)
-                    }
-                    className="w-full bg-primary text-white"
-                  >
-                    {isSubmitting ? "Submitting..." : "Submit Candidate"}
-                  </Button>
-                </form>
-              </Card>
-            </TabsContent>
             <TabsContent value="smart-match">
               <SmartMatches
                 smartMatches={smartMatches}
