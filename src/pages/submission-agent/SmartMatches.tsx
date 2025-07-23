@@ -15,6 +15,9 @@ interface SmartMatch {
 
 interface Props {
   smartMatches: SmartMatch[];
+  candidateJobMatches?: SmartMatch[];
+  selectedCandidateId?: string;
+  selectedCandidateName?: string;
   handleSmartSubmission: (candidateId: string, jobId: string) => void;
 }
 
@@ -24,16 +27,31 @@ const getProfileImage = (name: string) => {
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=48`;
 };
 
-const SmartMatches: React.FC<Props> = ({ smartMatches, handleSmartSubmission }) => (
-  <Card className="p-8 bg-background shadow-xl">
-    <div className="mb-6">
-      <h2 className="text-xl font-semibold mb-2">AI Smart Matches</h2>
-      <p className="text-muted-foreground">
-        AI-identified perfect candidate-job matches from your pipeline.
-      </p>
-    </div>
-    <div className="space-y-4">
-      {smartMatches.map((match) => (
+const SmartMatches: React.FC<Props> = ({ 
+  smartMatches, 
+  candidateJobMatches, 
+  selectedCandidateId, 
+  selectedCandidateName,
+  handleSmartSubmission 
+}) => {
+  const showCandidateMatches = selectedCandidateId && candidateJobMatches && candidateJobMatches.length > 0;
+  const displayMatches = showCandidateMatches ? candidateJobMatches : smartMatches;
+  
+  return (
+    <Card className="p-8 bg-background shadow-xl">
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">
+          {showCandidateMatches ? `Job Matches for ${selectedCandidateName}` : 'AI Smart Matches'}
+        </h2>
+        <p className="text-muted-foreground">
+          {showCandidateMatches 
+            ? `Best matching jobs for ${selectedCandidateName} based on skills and experience.`
+            : 'AI-identified perfect candidate-job matches from your pipeline.'
+          }
+        </p>
+      </div>
+      <div className="space-y-4">
+        {displayMatches.map((match) => (
         <Card key={`${match.candidateId}-${match.jobId}`} className="p-6 border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-start gap-4">
             <img 
@@ -88,20 +106,28 @@ const SmartMatches: React.FC<Props> = ({ smartMatches, handleSmartSubmission }) 
           </div>
         </Card>
       ))}
-      {smartMatches.length === 0 && (
-        <div className="text-center py-8 text-muted-foreground">
-          <Star className="w-12 h-12 mx-auto mb-4 opacity-50" />
-          <p>No smart matches found. Add more candidates to your pipeline from the Sourcing Agent.</p>
-          <Button variant="outline" className="mt-4" asChild>
-            <a href="/sourcing-agent">
-              <ArrowRight className="w-4 h-4 mr-2" />
-              Go to Sourcing Agent
-            </a>
-          </Button>
-        </div>
-      )}
-    </div>
-  </Card>
-);
+        {displayMatches.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            <Star className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p>
+              {showCandidateMatches 
+                ? `No job matches found for ${selectedCandidateName}. Try selecting a different candidate.`
+                : 'No smart matches found. Add more candidates to your pipeline from the Sourcing Agent.'
+              }
+            </p>
+            {!showCandidateMatches && (
+              <Button variant="outline" className="mt-4" asChild>
+                <a href="/sourcing-agent">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Go to Sourcing Agent
+                </a>
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+};
 
 export default SmartMatches;

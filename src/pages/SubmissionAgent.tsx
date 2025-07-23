@@ -166,6 +166,23 @@ export default function SubmissionAgent() {
     }
   }
 
+  // Generate candidate-specific job matches based on selected candidate
+  const getCandidateJobMatches = (candidateId: string) => {
+    const candidate = allCandidates.find(c => c.id === candidateId);
+    if (!candidate) return [];
+    
+    const candidateFit = typeof candidate.fit === 'string' ? parseFloat(candidate.fit) : candidate.fit;
+    
+    return jobs.map(job => ({
+      candidateId: candidate.id,
+      candidateName: candidate.name,
+      jobId: job.id,
+      jobTitle: `${job.title} at ${job.company}`,
+      matchScore: Math.round((candidateFit + job.fit) / 2 * 10) / 10,
+      reasons: candidate.skills.slice(0, 3).map(skill => `${skill} expertise`)
+    })).sort((a, b) => b.matchScore - a.matchScore);
+  };
+
   function toggleJob(id: string) {
     setSelectedJobs(sel =>
       sel.includes(id) ? sel.filter(jid => jid !== id) : [...sel, id]
@@ -356,6 +373,9 @@ AI Recruitment Team`;
             <TabsContent value="smart-match">
               <SmartMatches
                 smartMatches={smartMatches}
+                candidateJobMatches={selectedCandidate && selectedCandidate !== "manual" ? getCandidateJobMatches(selectedCandidate) : undefined}
+                selectedCandidateId={selectedCandidate !== "manual" ? selectedCandidate : undefined}
+                selectedCandidateName={getChosenCandidate()?.name}
                 handleSmartSubmission={handleSmartSubmission}
               />
             </TabsContent>
