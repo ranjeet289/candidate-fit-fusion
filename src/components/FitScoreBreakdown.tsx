@@ -35,12 +35,12 @@ const FitScoreBreakdown: React.FC<Props> = ({ fitBreakdown, overallFit }) => {
         </Badge>
       </div>
       
-      <div className="space-y-1">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         {categories.map(category => (
-          <div key={category.key} className="flex items-center justify-between text-sm">
+          <div key={category.key} className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">{category.label}:</span>
             <span className={`font-medium ${getScoreColor(category.value)}`}>
-              {category.value.toFixed(1)} / 10
+              {category.value.toFixed(1)}
             </span>
           </div>
         ))}

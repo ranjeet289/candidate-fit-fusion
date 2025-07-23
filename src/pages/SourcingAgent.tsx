@@ -539,9 +539,6 @@ export default function SourcingAgent() {
                                 </a>
                               </Button>
                             )}
-                            <Button size="sm" variant="outline" className="h-8 text-xs">
-                              Contact
-                            </Button>
                           </div>
                         </Card>
                       ))}
