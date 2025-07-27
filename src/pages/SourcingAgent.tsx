@@ -8,10 +8,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown } from "lucide-react";
+import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown, MessageSquare, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import FitScoreBreakdown from "@/components/FitScoreBreakdown";
+import { FeedbackModal, CandidateFeedback } from "@/components/FeedbackModal";
+import { FeedbackAnalytics } from "@/components/FeedbackAnalytics";
 
 const dummyJobs = [
   {
@@ -264,6 +266,9 @@ export default function SourcingAgent() {
   const [activeTab, setActiveTab] = useState("sourcing");
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const [openDialog, setOpenDialog] = useState<string | null>(null);
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+  const [selectedCandidateForFeedback, setSelectedCandidateForFeedback] = useState<any>(null);
+  const [feedbackData, setFeedbackData] = useState<CandidateFeedback[]>([]);
   const { toast } = useToast();
   const { setTitle, setIcon, setBadge } = usePageTitle();
 
@@ -485,6 +490,19 @@ export default function SourcingAgent() {
     });
   };
 
+  const handleProvideFeedback = (candidate: any) => {
+    setSelectedCandidateForFeedback(candidate);
+    setFeedbackModalOpen(true);
+  };
+
+  const handleSubmitFeedback = (feedback: CandidateFeedback) => {
+    setFeedbackData(prev => [...prev, feedback]);
+    toast({
+      title: "Feedback Submitted",
+      description: "Thank you for your feedback! This helps improve our AI sourcing.",
+    });
+  };
+
   const selectedJobData = dummyJobs.find(job => job.id === selectedJob);
 
   return (
@@ -492,7 +510,7 @@ export default function SourcingAgent() {
       <main className="flex-1 py-8 px-2 sm:px-8 bg-muted/40">
         <div className="max-w-6xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2 h-10 bg-muted rounded-md p-1">
+            <TabsList className="grid w-full grid-cols-3 h-10 bg-muted rounded-md p-1">
               <TabsTrigger 
                 value="sourcing" 
                 className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
@@ -504,6 +522,13 @@ export default function SourcingAgent() {
                 className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
               >
                 Sourcing History
+              </TabsTrigger>
+              <TabsTrigger 
+                value="analytics" 
+                className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+              >
+                <BarChart3 className="w-4 h-4 mr-1" />
+                Analytics
               </TabsTrigger>
             </TabsList>
 
@@ -813,6 +838,15 @@ export default function SourcingAgent() {
                                 </a>
                               </Button>
                             )}
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="h-8 text-xs"
+                              onClick={() => handleProvideFeedback(candidate)}
+                            >
+                              <MessageSquare className="w-3 h-3 mr-1" />
+                              Feedback
+                            </Button>
                           </div>
                         </Card>
                       ))}
@@ -973,6 +1007,14 @@ export default function SourcingAgent() {
                                         Add to Pipeline
                                       </Button>
                                     )}
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => handleProvideFeedback(candidate)}
+                                    >
+                                      <MessageSquare className="w-3 h-3 mr-1" />
+                                      Feedback
+                                    </Button>
                                   </div>
                                 </Card>
                               ))}
@@ -986,9 +1028,31 @@ export default function SourcingAgent() {
                 </div>
               </Card>
             </TabsContent>
+
+            <TabsContent value="analytics">
+              <Card className="p-8 bg-card shadow-sm border">
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold mb-2">Feedback Analytics & Insights</h2>
+                  <p className="text-muted-foreground">
+                    Track AI sourcing performance through recruiter feedback and improve candidate matching.
+                  </p>
+                </div>
+                <FeedbackAnalytics feedbackData={feedbackData} />
+              </Card>
+            </TabsContent>
           </Tabs>
         </div>
       </main>
+
+      {/* Feedback Modal */}
+      {selectedCandidateForFeedback && (
+        <FeedbackModal
+          open={feedbackModalOpen}
+          onOpenChange={setFeedbackModalOpen}
+          candidate={selectedCandidateForFeedback}
+          onSubmitFeedback={handleSubmitFeedback}
+        />
+      )}
     </div>
   );
 }
