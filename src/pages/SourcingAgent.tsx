@@ -14,6 +14,7 @@ import { usePageTitle } from "@/hooks/use-page-title";
 import FitScoreBreakdown from "@/components/FitScoreBreakdown";
 import { FeedbackModal, CandidateFeedback } from "@/components/FeedbackModal";
 import { FeedbackAnalytics } from "@/components/FeedbackAnalytics";
+import { RescrapeReasonModal, RescrapeReason } from "@/components/RescrapeReasonModal";
 
 const dummyJobs = [
   {
@@ -269,6 +270,8 @@ export default function SourcingAgent() {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [selectedCandidateForFeedback, setSelectedCandidateForFeedback] = useState<any>(null);
   const [feedbackData, setFeedbackData] = useState<CandidateFeedback[]>([]);
+  const [rescrapeModalOpen, setRescrapeModalOpen] = useState(false);
+  const [rescrapeReasons, setRescrapeReasons] = useState<RescrapeReason[]>([]);
   const { toast } = useToast();
   const { setTitle, setIcon, setBadge } = usePageTitle();
 
@@ -302,6 +305,12 @@ export default function SourcingAgent() {
 
   const handleRescrape = () => {
     if (!selectedJob) return;
+    setRescrapeModalOpen(true);
+  };
+
+  const handleConfirmRescrape = (rescrapeReason: RescrapeReason) => {
+    // Store the rescrape reason for analytics
+    setRescrapeReasons(prev => [...prev, rescrapeReason]);
     
     setIsSearching(true);
     setTimeout(() => {
@@ -332,9 +341,10 @@ export default function SourcingAgent() {
       newCandidates.push(additionalCandidate);
       setCandidates(newCandidates);
       setIsSearching(false);
+      
       toast({
         title: "Rescraping Complete",
-        description: "Found 1 new candidate with 8.2+ fit score",
+        description: `Found 1 new candidate based on your feedback. Adjusting algorithm for better results.`,
       });
     }, 2000);
   };
@@ -625,7 +635,7 @@ export default function SourcingAgent() {
                         className="flex items-center gap-2"
                       >
                         <RotateCcw className="w-4 h-4" />
-                        Rescrape
+                        Rescrape & Improve
                       </Button>
                     )}
                   </div>
@@ -1037,7 +1047,7 @@ export default function SourcingAgent() {
                     Track AI sourcing performance through recruiter feedback and improve candidate matching.
                   </p>
                 </div>
-                <FeedbackAnalytics feedbackData={feedbackData} />
+                <FeedbackAnalytics feedbackData={feedbackData} rescrapeReasons={rescrapeReasons} />
               </Card>
             </TabsContent>
           </Tabs>
@@ -1051,6 +1061,17 @@ export default function SourcingAgent() {
           onOpenChange={setFeedbackModalOpen}
           candidate={selectedCandidateForFeedback}
           onSubmitFeedback={handleSubmitFeedback}
+        />
+      )}
+
+      {/* Rescrape Reason Modal */}
+      {selectedJobData && (
+        <RescrapeReasonModal
+          open={rescrapeModalOpen}
+          onOpenChange={setRescrapeModalOpen}
+          jobTitle={selectedJobData.title}
+          currentCandidateCount={candidates.length}
+          onConfirmRescrape={handleConfirmRescrape}
         />
       )}
     </div>

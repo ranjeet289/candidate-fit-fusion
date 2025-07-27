@@ -3,14 +3,16 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, LineChart, Line, ResponsiveContainer } from "recharts";
-import { TrendingUp, Users, Star, Target, ArrowUp, ArrowDown } from "lucide-react";
+import { TrendingUp, Users, Star, Target, ArrowUp, ArrowDown, AlertTriangle } from "lucide-react";
 import { CandidateFeedback } from "./FeedbackModal";
+import { RescrapeReason } from "./RescrapeReasonModal";
 
 interface FeedbackAnalyticsProps {
   feedbackData: CandidateFeedback[];
+  rescrapeReasons?: RescrapeReason[];
 }
 
-export function FeedbackAnalytics({ feedbackData }: FeedbackAnalyticsProps) {
+export function FeedbackAnalytics({ feedbackData, rescrapeReasons = [] }: FeedbackAnalyticsProps) {
   // Calculate metrics
   const totalFeedback = feedbackData.length;
   const avgRating = totalFeedback > 0 ? feedbackData.reduce((sum, f) => sum + f.overallRating, 0) / totalFeedback : 0;
@@ -75,13 +77,33 @@ export function FeedbackAnalytics({ feedbackData }: FeedbackAnalyticsProps) {
       const feedbackDate = new Date(f.timestamp);
       return feedbackDate.toDateString() === date.toDateString();
     });
+    const dayRescrapes = rescrapeReasons.filter(r => {
+      const rescrapeDate = new Date(r.timestamp);
+      return rescrapeDate.toDateString() === date.toDateString();
+    });
     return {
       date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       feedback: dayFeedback.length,
+      rescrapes: dayRescrapes.length,
       avgRating: dayFeedback.length > 0 ? dayFeedback.reduce((sum, f) => sum + f.overallRating, 0) / dayFeedback.length : 0,
       interviewRate: dayFeedback.length > 0 ? (dayFeedback.filter(f => f.wouldInterview).length / dayFeedback.length) * 100 : 0
     };
   });
+
+  // Rescrape reasons analysis
+  const rescrapeInsights = {
+    totalRescrapes: rescrapeReasons.length,
+    topReasons: rescrapeReasons.reduce((acc, reason) => {
+      reason.reasons.forEach(r => {
+        acc[r] = (acc[r] || 0) + 1;
+      });
+      return acc;
+    }, {} as Record<string, number>),
+    commonMissingSkills: rescrapeReasons.flatMap(r => r.missingSkills).reduce((acc, skill) => {
+      acc[skill] = (acc[skill] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>)
+  };
 
   const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#ff0000'];
 
@@ -115,6 +137,18 @@ export function FeedbackAnalytics({ feedbackData }: FeedbackAnalyticsProps) {
             <div>
               <p className="text-sm text-muted-foreground">Total Feedback</p>
               <p className="text-2xl font-bold">{totalFeedback}</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5 text-orange-600" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Total Rescrapes</p>
+              <p className="text-2xl font-bold">{rescrapeInsights.totalRescrapes}</p>
             </div>
           </div>
         </Card>
@@ -162,6 +196,7 @@ export function FeedbackAnalytics({ feedbackData }: FeedbackAnalyticsProps) {
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="quality">Quality Metrics</TabsTrigger>
+          <TabsTrigger value="rescrapes">Rescrape Analysis</TabsTrigger>
           <TabsTrigger value="trends">Trends</TabsTrigger>
         </TabsList>
 
@@ -251,6 +286,83 @@ export function FeedbackAnalytics({ feedbackData }: FeedbackAnalyticsProps) {
           </Card>
         </TabsContent>
 
+        <TabsContent value="rescrapes" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Top Rescrape Reasons */}
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">Most Common Issues</h3>
+              {Object.keys(rescrapeInsights.topReasons).length > 0 ? (
+                <div className="space-y-3">
+                  {Object.entries(rescrapeInsights.topReasons)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 6)
+                    .map(([reason, count]) => (
+                      <div key={reason} className="flex items-center justify-between">
+                        <span className="text-sm capitalize">{reason.replace(/([A-Z])/g, ' $1').trim()}</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-16 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-orange-500 h-2 rounded-full" 
+                              style={{ width: `${(count / rescrapeInsights.totalRescrapes) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-sm font-medium w-8">{count}</span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-center py-4">No rescrape data available yet.</p>
+              )}
+            </Card>
+
+            {/* Missing Skills Analysis */}
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">Most Requested Skills</h3>
+              {Object.keys(rescrapeInsights.commonMissingSkills).length > 0 ? (
+                <div className="space-y-2">
+                  {Object.entries(rescrapeInsights.commonMissingSkills)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 8)
+                    .map(([skill, count]) => (
+                      <div key={skill} className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                        <Badge variant="outline">{skill}</Badge>
+                        <span className="text-sm font-medium">{count}x requested</span>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-center py-4">No missing skills data available yet.</p>
+              )}
+            </Card>
+          </div>
+
+          {/* Rescrape vs Success Rate */}
+          {rescrapeInsights.totalRescrapes > 0 && (
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">Rescrape Impact Analysis</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div className="p-4 bg-muted/30 rounded-lg">
+                  <div className="text-2xl font-bold text-orange-600">{rescrapeInsights.totalRescrapes}</div>
+                  <div className="text-sm text-muted-foreground">Total Rescrapes</div>
+                </div>
+                <div className="p-4 bg-muted/30 rounded-lg">
+                  <div className="text-2xl font-bold text-red-600">
+                    {((rescrapeInsights.totalRescrapes / (totalFeedback + rescrapeInsights.totalRescrapes)) * 100).toFixed(0)}%
+                  </div>
+                  <div className="text-sm text-muted-foreground">Rescrape Rate</div>
+                </div>
+                <div className="p-4 bg-muted/30 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {Object.keys(rescrapeInsights.commonMissingSkills).length}
+                  </div>
+                  <div className="text-sm text-muted-foreground">Unique Missing Skills</div>
+                </div>
+              </div>
+            </Card>
+          )}
+        </TabsContent>
+
         <TabsContent value="trends" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="p-6">
@@ -267,14 +379,14 @@ export function FeedbackAnalytics({ feedbackData }: FeedbackAnalyticsProps) {
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Interview Rate Trends</h3>
+              <h3 className="text-lg font-semibold mb-4">Rescrape Trends</h3>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={timeSeriesData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
-                  <YAxis domain={[0, 100]} />
-                  <Tooltip formatter={(value) => [`${value}%`, 'Interview Rate']} />
-                  <Line type="monotone" dataKey="interviewRate" stroke="#82ca9d" strokeWidth={2} />
+                  <YAxis />
+                  <Tooltip formatter={(value) => [value, 'Rescrapes']} />
+                  <Line type="monotone" dataKey="rescrapes" stroke="#f97316" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </Card>
@@ -286,6 +398,31 @@ export function FeedbackAnalytics({ feedbackData }: FeedbackAnalyticsProps) {
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4">AI Sourcing Improvement Suggestions</h3>
         <div className="space-y-3">
+          {rescrapeInsights.totalRescrapes > 5 && (
+            <div className="flex items-start gap-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5" />
+              <div>
+                <p className="font-medium text-orange-800">High Rescrape Rate Detected</p>
+                <p className="text-sm text-orange-700">
+                  Consider adjusting initial sourcing criteria based on common rescrape reasons: {Object.keys(rescrapeInsights.topReasons).slice(0, 2).join(', ')}.
+                </p>
+              </div>
+            </div>
+          )}
+          
+          {Object.keys(rescrapeInsights.commonMissingSkills).length > 0 && (
+            <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <Target className="w-5 h-5 text-blue-600 mt-0.5" />
+              <div>
+                <p className="font-medium text-blue-800">Missing Skills Pattern</p>
+                <p className="text-sm text-blue-700">
+                  Frequently requested missing skills: {Object.entries(rescrapeInsights.commonMissingSkills).slice(0, 3).map(([skill]) => skill).join(', ')}. 
+                  Consider adding these to initial sourcing criteria.
+                </p>
+              </div>
+            </div>
+          )}
+          
           {avgRating < 3 && (
             <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
               <ArrowDown className="w-5 h-5 text-red-600 mt-0.5" />
