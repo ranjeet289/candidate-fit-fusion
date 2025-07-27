@@ -4,15 +4,27 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, LineChart, Line, ResponsiveContainer } from "recharts";
 import { TrendingUp, Users, Star, Target, ArrowUp, ArrowDown, AlertTriangle } from "lucide-react";
-import { CandidateFeedback } from "./FeedbackModal";
 import { RescrapeReason } from "./RescrapeReasonModal";
 
+// Define CandidateFeedback interface locally since we removed the FeedbackModal
+interface CandidateFeedback {
+  candidateId: string;
+  overallRating: number;
+  profileAccuracy: "excellent" | "good" | "fair" | "poor";
+  skillsMatch: "excellent" | "good" | "fair" | "poor";
+  experienceRelevance: "excellent" | "good" | "fair" | "poor";
+  overallQuality: "excellent" | "good" | "fair" | "poor";
+  wouldInterview: boolean;
+  comments?: string;
+  timestamp: number;
+}
+
 interface FeedbackAnalyticsProps {
-  feedbackData: CandidateFeedback[];
+  feedbackData?: CandidateFeedback[];
   rescrapeReasons?: RescrapeReason[];
 }
 
-export function FeedbackAnalytics({ feedbackData, rescrapeReasons = [] }: FeedbackAnalyticsProps) {
+export function FeedbackAnalytics({ feedbackData = [], rescrapeReasons = [] }: FeedbackAnalyticsProps) {
   // Calculate metrics
   const totalFeedback = feedbackData.length;
   const avgRating = totalFeedback > 0 ? feedbackData.reduce((sum, f) => sum + f.overallRating, 0) / totalFeedback : 0;
@@ -107,7 +119,7 @@ export function FeedbackAnalytics({ feedbackData, rescrapeReasons = [] }: Feedba
 
   const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#ff0000'];
 
-  if (totalFeedback === 0) {
+  if (totalFeedback === 0 && rescrapeReasons.length === 0) {
     return (
       <Card className="p-8 text-center">
         <div className="flex flex-col items-center gap-4">
@@ -115,9 +127,9 @@ export function FeedbackAnalytics({ feedbackData, rescrapeReasons = [] }: Feedba
             <Target className="w-8 h-8 text-muted-foreground" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-2">No Feedback Data Yet</h3>
+            <h3 className="text-lg font-semibold mb-2">No Data Available Yet</h3>
             <p className="text-muted-foreground">
-              Start collecting feedback on sourced candidates to see analytics and insights.
+              Start collecting feedback and rescrape data to see analytics and insights.
             </p>
           </div>
         </div>
@@ -128,7 +140,7 @@ export function FeedbackAnalytics({ feedbackData, rescrapeReasons = [] }: Feedba
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -155,136 +167,28 @@ export function FeedbackAnalytics({ feedbackData, rescrapeReasons = [] }: Feedba
 
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <Star className="w-5 h-5 text-yellow-600" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Avg Rating</p>
-              <p className="text-2xl font-bold">{avgRating.toFixed(1)}</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
               <Target className="w-5 h-5 text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Interview Rate</p>
-              <p className="text-2xl font-bold">{interviewRate.toFixed(0)}%</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Quality Score</p>
+              <p className="text-sm text-muted-foreground">
+                {totalFeedback > 0 ? "Interview Rate" : "Sourcing Sessions"}
+              </p>
               <p className="text-2xl font-bold">
-                {(avgRating * 20).toFixed(0)}%
+                {totalFeedback > 0 ? `${interviewRate.toFixed(0)}%` : rescrapeInsights.totalRescrapes + totalFeedback}
               </p>
             </div>
           </div>
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="rescrapes" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="quality">Quality Metrics</TabsTrigger>
           <TabsTrigger value="rescrapes">Rescrape Analysis</TabsTrigger>
+          {totalFeedback > 0 && <TabsTrigger value="overview">Overview</TabsTrigger>}
+          {totalFeedback > 0 && <TabsTrigger value="quality">Quality Metrics</TabsTrigger>}
           <TabsTrigger value="trends">Trends</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Rating Distribution */}
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Rating Distribution</h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={ratingDistribution.filter(d => d.count > 0)}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="count"
-                    label={({ rating, percentage }) => `${rating}: ${percentage.toFixed(0)}%`}
-                  >
-                    {ratingDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </Card>
-
-            {/* Interview Intent by Rating */}
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Interview Intent by Rating</h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={interviewByRating}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="rating" />
-                  <YAxis />
-                  <Tooltip 
-                    formatter={(value, name) => [`${value}%`, 'Would Interview']}
-                    labelFormatter={(label) => `Rating: ${label}`}
-                  />
-                  <Bar dataKey="percentage" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="quality" className="space-y-4">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Quality Metrics Breakdown</h3>
-            <div className="space-y-6">
-              {qualityMetrics.map((metric) => {
-                const total = metric.excellent + metric.good + metric.fair + metric.poor;
-                if (total === 0) return null;
-                
-                return (
-                  <div key={metric.metric}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium">{metric.metric}</span>
-                      <span className="text-sm text-muted-foreground">{total} responses</span>
-                    </div>
-                    <div className="space-y-2">
-                      {[
-                        { label: "Excellent", value: metric.excellent, color: "bg-green-500" },
-                        { label: "Good", value: metric.good, color: "bg-blue-500" },
-                        { label: "Fair", value: metric.fair, color: "bg-yellow-500" },
-                        { label: "Poor", value: metric.poor, color: "bg-red-500" }
-                      ].map((item) => (
-                        <div key={item.label} className="flex items-center gap-3">
-                          <div className="w-16 text-sm">{item.label}</div>
-                          <div className="flex-1">
-                            <Progress 
-                              value={(item.value / total) * 100} 
-                              className="h-2"
-                            />
-                          </div>
-                          <div className="w-12 text-sm text-right">
-                            {((item.value / total) * 100).toFixed(0)}%
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="rescrapes" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -363,20 +267,112 @@ export function FeedbackAnalytics({ feedbackData, rescrapeReasons = [] }: Feedba
           )}
         </TabsContent>
 
-        <TabsContent value="trends" className="space-y-4">
+        {totalFeedback > 0 && (
+          <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Rating Distribution */}
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Rating Trends (Last 7 Days)</h3>
+              <h3 className="text-lg font-semibold mb-4">Rating Distribution</h3>
               <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={timeSeriesData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis domain={[0, 5]} />
+                <PieChart>
+                  <Pie
+                    data={ratingDistribution.filter(d => d.count > 0)}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="count"
+                    label={({ rating, percentage }) => `${rating}: ${percentage.toFixed(0)}%`}
+                  >
+                    {ratingDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
                   <Tooltip />
-                  <Line type="monotone" dataKey="avgRating" stroke="#8884d8" strokeWidth={2} />
-                </LineChart>
+                </PieChart>
               </ResponsiveContainer>
             </Card>
+
+            {/* Interview Intent by Rating */}
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">Interview Intent by Rating</h3>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={interviewByRating}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="rating" />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value, name) => [`${value}%`, 'Would Interview']}
+                    labelFormatter={(label) => `Rating: ${label}`}
+                  />
+                  <Bar dataKey="percentage" fill="#82ca9d" />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
+        </TabsContent>
+        )}
+
+        {totalFeedback > 0 && (
+        <TabsContent value="quality" className="space-y-4">
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Quality Metrics Breakdown</h3>
+            <div className="space-y-6">
+              {qualityMetrics.map((metric) => {
+                const total = metric.excellent + metric.good + metric.fair + metric.poor;
+                if (total === 0) return null;
+                
+                return (
+                  <div key={metric.metric}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium">{metric.metric}</span>
+                      <span className="text-sm text-muted-foreground">{total} responses</span>
+                    </div>
+                    <div className="space-y-2">
+                      {[
+                        { label: "Excellent", value: metric.excellent, color: "bg-green-500" },
+                        { label: "Good", value: metric.good, color: "bg-blue-500" },
+                        { label: "Fair", value: metric.fair, color: "bg-yellow-500" },
+                        { label: "Poor", value: metric.poor, color: "bg-red-500" }
+                      ].map((item) => (
+                        <div key={item.label} className="flex items-center gap-3">
+                          <div className="w-16 text-sm">{item.label}</div>
+                          <div className="flex-1">
+                            <Progress 
+                              value={(item.value / total) * 100} 
+                              className="h-2"
+                            />
+                          </div>
+                          <div className="w-12 text-sm text-right">
+                            {((item.value / total) * 100).toFixed(0)}%
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+        </TabsContent>
+        )}
+
+        <TabsContent value="trends" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {totalFeedback > 0 && (
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4">Rating Trends (Last 7 Days)</h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <LineChart data={timeSeriesData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis domain={[0, 5]} />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="avgRating" stroke="#8884d8" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Card>
+            )}
 
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Rescrape Trends</h3>
@@ -423,7 +419,7 @@ export function FeedbackAnalytics({ feedbackData, rescrapeReasons = [] }: Feedba
             </div>
           )}
           
-          {avgRating < 3 && (
+          {totalFeedback > 0 && avgRating < 3 && (
             <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
               <ArrowDown className="w-5 h-5 text-red-600 mt-0.5" />
               <div>
@@ -434,8 +430,8 @@ export function FeedbackAnalytics({ feedbackData, rescrapeReasons = [] }: Feedba
               </div>
             </div>
           )}
-          
-          {interviewRate < 50 && (
+
+          {totalFeedback > 0 && interviewRate < 50 && (
             <div className="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <Target className="w-5 h-5 text-yellow-600 mt-0.5" />
               <div>
@@ -447,7 +443,7 @@ export function FeedbackAnalytics({ feedbackData, rescrapeReasons = [] }: Feedba
             </div>
           )}
           
-          {avgRating >= 4 && interviewRate >= 70 && (
+          {totalFeedback > 0 && avgRating >= 4 && interviewRate >= 70 && (
             <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
               <ArrowUp className="w-5 h-5 text-green-600 mt-0.5" />
               <div>

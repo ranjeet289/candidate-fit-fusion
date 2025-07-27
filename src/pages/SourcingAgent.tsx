@@ -8,11 +8,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown, MessageSquare, BarChart3 } from "lucide-react";
+import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import FitScoreBreakdown from "@/components/FitScoreBreakdown";
-import { FeedbackModal, CandidateFeedback } from "@/components/FeedbackModal";
 import { FeedbackAnalytics } from "@/components/FeedbackAnalytics";
 import { RescrapeReasonModal, RescrapeReason } from "@/components/RescrapeReasonModal";
 
@@ -267,9 +266,6 @@ export default function SourcingAgent() {
   const [activeTab, setActiveTab] = useState("sourcing");
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const [openDialog, setOpenDialog] = useState<string | null>(null);
-  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
-  const [selectedCandidateForFeedback, setSelectedCandidateForFeedback] = useState<any>(null);
-  const [feedbackData, setFeedbackData] = useState<CandidateFeedback[]>([]);
   const [rescrapeModalOpen, setRescrapeModalOpen] = useState(false);
   const [rescrapeReasons, setRescrapeReasons] = useState<RescrapeReason[]>([]);
   const { toast } = useToast();
@@ -497,19 +493,6 @@ export default function SourcingAgent() {
     toast({
       title: "Added to Pipeline",
       description: `${candidate?.name} has been added to the Outreach Agent pipeline`,
-    });
-  };
-
-  const handleProvideFeedback = (candidate: any) => {
-    setSelectedCandidateForFeedback(candidate);
-    setFeedbackModalOpen(true);
-  };
-
-  const handleSubmitFeedback = (feedback: CandidateFeedback) => {
-    setFeedbackData(prev => [...prev, feedback]);
-    toast({
-      title: "Feedback Submitted",
-      description: "Thank you for your feedback! This helps improve our AI sourcing.",
     });
   };
 
@@ -848,15 +831,6 @@ export default function SourcingAgent() {
                                 </a>
                               </Button>
                             )}
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              className="h-8 text-xs"
-                              onClick={() => handleProvideFeedback(candidate)}
-                            >
-                              <MessageSquare className="w-3 h-3 mr-1" />
-                              Feedback
-                            </Button>
                           </div>
                         </Card>
                       ))}
@@ -1017,14 +991,6 @@ export default function SourcingAgent() {
                                         Add to Pipeline
                                       </Button>
                                     )}
-                                    <Button 
-                                      size="sm" 
-                                      variant="outline"
-                                      onClick={() => handleProvideFeedback(candidate)}
-                                    >
-                                      <MessageSquare className="w-3 h-3 mr-1" />
-                                      Feedback
-                                    </Button>
                                   </div>
                                 </Card>
                               ))}
@@ -1042,27 +1008,17 @@ export default function SourcingAgent() {
             <TabsContent value="analytics">
               <Card className="p-8 bg-card shadow-sm border">
                 <div className="mb-6">
-                  <h2 className="text-xl font-semibold mb-2">Feedback Analytics & Insights</h2>
+                  <h2 className="text-xl font-semibold mb-2">Rescrape Analytics & Insights</h2>
                   <p className="text-muted-foreground">
-                    Track AI sourcing performance through recruiter feedback and improve candidate matching.
+                    Track AI sourcing performance through rescrape feedback and improve candidate matching.
                   </p>
                 </div>
-                <FeedbackAnalytics feedbackData={feedbackData} rescrapeReasons={rescrapeReasons} />
+                <FeedbackAnalytics rescrapeReasons={rescrapeReasons} />
               </Card>
             </TabsContent>
           </Tabs>
         </div>
       </main>
-
-      {/* Feedback Modal */}
-      {selectedCandidateForFeedback && (
-        <FeedbackModal
-          open={feedbackModalOpen}
-          onOpenChange={setFeedbackModalOpen}
-          candidate={selectedCandidateForFeedback}
-          onSubmitFeedback={handleSubmitFeedback}
-        />
-      )}
 
       {/* Rescrape Reason Modal */}
       {selectedJobData && (
