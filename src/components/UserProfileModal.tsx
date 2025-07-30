@@ -125,9 +125,9 @@ export function UserProfileModal({ user, isOpen, onClose, onStatusChange }: User
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="onboarding">onboarding</SelectItem>
-                <SelectItem value="active">active</SelectItem>
-                <SelectItem value="blocked">blocked</SelectItem>
+                <SelectItem value="onboarding">Onboarding</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="blocked">Blocked</SelectItem>
               </SelectContent>
             </Select>
           </div>
