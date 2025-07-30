@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UserProfileModal } from "@/components/UserProfileModal";
 
 type UserStatus = "onboarding" | "active" | "blocked";
@@ -104,17 +105,27 @@ export default function Users() {
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getStatusBadge = (status: UserStatus) => {
+  const getStatusDropdown = (user: User) => {
     const statusConfig = {
-      onboarding: { variant: "secondary", label: "Onboarding" },
-      active: { variant: "default", label: "Active" },
-      blocked: { variant: "destructive", label: "Blocked" }
+      onboarding: { label: "Pending Approval", className: "bg-gray-100 text-gray-700 hover:bg-gray-200" },
+      active: { label: "Submitted to AM", className: "bg-gray-100 text-gray-700 hover:bg-gray-200" },
+      blocked: { label: "Rejected", className: "bg-gray-100 text-gray-700 hover:bg-gray-200" }
     } as const;
 
     return (
-      <Badge variant={statusConfig[status].variant as any}>
-        {statusConfig[status].label}
-      </Badge>
+      <Select 
+        value={user.status} 
+        onValueChange={(value: UserStatus) => handleUserStatusChange(user.id, value)}
+      >
+        <SelectTrigger className={`w-40 h-8 text-sm font-medium border-0 rounded-md ${statusConfig[user.status].className}`}>
+          <SelectValue placeholder={statusConfig[user.status].label} />
+        </SelectTrigger>
+        <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+          <SelectItem value="onboarding" className="text-gray-700 hover:bg-gray-50">Pending Approval</SelectItem>
+          <SelectItem value="active" className="text-gray-700 hover:bg-gray-50">Submitted to AM</SelectItem>
+          <SelectItem value="blocked" className="text-gray-700 hover:bg-gray-50">Rejected</SelectItem>
+        </SelectContent>
+      </Select>
     );
   };
 
@@ -167,7 +178,7 @@ export default function Users() {
             </TableCell>
             <TableCell className="text-gray-700">{user.recruiterId}</TableCell>
             <TableCell className="text-gray-700">{user.email}</TableCell>
-            <TableCell>{getStatusBadge(user.status)}</TableCell>
+            <TableCell>{getStatusDropdown(user)}</TableCell>
             <TableCell className="text-gray-700">{user.dateJoined}</TableCell>
             <TableCell>
               {user.linkedinUrl ? (
@@ -186,8 +197,9 @@ export default function Users() {
   );
 
   return (
-    <div className="flex-1 space-y-6 p-6 bg-gray-50 min-h-screen">
-      <div className="flex items-center justify-between">
+    <div className="flex-1 space-y-6 bg-gray-50 min-h-screen">
+      {/* Header with Users title and notification */}
+      <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
         <h1 className="text-2xl font-semibold text-gray-900">Users</h1>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
@@ -195,66 +207,69 @@ export default function Users() {
           </Button>
         </div>
       </div>
+      
+      <div className="px-6 space-y-6">
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500"
-          />
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500"
+            />
+          </div>
+          <Button variant="outline" size="sm" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50">
+            <Filter className="mr-2 h-4 w-4" />
+            Filters
+          </Button>
         </div>
-        <Button variant="outline" size="sm" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50">
-          <Filter className="mr-2 h-4 w-4" />
-          Filters
-        </Button>
+
+        <Tabs defaultValue="all" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-6 bg-white border border-gray-200 p-1">
+            <TabsTrigger value="all" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">All Users ({filteredUsers.length})</TabsTrigger>
+            <TabsTrigger value="week" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">This Week Joined</TabsTrigger>
+            <TabsTrigger value="month" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">This Month Joined</TabsTrigger>
+            <TabsTrigger value="onboarding" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">Onboarding</TabsTrigger>
+            <TabsTrigger value="active" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">Active Users</TabsTrigger>
+            <TabsTrigger value="blocked" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">Blocked Users</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="all" className="space-y-4">
+            {renderUserTable(filteredUsers)}
+          </TabsContent>
+
+          <TabsContent value="week" className="space-y-4">
+            {renderUserTable(thisWeekUsers)}
+          </TabsContent>
+
+          <TabsContent value="month" className="space-y-4">
+            {renderUserTable(thisMonthUsers)}
+          </TabsContent>
+
+          <TabsContent value="onboarding" className="space-y-4">
+            {renderUserTable(getUsersByStatus("onboarding"))}
+          </TabsContent>
+
+          <TabsContent value="active" className="space-y-4">
+            {renderUserTable(getUsersByStatus("active"))}
+          </TabsContent>
+
+          <TabsContent value="blocked" className="space-y-4">
+            {renderUserTable(getUsersByStatus("blocked"))}
+          </TabsContent>
+        </Tabs>
+
+        {selectedUser && (
+          <UserProfileModal
+            user={selectedUser}
+            isOpen={!!selectedUser}
+            onClose={() => setSelectedUser(null)}
+            onStatusChange={handleUserStatusChange}
+          />
+        )}
       </div>
-
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6 bg-white border border-gray-200 p-1">
-          <TabsTrigger value="all" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">All Users ({filteredUsers.length})</TabsTrigger>
-          <TabsTrigger value="week" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">This Week Joined</TabsTrigger>
-          <TabsTrigger value="month" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">This Month Joined</TabsTrigger>
-          <TabsTrigger value="onboarding" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">Onboarding</TabsTrigger>
-          <TabsTrigger value="active" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">Active Users</TabsTrigger>
-          <TabsTrigger value="blocked" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">Blocked Users</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="space-y-4">
-          {renderUserTable(filteredUsers)}
-        </TabsContent>
-
-        <TabsContent value="week" className="space-y-4">
-          {renderUserTable(thisWeekUsers)}
-        </TabsContent>
-
-        <TabsContent value="month" className="space-y-4">
-          {renderUserTable(thisMonthUsers)}
-        </TabsContent>
-
-        <TabsContent value="onboarding" className="space-y-4">
-          {renderUserTable(getUsersByStatus("onboarding"))}
-        </TabsContent>
-
-        <TabsContent value="active" className="space-y-4">
-          {renderUserTable(getUsersByStatus("active"))}
-        </TabsContent>
-
-        <TabsContent value="blocked" className="space-y-4">
-          {renderUserTable(getUsersByStatus("blocked"))}
-        </TabsContent>
-      </Tabs>
-
-      {selectedUser && (
-        <UserProfileModal
-          user={selectedUser}
-          isOpen={!!selectedUser}
-          onClose={() => setSelectedUser(null)}
-          onStatusChange={handleUserStatusChange}
-        />
-      )}
     </div>
   );
 }
