@@ -7,6 +7,7 @@ import Index from './pages/Index';
 import Overview from './pages/Overview';
 import Jobs from './pages/Jobs';
 import Candidates from './pages/Candidates';
+import Users from './pages/Users';
 import SourcingAgent from './pages/SourcingAgent';
 import OutreachAgent from './pages/OutreachAgent';
 import SubmissionAgent from './pages/SubmissionAgent';
@@ -37,6 +38,7 @@ function App() {
                 <Route path="/overview" element={<Overview />} />
                 <Route path="/jobs" element={<Jobs />} />
                 <Route path="/candidates" element={<Candidates />} />
+                <Route path="/users" element={<Users />} />
                 <Route path="/sourcing-agent" element={<SourcingAgent />} />
                 <Route path="/outreach-agent" element={<OutreachAgent />} />
                 <Route path="/submission-agent" element={<SubmissionAgent />} />
