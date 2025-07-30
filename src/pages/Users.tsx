@@ -114,9 +114,9 @@ export default function Users() {
 
   const getStatusDropdown = (user: User) => {
     const statusConfig = {
-      onboarding: { label: "Pending Approval", className: "bg-gray-100 text-gray-700 hover:bg-gray-200" },
-      active: { label: "Submitted to AM", className: "bg-gray-100 text-gray-700 hover:bg-gray-200" },
-      blocked: { label: "Rejected", className: "bg-gray-100 text-gray-700 hover:bg-gray-200" }
+      onboarding: { label: "onboarding", className: "bg-gray-100 text-gray-700 hover:bg-gray-200" },
+      active: { label: "active", className: "bg-gray-100 text-gray-700 hover:bg-gray-200" },
+      blocked: { label: "blocked", className: "bg-gray-100 text-gray-700 hover:bg-gray-200" }
     } as const;
 
     return (
@@ -128,9 +128,9 @@ export default function Users() {
           <SelectValue placeholder={statusConfig[user.status].label} />
         </SelectTrigger>
         <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
-          <SelectItem value="onboarding" className="text-gray-700 hover:bg-gray-50">Pending Approval</SelectItem>
-          <SelectItem value="active" className="text-gray-700 hover:bg-gray-50">Submitted to AM</SelectItem>
-          <SelectItem value="blocked" className="text-gray-700 hover:bg-gray-50">Rejected</SelectItem>
+          <SelectItem value="onboarding" className="text-gray-700 hover:bg-gray-50">onboarding</SelectItem>
+          <SelectItem value="active" className="text-gray-700 hover:bg-gray-50">active</SelectItem>
+          <SelectItem value="blocked" className="text-gray-700 hover:bg-gray-50">blocked</SelectItem>
         </SelectContent>
       </Select>
     );
