@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter, Linkedin } from "lucide-react";
+import { Search, Filter, Linkedin, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -187,6 +187,11 @@ export default function Users() {
     <div className="flex-1 space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Users</h1>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon">
+            <Bell className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">
