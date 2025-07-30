@@ -138,57 +138,59 @@ export default function Users() {
   });
 
   const renderUserTable = (userList: User[]) => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>RECRUITER NAME</TableHead>
-          <TableHead>RECRUITER ID</TableHead>
-          <TableHead>EMAIL</TableHead>
-          <TableHead>STATUS</TableHead>
-          <TableHead>DATE JOINED</TableHead>
-          <TableHead>LINKEDIN</TableHead>
-        </TableRow>
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <Table>
+        <TableHeader className="bg-gray-50">
+          <TableRow className="border-b border-gray-200">
+            <TableHead className="text-gray-600 font-medium">RECRUITER NAME</TableHead>
+            <TableHead className="text-gray-600 font-medium">RECRUITER ID</TableHead>
+            <TableHead className="text-gray-600 font-medium">EMAIL</TableHead>
+            <TableHead className="text-gray-600 font-medium">STATUS</TableHead>
+            <TableHead className="text-gray-600 font-medium">DATE JOINED</TableHead>
+            <TableHead className="text-gray-600 font-medium">LINKEDIN</TableHead>
+          </TableRow>
       </TableHeader>
       <TableBody>
-        {userList.map((user) => (
-          <TableRow 
-            key={user.id} 
-            className="cursor-pointer hover:bg-muted/50"
-            onClick={() => setSelectedUser(user)}
+          {userList.map((user) => (
+            <TableRow 
+              key={user.id} 
+              className="cursor-pointer hover:bg-gray-50 border-b border-gray-100"
+              onClick={() => setSelectedUser(user)}
           >
-            <TableCell className="flex items-center gap-3">
+            <TableCell className="flex items-center gap-3 text-gray-900">
               <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-primary text-primary-foreground">
+                <AvatarFallback className="bg-gray-100 text-gray-700 text-sm">
                   {user.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               {user.name}
             </TableCell>
-            <TableCell>{user.recruiterId}</TableCell>
-            <TableCell>{user.email}</TableCell>
+            <TableCell className="text-gray-700">{user.recruiterId}</TableCell>
+            <TableCell className="text-gray-700">{user.email}</TableCell>
             <TableCell>{getStatusBadge(user.status)}</TableCell>
-            <TableCell>{user.dateJoined}</TableCell>
+            <TableCell className="text-gray-700">{user.dateJoined}</TableCell>
             <TableCell>
               {user.linkedinUrl ? (
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-blue-600">
                   <Linkedin className="h-4 w-4" />
                 </Button>
               ) : (
-                "-"
+                <span className="text-gray-400">-</span>
               )}
             </TableCell>
           </TableRow>
         ))}
       </TableBody>
     </Table>
+    </div>
   );
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-6 bg-gray-50 min-h-screen">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Users</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Users</h1>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
             <Bell className="h-5 w-5" />
           </Button>
         </div>
@@ -196,28 +198,28 @@ export default function Users() {
 
       <div className="flex items-center gap-4">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
             placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
+            className="pl-9 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500"
           />
         </div>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50">
           <Filter className="mr-2 h-4 w-4" />
           Filters
         </Button>
       </div>
 
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="all">All Users ({filteredUsers.length})</TabsTrigger>
-          <TabsTrigger value="week">This Week Joined</TabsTrigger>
-          <TabsTrigger value="month">This Month Joined</TabsTrigger>
-          <TabsTrigger value="onboarding">Onboarding</TabsTrigger>
-          <TabsTrigger value="active">Active Users</TabsTrigger>
-          <TabsTrigger value="blocked">Blocked Users</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-6 bg-white border border-gray-200 p-1">
+          <TabsTrigger value="all" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">All Users ({filteredUsers.length})</TabsTrigger>
+          <TabsTrigger value="week" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">This Week Joined</TabsTrigger>
+          <TabsTrigger value="month" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">This Month Joined</TabsTrigger>
+          <TabsTrigger value="onboarding" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">Onboarding</TabsTrigger>
+          <TabsTrigger value="active" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">Active Users</TabsTrigger>
+          <TabsTrigger value="blocked" className="text-gray-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-blue-200">Blocked Users</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
