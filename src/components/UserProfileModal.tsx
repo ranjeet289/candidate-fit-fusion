@@ -112,7 +112,8 @@ export function UserProfileModal({ user, isOpen, onClose, onStatusChange }: User
               <div className="flex items-center gap-2">
                 <div className={`h-2 w-2 rounded-full ${getStatusColor(user.status)}`} />
                 <Badge variant="outline" className="capitalize">
-                  {user.status}
+                  {user.status === "onboarding" ? "Pending Approval" : 
+                   user.status === "active" ? "Submitted to AM" : "Rejected"}
                 </Badge>
               </div>
             </div>
@@ -125,9 +126,9 @@ export function UserProfileModal({ user, isOpen, onClose, onStatusChange }: User
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="onboarding">Onboarding</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="blocked">Blocked</SelectItem>
+                <SelectItem value="onboarding">Pending Approval</SelectItem>
+                <SelectItem value="active">Submitted to AM</SelectItem>
+                <SelectItem value="blocked">Rejected</SelectItem>
               </SelectContent>
             </Select>
           </div>
