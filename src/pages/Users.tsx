@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter, Linkedin, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UserProfileModal } from "@/components/UserProfileModal";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 type UserStatus = "onboarding" | "active" | "blocked";
 
@@ -90,6 +91,12 @@ export default function Users() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(mockUsers);
+  
+  const { setTitle } = usePageTitle();
+  
+  useEffect(() => {
+    setTitle("Users");
+  }, [setTitle]);
 
   const handleUserStatusChange = (userId: string, newStatus: UserStatus) => {
     setUsers(prev => prev.map(user => 
@@ -198,17 +205,7 @@ export default function Users() {
 
   return (
     <div className="flex-1 space-y-6 bg-gray-50 min-h-screen">
-      {/* Header with Users title and notification */}
-      <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
-        <h1 className="text-2xl font-semibold text-gray-900">Users</h1>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
-            <Bell className="h-5 w-5" />
-          </Button>
-        </div>
-      </div>
-      
-      <div className="px-6 space-y-6">
+      <div className="px-6 pt-6 space-y-6">
 
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-sm">
