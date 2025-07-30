@@ -41,50 +41,6 @@ export function UserProfileModal({ user, isOpen, onClose, onStatusChange }: User
     }
   };
 
-  const getActionButtons = () => {
-    switch (user.status) {
-      case "onboarding":
-        return (
-          <div className="flex gap-2">
-            <Button 
-              onClick={() => onStatusChange(user.id, "active")}
-              className="flex-1"
-            >
-              Approve
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={() => onStatusChange(user.id, "blocked")}
-              className="flex-1"
-            >
-              Reject
-            </Button>
-          </div>
-        );
-      case "active":
-        return (
-          <Button 
-            variant="destructive" 
-            onClick={() => onStatusChange(user.id, "blocked")}
-            className="w-full"
-          >
-            Block User
-          </Button>
-        );
-      case "blocked":
-        return (
-          <Button 
-            onClick={() => onStatusChange(user.id, "active")}
-            className="w-full"
-          >
-            Unblock User
-          </Button>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
@@ -181,10 +137,6 @@ export function UserProfileModal({ user, isOpen, onClose, onStatusChange }: User
             <p className="text-sm text-muted-foreground">
               {user.bio || "No bio provided"}
             </p>
-          </div>
-
-          <div className="pt-4 border-t">
-            {getActionButtons()}
           </div>
         </div>
       </DialogContent>
