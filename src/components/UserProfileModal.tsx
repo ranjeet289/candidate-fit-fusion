@@ -89,12 +89,7 @@ export function UserProfileModal({ user, isOpen, onClose, onStatusChange }: User
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            User Profile
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogTitle>
+          <DialogTitle>User Profile</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
