@@ -241,16 +241,17 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                       <User className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-3 mb-1">
                         <button 
                           className="font-semibold text-base hover:text-primary transition-colors cursor-pointer"
                           onClick={() => {/* Handle view profile */}}
                         >
                           {candidate.candidateName}
                         </button>
-                        <Badge variant="secondary" className="text-xs">
-                          {candidate.matchScore.toFixed(1)} fit
-                        </Badge>
+                        <div className="flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full">
+                          <Star className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-bold text-primary">{candidate.matchScore.toFixed(1)}</span>
+                        </div>
                       </div>
                       <p className="text-sm text-muted-foreground mb-1">{candidate.candidateTitle}</p>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
