@@ -49,7 +49,42 @@ export default function CandidateProfileModal({
   onSubmit,
   isOutreachSent 
 }: CandidateProfileModalProps) {
-  if (!candidate) return null;
+  // Mock evaluation data based on the JSON structure
+  const evaluationData = {
+    final_score: 8.4,
+    confidence_level: 85.0,
+    match_rate: 85.0,
+    verdict: "Accept",
+    breakdown: {
+      education: { score: 6.0, confidence: 70.0, description: "BSc (Hons) in Computing from London Metropolitan University, classified as a Tier 3 institution. While not from a top-tier university, the degree is relevant to the field of Information Technology." },
+      career_trajectory: { score: 8.5, confidence: 85.0, description: "Strong career progression from Frontend Developer to Senior Software Engineer over 8 years, with increasing responsibilities and leadership in AI and full-stack development." },
+      company_relevance: { score: 7.5, confidence: 80.0, description: "Experience at American Express and Fiserv provides strong enterprise exposure, though not at elite tech companies. The roles involved significant technical contributions relevant to the target role." },
+      tenure_stability: { score: 8.0, confidence: 80.0, description: "Maintained stable tenures at each company, averaging around 2 years per role, which is consistent with industry norms for technology roles." },
+      most_important_skills: { score: 8.0, confidence: 80.0, description: "Demonstrated expertise in full-stack development, AI integration, and cloud infrastructure aligns well with the role requirements. However, specific experience with GCP and some AI tools like Ray or Temporal is not explicitly mentioned." },
+      bonus_signals: { score: 3.0, confidence: 50.0, description: "No significant bonus signals such as patents or major awards are mentioned, but the candidate has contributed to innovative AI projects." },
+      red_flags: { score: 0.0, confidence: 100.0, description: "No red flags identified in the candidate's profile." }
+    },
+    summary: {
+      strengths: ["Strong full-stack development skills", "Experience with AI integration", "Stable career progression"],
+      weaknesses: ["Lack of explicit experience with GCP", "No major bonus signals like patents or awards"],
+      opportunities: ["Potential for leadership in cross-functional teams", "Opportunity to expand expertise in GCP and advanced AI tools"],
+      recommendations: ["Fast-track interview", "Technical assessment focus"]
+    },
+    match_requirements: ["Full-stack development expertise", "AI integration experience", "Stable career progression"],
+    miss_requirements: ["Specific experience with GCP", "Experience with Ray or Temporal"]
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return "text-green-600";
+    if (score >= 6) return "text-yellow-600";
+    return "text-red-600";
+  };
+
+  const getScoreBgColor = (score: number) => {
+    if (score >= 8) return "bg-green-100 border-green-200";
+    if (score >= 6) return "bg-yellow-100 border-yellow-200";
+    return "bg-red-100 border-red-200";
+  };
 
   // Mock additional candidate data for the profile
   const candidateProfile = {
@@ -253,6 +288,112 @@ export default function CandidateProfileModal({
               <div className="flex flex-wrap gap-2">
                 {candidate.preferredLocations.map((location, index) => (
                   <Badge key={index} variant="outline">{location}</Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* AI Evaluation Breakdown */}
+          <div>
+            <h3 className="text-lg font-semibold mb-3">AI Evaluation Breakdown</h3>
+            
+            {/* Overall Score */}
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="text-center p-4 border rounded-lg bg-primary/5">
+                <div className="text-2xl font-bold text-primary mb-1">{evaluationData.final_score.toFixed(1)}</div>
+                <p className="text-sm text-muted-foreground">Final Score</p>
+              </div>
+              <div className="text-center p-4 border rounded-lg bg-blue-50">
+                <div className="text-2xl font-bold text-blue-600 mb-1">{evaluationData.confidence_level}%</div>
+                <p className="text-sm text-muted-foreground">Confidence</p>
+              </div>
+              <div className="text-center p-4 border rounded-lg bg-green-50">
+                <div className="text-2xl font-bold text-green-600 mb-1">{evaluationData.verdict}</div>
+                <p className="text-sm text-muted-foreground">Verdict</p>
+              </div>
+            </div>
+
+            {/* Detailed Breakdown */}
+            <div className="space-y-4 mb-6">
+              <h4 className="font-medium">Category Breakdown</h4>
+              <div className="grid grid-cols-1 gap-3">
+                {Object.entries(evaluationData.breakdown).map(([category, data]) => (
+                  <div key={category} className={`p-3 border rounded-lg ${getScoreBgColor(data.score)}`}>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium capitalize">{category.replace('_', ' ')}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`font-bold ${getScoreColor(data.score)}`}>{data.score.toFixed(1)}</span>
+                        <span className="text-xs text-muted-foreground">({data.confidence}% confidence)</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{data.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Summary Insights */}
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <h4 className="font-medium mb-3 text-green-700">✅ Strengths</h4>
+                <div className="space-y-2">
+                  {evaluationData.summary.strengths.map((strength, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-sm">{strength}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-medium mb-3 text-orange-700">⚠️ Areas for Growth</h4>
+                <div className="space-y-2">
+                  {evaluationData.summary.weaknesses.map((weakness, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <span className="text-sm">{weakness}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Requirements Match */}
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <h4 className="font-medium mb-3 text-green-700">✅ Requirements Met</h4>
+                <div className="flex flex-wrap gap-2">
+                  {evaluationData.match_requirements.map((req, index) => (
+                    <Badge key={index} className="bg-green-50 text-green-700 border-green-200">
+                      {req}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-medium mb-3 text-red-700">❌ Requirements Missed</h4>
+                <div className="flex flex-wrap gap-2">
+                  {evaluationData.miss_requirements.map((req, index) => (
+                    <Badge key={index} variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                      {req}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Recommendations */}
+            <div>
+              <h4 className="font-medium mb-3">🎯 Recommendations</h4>
+              <div className="flex flex-wrap gap-2">
+                {evaluationData.summary.recommendations.map((rec, index) => (
+                  <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200">
+                    {rec}
+                  </Badge>
                 ))}
               </div>
             </div>
