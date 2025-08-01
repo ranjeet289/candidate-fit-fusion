@@ -335,8 +335,7 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                     className="flex items-center gap-2 min-w-[140px]"
                     size="sm"
                   >
-                    <CheckCircle2 className="w-4 h-4" />
-                    Submit
+                    Submit now
                   </Button>
                 </div>
               </div>
