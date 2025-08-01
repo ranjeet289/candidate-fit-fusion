@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Star, ArrowRight, Briefcase, MapPin, UserPlus, User, Calendar, DollarSign, Clock, Eye, Send, CheckCircle2, Zap, Check } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useEntities } from "@/context/EntityContext";
 import { useToast } from "@/hooks/use-toast";
 import CandidateProfileModal from "../CandidateProfileModal";
@@ -36,6 +37,7 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
   const [outreachSent, setOutreachSent] = useState<Set<string>>(new Set());
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateJobMatch | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCandidates, setSelectedCandidates] = useState<Set<string>>(new Set());
 
   // Generate candidates for the selected job
   const getCandidatesForJob = (jobId: string) => {
@@ -125,6 +127,65 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
     if (rate >= 85) return 'text-green-600';
     if (rate >= 70) return 'text-yellow-600';
     return 'text-red-600';
+  };
+
+  // Handle individual candidate selection
+  const toggleCandidateSelection = (candidateId: string) => {
+    setSelectedCandidates(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(candidateId)) {
+        newSet.delete(candidateId);
+      } else {
+        newSet.add(candidateId);
+      }
+      return newSet;
+    });
+  };
+
+  // Handle select all candidates
+  const handleSelectAll = () => {
+    if (selectedCandidates.size === candidatesForJob.length) {
+      setSelectedCandidates(new Set());
+    } else {
+      setSelectedCandidates(new Set(candidatesForJob.map(c => c.candidateId)));
+    }
+  };
+
+  // Handle bulk outreach
+  const handleBulkOutreach = () => {
+    const selectedCandidateNames: string[] = [];
+    selectedCandidates.forEach(candidateId => {
+      const candidate = candidatesForJob.find(c => c.candidateId === candidateId);
+      if (candidate && !outreachSent.has(candidateId)) {
+        selectedCandidateNames.push(candidate.candidateName);
+        handleAddToOutreach(candidateId, candidate.jobId);
+      }
+    });
+    
+    setOutreachSent(prev => new Set([...prev, ...selectedCandidates]));
+    
+    toast({
+      title: "Bulk Outreach Sent",
+      description: `${selectedCandidateNames.length} candidates added to outreach pipeline`,
+      duration: 3000,
+    });
+    
+    setSelectedCandidates(new Set());
+  };
+
+  // Handle bulk submit
+  const handleBulkSubmit = () => {
+    const selectedCandidateNames = candidatesForJob
+      .filter(c => selectedCandidates.has(c.candidateId))
+      .map(c => c.candidateName);
+    
+    toast({
+      title: "Bulk Submission",
+      description: `${selectedCandidateNames.length} candidates submitted successfully`,
+      duration: 3000,
+    });
+    
+    setSelectedCandidates(new Set());
   };
 
   // Handle outreach with notification and state change
@@ -229,80 +290,130 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-muted-foreground">
-              Found {candidatesForJob.length} candidates for this position
-            </p>
+          {/* Multi-select header with bulk actions */}
+          <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={selectedCandidates.size === candidatesForJob.length && candidatesForJob.length > 0}
+                  onCheckedChange={handleSelectAll}
+                />
+                <span className="text-sm font-medium">
+                  {selectedCandidates.size > 0 
+                    ? `${selectedCandidates.size} of ${candidatesForJob.length} selected`
+                    : `Select all ${candidatesForJob.length} candidates`
+                  }
+                </span>
+              </div>
+            </div>
+            
+            {selectedCandidates.size > 0 && (
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleBulkOutreach}
+                  size="sm"
+                  className="flex items-center gap-2"
+                  disabled={Array.from(selectedCandidates).every(id => outreachSent.has(id))}
+                >
+                  <Send className="w-4 h-4" />
+                  Send Outreach ({selectedCandidates.size})
+                </Button>
+                <Button
+                  onClick={handleBulkSubmit}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  Submit ({selectedCandidates.size})
+                </Button>
+              </div>
+            )}
           </div>
           
           {candidatesForJob.map((candidate) => (
-            <div key={candidate.candidateId} className="p-4 border rounded-lg hover:bg-muted/50 transition-all duration-200 hover:shadow-md">
+            <div 
+              key={candidate.candidateId} 
+              className={`p-4 border rounded-lg transition-all duration-200 hover:shadow-md ${
+                selectedCandidates.has(candidate.candidateId) 
+                  ? 'bg-primary/5 border-primary/30' 
+                  : 'hover:bg-muted/50'
+              }`}
+            >
               <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  {/* Candidate Header - More Compact */}
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-1">
-                        <button 
-                          className="font-semibold text-base hover:text-primary transition-colors cursor-pointer"
-                          onClick={() => {
-                            setSelectedCandidate(candidate);
-                            setIsModalOpen(true);
-                          }}
-                        >
-                          {candidate.candidateName}
-                        </button>
-                        <div className="flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full">
-                          <Star className="w-4 h-4 text-primary" />
-                          <span className="text-sm font-bold text-primary">{candidate.matchScore.toFixed(1)}</span>
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-1">{candidate.candidateTitle}</p>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          Active {candidate.lastActive}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {candidate.preferredLocations.slice(0, 2).join(', ')}
-                          {candidate.preferredLocations.length > 2 && ` +${candidate.preferredLocations.length - 2}`}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                {/* Checkbox for selection */}
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    checked={selectedCandidates.has(candidate.candidateId)}
+                    onCheckedChange={() => toggleCandidateSelection(candidate.candidateId)}
+                    className="mt-2"
+                  />
                   
-                  {/* Compact Skills Analysis */}
-                  <div className="mb-3">
-                    <div className="flex items-center gap-4">
-                      {candidate.skillGapAnalysis.strength.length > 0 && (
-                        <div className="flex-1">
-                          <p className="text-xs text-green-700 font-medium mb-1">✅ Strengths</p>
-                          <div className="flex flex-wrap gap-1">
-                            {candidate.skillGapAnalysis.strength.slice(0, 2).map((skill, index) => (
-                              <Badge key={index} className="text-xs bg-green-50 text-green-700 border-green-200">
-                                {skill}
-                              </Badge>
-                            ))}
+                  <div className="flex-1">
+                    {/* Candidate Header - More Compact */}
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-1">
+                          <button 
+                            className="font-semibold text-base hover:text-primary transition-colors cursor-pointer"
+                            onClick={() => {
+                              setSelectedCandidate(candidate);
+                              setIsModalOpen(true);
+                            }}
+                          >
+                            {candidate.candidateName}
+                          </button>
+                          <div className="flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full">
+                            <Star className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-bold text-primary">{candidate.matchScore.toFixed(1)}</span>
                           </div>
                         </div>
-                      )}
-                      
-                      {candidate.skillGapAnalysis.missing.length > 0 && (
-                        <div className="flex-1">
-                          <p className="text-xs text-orange-700 font-medium mb-1">📚 Growth</p>
-                          <div className="flex flex-wrap gap-1">
-                            {candidate.skillGapAnalysis.missing.slice(0, 2).map((skill, index) => (
-                              <Badge key={index} variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
-                                {skill}
-                              </Badge>
-                            ))}
+                        <p className="text-sm text-muted-foreground mb-1">{candidate.candidateTitle}</p>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            Active {candidate.lastActive}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {candidate.preferredLocations.slice(0, 2).join(', ')}
+                            {candidate.preferredLocations.length > 2 && ` +${candidate.preferredLocations.length - 2}`}
                           </div>
                         </div>
-                      )}
+                      </div>
+                    </div>
+                    
+                    {/* Compact Skills Analysis */}
+                    <div className="mb-3">
+                      <div className="flex items-center gap-4">
+                        {candidate.skillGapAnalysis.strength.length > 0 && (
+                          <div className="flex-1">
+                            <p className="text-xs text-green-700 font-medium mb-1">✅ Strengths</p>
+                            <div className="flex flex-wrap gap-1">
+                              {candidate.skillGapAnalysis.strength.slice(0, 2).map((skill, index) => (
+                                <Badge key={index} className="text-xs bg-green-50 text-green-700 border-green-200">
+                                  {skill}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {candidate.skillGapAnalysis.missing.length > 0 && (
+                          <div className="flex-1">
+                            <p className="text-xs text-orange-700 font-medium mb-1">📚 Growth</p>
+                            <div className="flex flex-wrap gap-1">
+                              {candidate.skillGapAnalysis.missing.slice(0, 2).map((skill, index) => (
+                                <Badge key={index} variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+                                  {skill}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
