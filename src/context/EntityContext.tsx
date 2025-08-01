@@ -29,8 +29,9 @@ export interface Job {
   title: string;
   company: string;
   fit: number;
-  urgency: "High" | "Medium" | "Low" | string;
   location: string;
+  workType: "Remote" | "Onsite" | "Hybrid";
+  requirements: string[];
   fitBreakdown?: FitScoreBreakdown;
 }
 
@@ -84,8 +85,9 @@ const defaultJobs: Job[] = [
     title: "AI Engineer", 
     company: "Inferred Tech Solutions", 
     fit: 9.1, 
-    urgency: "High", 
     location: "San Francisco, CA",
+    workType: "Onsite",
+    requirements: ["Python", "TensorFlow", "AWS", "5+ years experience"],
     fitBreakdown: { education: 9.0, careerTrajectory: 9.5, companyRelevance: 9.8, tenureStability: 8.5, mostImportantSkills: 8.7, bonusSignals: 8.0, redFlags: 0.0, location: 8.7 }
   },
   { 
@@ -93,8 +95,9 @@ const defaultJobs: Job[] = [
     title: "ML Ops Lead", 
     company: "Fintech Analytics", 
     fit: 8.7, 
-    urgency: "Medium", 
     location: "Remote",
+    workType: "Remote",
+    requirements: ["Docker", "Kubernetes", "MLOps", "3+ years experience"],
     fitBreakdown: { education: 8.2, careerTrajectory: 9.0, companyRelevance: 9.2, tenureStability: 8.8, mostImportantSkills: 8.3, bonusSignals: 7.0, redFlags: 0.0, location: 8.3 }
   },
   { 
@@ -102,8 +105,9 @@ const defaultJobs: Job[] = [
     title: "NLP Scientist", 
     company: "HealthcareAI", 
     fit: 9.3, 
-    urgency: "High", 
     location: "Boston, MA",
+    workType: "Hybrid",
+    requirements: ["NLP", "PyTorch", "Research experience", "PhD preferred"],
     fitBreakdown: { education: 9.8, careerTrajectory: 9.0, companyRelevance: 9.5, tenureStability: 9.2, mostImportantSkills: 9.0, bonusSignals: 8.5, redFlags: 0.0, location: 9.0 }
   }
 ];

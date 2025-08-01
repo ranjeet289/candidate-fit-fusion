@@ -34,10 +34,10 @@ const JobMultiSelect: React.FC<Props> = ({ selectedJobs, toggleJob }) => {
               <Briefcase className="w-4 h-4" />
               <span>{job.title} at {job.company}</span>
               <Badge
-                variant={job.urgency === 'High' ? 'destructive' : 'outline'}
+                variant={job.workType === 'Remote' ? 'secondary' : 'outline'}
                 className="text-xs ml-2"
               >
-                {job.urgency}
+                {job.workType}
               </Badge>
               <Badge variant="outline">{job.fit}</Badge>
             </div>

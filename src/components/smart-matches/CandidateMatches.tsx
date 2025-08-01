@@ -144,10 +144,10 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                   <Briefcase className="w-4 h-4" />
                   <span>{job.title} at {job.company}</span>
                   <Badge
-                    variant={job.urgency === 'High' ? 'destructive' : 'outline'}
+                    variant={job.workType === 'Remote' ? 'secondary' : 'outline'}
                     className="text-xs ml-2"
                   >
-                    {job.urgency}
+                    {job.workType}
                   </Badge>
                 </div>
               </SelectItem>
@@ -169,12 +169,22 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
               <MapPin className="w-4 h-4" />
               {selectedJob.location}
             </div>
-            <Badge variant={selectedJob.urgency === 'High' ? 'destructive' : 'outline'}>
-              {selectedJob.urgency} Priority
+            <Badge variant={selectedJob.workType === 'Remote' ? 'secondary' : 'outline'}>
+              {selectedJob.workType}
             </Badge>
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4" />
               {selectedJob.fit} Fit Score
+            </div>
+          </div>
+          <div className="mt-3">
+            <p className="text-xs text-muted-foreground mb-2">Requirements:</p>
+            <div className="flex flex-wrap gap-2">
+              {selectedJob.requirements.map((req, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {req}
+                </Badge>
+              ))}
             </div>
           </div>
         </div>
