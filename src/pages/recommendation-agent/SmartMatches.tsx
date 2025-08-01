@@ -65,11 +65,9 @@ export default function SmartMatches({
         </TabsContent>
 
         <TabsContent value="candidate">
-          <CandidateMatches
-            candidateJobMatches={candidateJobMatches}
-            selectedCandidateName={selectedCandidateName}
-            handleAddToOutreach={handleAddToOutreach}
-          />
+        <CandidateMatches
+          handleAddToOutreach={handleAddToOutreach}
+        />
         </TabsContent>
       </Tabs>
     </div>

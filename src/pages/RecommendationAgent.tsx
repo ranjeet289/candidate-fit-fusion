@@ -364,7 +364,7 @@ AI Recruitment Team`;
           <Tabs defaultValue="smart-jd" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3 h-10 bg-muted rounded-md p-1">
               <TabsTrigger value="smart-jd" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Smart JD Matches</TabsTrigger>
-              <TabsTrigger value="smart-candidate" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Top Talent Recommendations</TabsTrigger>
+              <TabsTrigger value="smart-candidate" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Candidates for Job</TabsTrigger>
               <TabsTrigger value="history" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Recommendation History</TabsTrigger>
             </TabsList>
             <TabsContent value="smart-jd">
@@ -375,8 +375,6 @@ AI Recruitment Team`;
             </TabsContent>
             <TabsContent value="smart-candidate">
               <CandidateMatches
-                candidateJobMatches={selectedCandidate && selectedCandidate !== "manual" ? getCandidateJobMatches(selectedCandidate) : undefined}
-                selectedCandidateName={getChosenCandidate()?.name}
                 handleAddToOutreach={handleAddToOutreach}
               />
             </TabsContent>
