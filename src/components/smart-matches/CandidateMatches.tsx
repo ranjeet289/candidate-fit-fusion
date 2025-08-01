@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, ArrowRight, Briefcase, MapPin, UserPlus, User, Calendar, DollarSign, Clock, Eye, Send, CheckCircle2, Zap, Check } from "lucide-react";
+import { Star, ArrowRight, Briefcase, MapPin, UserPlus, User, Calendar, DollarSign, Clock, Eye, Send, CheckCircle2, Zap, Check, Building } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useEntities } from "@/context/EntityContext";
 import { useToast } from "@/hooks/use-toast";
@@ -374,13 +374,16 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                         <p className="text-sm text-muted-foreground mb-1">{candidate.candidateTitle}</p>
                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            Active {candidate.lastActive}
+                            <Building className="w-3 h-3" />
+                            <span>Tech Innovations Inc.</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <MapPin className="w-3 h-3" />
-                            {candidate.preferredLocations.slice(0, 2).join(', ')}
-                            {candidate.preferredLocations.length > 2 && ` +${candidate.preferredLocations.length - 2}`}
+                            <span>{candidate.preferredLocations[0] || 'Remote'}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            Active {candidate.lastActive}
                           </div>
                         </div>
                       </div>
