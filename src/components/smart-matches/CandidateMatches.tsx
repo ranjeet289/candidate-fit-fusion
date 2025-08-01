@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Star, ArrowRight, Briefcase, MapPin, UserPlus, User, Calendar, DollarSign, Clock, Eye, Send, CheckCircle2, Zap, Check } from "lucide-react";
 import { useEntities } from "@/context/EntityContext";
 import { useToast } from "@/hooks/use-toast";
+import CandidateProfileModal from "../CandidateProfileModal";
 
 interface CandidateJobMatch {
   candidateId: string;
@@ -33,6 +34,8 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
   const { toast } = useToast();
   const [selectedJobId, setSelectedJobId] = useState<string>("");
   const [outreachSent, setOutreachSent] = useState<Set<string>>(new Set());
+  const [selectedCandidate, setSelectedCandidate] = useState<CandidateJobMatch | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Generate candidates for the selected job
   const getCandidatesForJob = (jobId: string) => {
@@ -144,7 +147,8 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
   };
 
   return (
-    <Card className="p-8 bg-card shadow-xl border">
+    <>
+      <Card className="p-8 bg-card shadow-xl border">
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-2">Candidates for Job</h3>
         <p className="text-muted-foreground">
@@ -244,7 +248,10 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                       <div className="flex items-center gap-3 mb-1">
                         <button 
                           className="font-semibold text-base hover:text-primary transition-colors cursor-pointer"
-                          onClick={() => {/* Handle view profile */}}
+                          onClick={() => {
+                            setSelectedCandidate(candidate);
+                            setIsModalOpen(true);
+                          }}
                         >
                           {candidate.candidateName}
                         </button>
@@ -338,5 +345,29 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
         </div>
       )}
     </Card>
+
+    {/* Candidate Profile Modal */}
+    <CandidateProfileModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      candidate={selectedCandidate}
+      onSendOutreach={() => {
+        if (selectedCandidate) {
+          handleOutreachClick(selectedCandidate.candidateId, selectedCandidate.jobId, selectedCandidate.candidateName);
+          setIsModalOpen(false);
+        }
+      }}
+      onSubmit={() => {
+        // Handle submit functionality
+        toast({
+          title: "Candidate Submitted",
+          description: `${selectedCandidate?.candidateName} has been submitted successfully`,
+          duration: 3000,
+        });
+        setIsModalOpen(false);
+      }}
+      isOutreachSent={selectedCandidate ? outreachSent.has(selectedCandidate.candidateId) : false}
+    />
+    </>
   );
 }
