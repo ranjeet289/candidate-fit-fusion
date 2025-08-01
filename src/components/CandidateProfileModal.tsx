@@ -51,10 +51,6 @@ export default function CandidateProfileModal({
 }: CandidateProfileModalProps) {
   // Mock evaluation data based on the JSON structure
   const evaluationData = {
-    final_score: 8.4,
-    confidence_level: 85.0,
-    match_rate: 85.0,
-    verdict: "Accept",
     breakdown: {
       education: { score: 6.0, confidence: 70.0, description: "BSc (Hons) in Computing from London Metropolitan University, classified as a Tier 3 institution. While not from a top-tier university, the degree is relevant to the field of Information Technology." },
       career_trajectory: { score: 8.5, confidence: 85.0, description: "Strong career progression from Frontend Developer to Senior Software Engineer over 8 years, with increasing responsibilities and leadership in AI and full-stack development." },
@@ -63,27 +59,19 @@ export default function CandidateProfileModal({
       most_important_skills: { score: 8.0, confidence: 80.0, description: "Demonstrated expertise in full-stack development, AI integration, and cloud infrastructure aligns well with the role requirements. However, specific experience with GCP and some AI tools like Ray or Temporal is not explicitly mentioned." },
       bonus_signals: { score: 3.0, confidence: 50.0, description: "No significant bonus signals such as patents or major awards are mentioned, but the candidate has contributed to innovative AI projects." },
       red_flags: { score: 0.0, confidence: 100.0, description: "No red flags identified in the candidate's profile." }
-    },
-    summary: {
-      strengths: ["Strong full-stack development skills", "Experience with AI integration", "Stable career progression"],
-      weaknesses: ["Lack of explicit experience with GCP", "No major bonus signals like patents or awards"],
-      opportunities: ["Potential for leadership in cross-functional teams", "Opportunity to expand expertise in GCP and advanced AI tools"],
-      recommendations: ["Fast-track interview", "Technical assessment focus"]
-    },
-    match_requirements: ["Full-stack development expertise", "AI integration experience", "Stable career progression"],
-    miss_requirements: ["Specific experience with GCP", "Experience with Ray or Temporal"]
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 8) return "text-green-600";
-    if (score >= 6) return "text-yellow-600";
-    return "text-red-600";
+    }
   };
 
   const getScoreBgColor = (score: number) => {
-    if (score >= 8) return "bg-green-100 border-green-200";
-    if (score >= 6) return "bg-yellow-100 border-yellow-200";
-    return "bg-red-100 border-red-200";
+    if (score >= 8) return "bg-primary/10 border-primary/20";
+    if (score >= 6) return "bg-secondary/10 border-secondary/20";
+    return "bg-muted border-muted";
+  };
+
+  const getScoreTextColor = (score: number) => {
+    if (score >= 8) return "text-primary";
+    if (score >= 6) return "text-secondary-foreground";
+    return "text-muted-foreground";
   };
 
   // Mock additional candidate data for the profile
@@ -217,6 +205,27 @@ export default function CandidateProfileModal({
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Category Breakdown */}
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Category Breakdown</h3>
+            <div className="space-y-3">
+              {Object.entries(evaluationData.breakdown).map(([category, data]) => (
+                <div key={category} className={`p-4 border rounded-lg ${getScoreBgColor(data.score)}`}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-medium capitalize">{category.replace('_', ' ')}</span>
+                    <div className="flex items-center gap-2">
+                      <span className={`font-bold ${getScoreTextColor(data.score)}`}>{data.score.toFixed(1)}</span>
+                      <span className="text-xs text-muted-foreground">({data.confidence}% confidence)</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{data.description}</p>
+                </div>
+              ))}
             </div>
           </div>
 
