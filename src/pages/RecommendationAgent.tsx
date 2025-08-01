@@ -29,10 +29,10 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
-import CandidateSelector from "./submission-agent/CandidateSelector";
-import JobMultiSelect from "./submission-agent/JobMultiSelect";
-import CoverLetterSection from "./submission-agent/CoverLetterSection";
-import SubmissionHistory from "./submission-agent/SubmissionHistory";
+import CandidateSelector from "./recommendation-agent/CandidateSelector";
+import JobMultiSelect from "./recommendation-agent/JobMultiSelect";
+import CoverLetterSection from "./recommendation-agent/CoverLetterSection";
+import SubmissionHistory from "./recommendation-agent/SubmissionHistory";
 import JobMatches from "@/components/smart-matches/JobMatches";
 import CandidateMatches from "@/components/smart-matches/CandidateMatches";
 import { useEntities } from "@/context/EntityContext";
@@ -109,7 +109,7 @@ const smartMatches = [
   }
 ];
 
-export default function SubmissionAgent() {
+export default function RecommendationAgent() {
   const { candidates, jobs, addCandidate } = useEntities();
 
   const [selectedCandidate, setSelectedCandidate] = useState(""); // Candidate id, or "manual"
@@ -127,7 +127,7 @@ export default function SubmissionAgent() {
   const { setTitle, setIcon, setBadge } = usePageTitle();
 
   useEffect(() => {
-    setTitle("Submission Agent");
+    setTitle("Recommendation Agent");
     setIcon(null);
     setBadge(<Badge variant="secondary" className="ml-3">Premium</Badge>);
   }, [setTitle, setIcon, setBadge]);
@@ -173,15 +173,50 @@ export default function SubmissionAgent() {
     if (!candidate) return [];
     
     const candidateFit = typeof candidate.fit === 'string' ? parseFloat(candidate.fit) : candidate.fit;
+    const availabilityOptions = ['Available', 'Interviewing', 'Offer Stage'] as const;
+    const locationOptions = ['Remote', 'San Francisco', 'New York', 'Austin', 'Boston'];
     
-    return jobs.map(job => ({
-      candidateId: candidate.id,
-      candidateName: candidate.name,
-      jobId: job.id,
-      jobTitle: `${job.title} at ${job.company}`,
-      matchScore: Math.round((candidateFit + job.fit) / 2 * 10) / 10,
-      reasons: candidate.skills.slice(0, 3).map(skill => `${skill} expertise`)
-    })).sort((a, b) => b.matchScore - a.matchScore);
+    return jobs.map(job => {
+      // Generate realistic recommendation data
+      const availability = availabilityOptions[Math.floor(Math.random() * availabilityOptions.length)];
+      const salaryMatch = Math.floor(80 + Math.random() * 20); // 80-100% salary match
+      const responseRate = Math.floor(70 + Math.random() * 30); // 70-100% response rate
+      const daysAgo = Math.floor(Math.random() * 7) + 1;
+      const lastActive = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
+      
+      // Sample preferred locations
+      const numLocations = Math.floor(Math.random() * 3) + 1;
+      const preferredLocations = locationOptions
+        .sort(() => 0.5 - Math.random())
+        .slice(0, numLocations);
+
+      // Generate skill gap analysis
+      const allSkills = ['React', 'Python', 'AWS', 'Docker', 'Kubernetes', 'GraphQL', 'TypeScript', 'Node.js'];
+      const candidateSkills = candidate.skills || [];
+      const strengthSkills = candidateSkills.slice(0, 2);
+      const potentialMissing = allSkills.filter(skill => !candidateSkills.includes(skill));
+      const missingSkills = potentialMissing.slice(0, Math.floor(Math.random() * 2) + 1);
+
+      return {
+        candidateId: candidate.id,
+        candidateName: candidate.name,
+        candidateTitle: candidate.title,
+        jobId: job.id,
+        jobTitle: job.title,
+        companyName: job.company,
+        matchScore: Math.round((candidateFit + job.fit) / 2 * 10) / 10,
+        availability,
+        salaryMatch,
+        responseRate,
+        lastActive,
+        preferredLocations,
+        skillGapAnalysis: {
+          strength: strengthSkills,
+          missing: missingSkills
+        },
+        reasons: candidate.skills.slice(0, 3).map(skill => `${skill} expertise`)
+      };
+    }).sort((a, b) => b.matchScore - a.matchScore);
   };
 
   function toggleJob(id: string) {
@@ -329,8 +364,8 @@ AI Recruitment Team`;
           <Tabs defaultValue="smart-jd" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3 h-10 bg-muted rounded-md p-1">
               <TabsTrigger value="smart-jd" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Smart JD Matches</TabsTrigger>
-              <TabsTrigger value="smart-candidate" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Smart Candidate Matches</TabsTrigger>
-              <TabsTrigger value="history" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Submission History</TabsTrigger>
+              <TabsTrigger value="smart-candidate" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Top Talent Recommendations</TabsTrigger>
+              <TabsTrigger value="history" className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm">Recommendation History</TabsTrigger>
             </TabsList>
             <TabsContent value="smart-jd">
               <JobMatches

@@ -14,10 +14,18 @@ interface SmartMatch {
 interface CandidateJobMatch {
   candidateId: string;
   candidateName: string;
+  candidateTitle: string;
   jobId: string;
   jobTitle: string;
+  companyName: string;
   matchScore: number;
   reasons: string[];
+  availability: 'Available' | 'Interviewing' | 'Offer Stage';
+  salaryMatch: number;
+  responseRate: number;
+  lastActive: string;
+  preferredLocations: string[];
+  skillGapAnalysis: { missing: string[]; strength: string[] };
 }
 
 interface SmartMatchesProps {

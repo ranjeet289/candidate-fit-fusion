@@ -10,7 +10,7 @@ import Candidates from './pages/Candidates';
 import Users from './pages/Users';
 import SourcingAgent from './pages/SourcingAgent';
 import OutreachAgent from './pages/OutreachAgent';
-import SubmissionAgent from './pages/SubmissionAgent';
+import RecommendationAgent from './pages/RecommendationAgent';
 import AIRecruiter from './pages/AIRecruiter';
 import AIAgentsOverview from './pages/AIAgentsOverview';
 import NotFound from './pages/NotFound';
@@ -41,7 +41,7 @@ function App() {
                 <Route path="/users" element={<Users />} />
                 <Route path="/sourcing-agent" element={<SourcingAgent />} />
                 <Route path="/outreach-agent" element={<OutreachAgent />} />
-                <Route path="/submission-agent" element={<SubmissionAgent />} />
+                <Route path="/recommendation-agent" element={<RecommendationAgent />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

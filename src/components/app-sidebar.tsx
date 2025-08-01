@@ -89,9 +89,9 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary data-[active=true]:bg-sidebar-accent data-[active=true]:text-primary">
-                  <a href="/submission-agent">
+                  <a href="/recommendation-agent">
                     <MessageSquare className="mr-2" size={18} />
-                    <span>Submission Agent</span>
+                    <span>Recommendation Agent</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>

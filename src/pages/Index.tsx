@@ -41,13 +41,13 @@ const Index = () => {
             
             <Card className="p-6 text-center border-2 hover:border-primary transition-colors">
               <Send className="w-12 h-12 mx-auto mb-4 text-primary" />
-              <h3 className="font-semibold mb-2">Submission Agent</h3>
+              <h3 className="font-semibold mb-2">Recommendation Agent</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Automatically match and submit candidates to relevant job openings with smart tracking.
+                AI-powered candidate recommendations with intelligent matching and engagement insights.
               </p>
-              <a href="/submission-agent">
+              <a href="/recommendation-agent">
                 <Button variant="outline" className="w-full">
-                  Manage Submissions
+                  View Recommendations
                 </Button>
               </a>
             </Card>

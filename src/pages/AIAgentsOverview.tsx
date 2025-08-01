@@ -47,14 +47,14 @@ const agents = [
     features: ["Email Templates", "LinkedIn Messages", "Follow-up Sequences", "Response Tracking"]
   },
   {
-    id: "submission",
-    name: "Submission Agent",
-    description: "Smart candidate-job matching and automated submissions",
+    id: "recommendation",
+    name: "Recommendation Agent",
+    description: "AI-powered candidate recommendations with intelligent matching",
     icon: Send,
     color: "bg-purple-500", 
-    route: "/submission-agent",
-    stats: { submitted: 67, approved: 45, active: true },
-    features: ["Smart Matching", "Cover Letter Gen", "Submission Tracking", "Status Updates"]
+    route: "/recommendation-agent",
+    stats: { recommended: 67, matched: 45, active: true },
+    features: ["Smart Recommendations", "Engagement Analytics", "Talent Insights", "Match Scoring"]
   },
   {
     id: "recruiter",
@@ -85,8 +85,8 @@ const recentActivity = [
   },
   {
     id: 3,
-    agent: "Submission Agent",
-    action: "Submitted 3 candidates to high-priority positions",
+    agent: "Recommendation Agent",
+    action: "Generated 8 high-priority candidate recommendations",
     time: "1 hour ago", 
     status: "pending"
   },
