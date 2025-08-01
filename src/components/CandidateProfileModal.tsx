@@ -17,7 +17,8 @@ import {
   Globe,
   Building,
   Award,
-  DollarSign
+  DollarSign,
+  ArrowRight
 } from "lucide-react";
 
 interface CandidateProfileModalProps {
@@ -150,6 +151,7 @@ export default function CandidateProfileModal({
               )}
               
               <Button variant="outline" onClick={onSubmit} size="sm" className="text-xs">
+                <ArrowRight className="w-3 h-3 mr-1" />
                 Submit now
               </Button>
             </div>

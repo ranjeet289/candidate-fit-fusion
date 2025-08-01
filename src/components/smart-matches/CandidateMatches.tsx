@@ -324,6 +324,7 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                   size="sm"
                   className="flex items-center gap-2"
                 >
+                  <ArrowRight className="w-4 h-4" />
                   Submit ({selectedCandidates.size})
                 </Button>
               </div>
@@ -446,6 +447,7 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                     className="flex items-center gap-2 min-w-[140px]"
                     size="sm"
                   >
+                    <ArrowRight className="w-4 h-4" />
                     Submit now
                   </Button>
                 </div>
