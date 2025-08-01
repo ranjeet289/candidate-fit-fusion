@@ -248,11 +248,8 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                         >
                           {candidate.candidateName}
                         </button>
-                        <Badge 
-                          className={`text-xs font-medium border ${getAvailabilityColor(candidate.availability)}`}
-                          variant="outline"
-                        >
-                          {candidate.availability}
+                        <Badge variant="secondary" className="text-xs">
+                          {candidate.matchScore.toFixed(1)} fit
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mb-1">{candidate.candidateTitle}</p>
@@ -267,37 +264,6 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                           {candidate.preferredLocations.length > 2 && ` +${candidate.preferredLocations.length - 2}`}
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  
-                  {/* Compact Metrics Row */}
-                  <div className="grid grid-cols-3 gap-3 mb-3">
-                    <div className="text-center p-2 bg-muted/30 rounded">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Star className="w-3 h-3 text-primary" />
-                        <span className="text-sm font-bold text-primary">{candidate.matchScore.toFixed(1)}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">Match</p>
-                    </div>
-                    
-                    <div className="text-center p-2 bg-muted/30 rounded">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <DollarSign className="w-3 h-3" />
-                        <span className={`text-sm font-bold ${getSalaryMatchColor(candidate.salaryMatch)}`}>
-                          {candidate.salaryMatch}%
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">Salary</p>
-                    </div>
-                    
-                    <div className="text-center p-2 bg-muted/30 rounded">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Zap className="w-3 h-3" />
-                        <span className={`text-sm font-bold ${getResponseRateColor(candidate.responseRate)}`}>
-                          {candidate.responseRate}%
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">Response</p>
                     </div>
                   </div>
                   
