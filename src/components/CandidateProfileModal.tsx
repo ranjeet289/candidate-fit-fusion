@@ -75,7 +75,7 @@ export default function CandidateProfileModal({
   };
 
   // Mock additional candidate data for the profile
-  const candidateProfile = {
+  const candidateProfile = candidate ? {
     email: `${candidate.candidateName.toLowerCase().replace(' ', '.')}@email.com`,
     phone: "+1 (555) 123-4567",
     location: candidate.preferredLocations[0] || "Remote",
@@ -90,7 +90,7 @@ export default function CandidateProfileModal({
     workPreference: "Remote / Hybrid",
     timezone: "PST (UTC-8)",
     startDate: "2-4 weeks notice"
-  };
+  } : null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -98,6 +98,12 @@ export default function CandidateProfileModal({
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">Candidate Profile</DialogTitle>
         </DialogHeader>
+        
+        {!candidate ? (
+          <div className="p-4 text-center">
+            <p>No candidate data available</p>
+          </div>
+        ) : (
         
         <div className="space-y-4">
           {/* Header Section */}
@@ -117,16 +123,16 @@ export default function CandidateProfileModal({
               
               <p className="text-sm text-muted-foreground mb-2">{candidate.candidateTitle}</p>
               
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="flex items-center gap-1">
-                  <Building className="w-3 h-3 text-muted-foreground" />
-                  <span>{candidateProfile.currentCompany}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-muted-foreground" />
-                  <span>{candidateProfile.location}</span>
-                </div>
-              </div>
+               <div className="grid grid-cols-2 gap-2 text-xs">
+                 <div className="flex items-center gap-1">
+                   <Building className="w-3 h-3 text-muted-foreground" />
+                   <span>{candidateProfile?.currentCompany}</span>
+                 </div>
+                 <div className="flex items-center gap-1">
+                   <MapPin className="w-3 h-3 text-muted-foreground" />
+                   <span>{candidateProfile?.location}</span>
+                 </div>
+               </div>
             </div>
             
             {/* Action Buttons */}
@@ -159,15 +165,15 @@ export default function CandidateProfileModal({
               <div className="space-y-1 text-xs">
                 <div className="flex items-center gap-1">
                   <Mail className="w-3 h-3 text-muted-foreground" />
-                  <span>{candidateProfile.email}</span>
+                  <span>{candidateProfile?.email}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Phone className="w-3 h-3 text-muted-foreground" />
-                  <span>{candidateProfile.phone}</span>
+                  <span>{candidateProfile?.phone}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Globe className="w-3 h-3 text-muted-foreground" />
-                  <span className="text-primary cursor-pointer hover:underline">{candidateProfile.linkedinUrl}</span>
+                  <span className="text-primary cursor-pointer hover:underline">{candidateProfile?.linkedinUrl}</span>
                 </div>
               </div>
             </div>
@@ -240,6 +246,7 @@ export default function CandidateProfileModal({
             </div>
           </div>
         </div>
+        )}
       </DialogContent>
     </Dialog>
   );
