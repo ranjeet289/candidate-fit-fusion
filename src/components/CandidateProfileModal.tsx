@@ -129,7 +129,7 @@ export default function CandidateProfileModal({
               
               <p className="text-lg text-muted-foreground mb-3">{candidate.candidateTitle}</p>
               
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <Building className="w-4 h-4 text-muted-foreground" />
                   <span>{candidateProfile.currentCompany}</span>
@@ -137,14 +137,6 @@ export default function CandidateProfileModal({
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-muted-foreground" />
                   <span>{candidateProfile.location}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-muted-foreground" />
-                  <span>Active {candidate.lastActive}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-muted-foreground" />
-                  <span>{candidateProfile.salaryExpectation}</span>
                 </div>
               </div>
             </div>
@@ -225,71 +217,6 @@ export default function CandidateProfileModal({
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Experience & Education */}
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <Briefcase className="w-5 h-5" />
-                Experience
-              </h3>
-              <div className="space-y-3">
-                <div className="p-3 border rounded-lg">
-                  <p className="font-medium">{candidateProfile.currentRole}</p>
-                  <p className="text-sm text-muted-foreground">{candidateProfile.currentCompany}</p>
-                  <p className="text-xs text-muted-foreground">{candidateProfile.experience}</p>
-                </div>
-                <div className="p-3 border rounded-lg">
-                  <p className="font-medium">Software Engineer</p>
-                  <p className="text-sm text-muted-foreground">Previous Company</p>
-                  <p className="text-xs text-muted-foreground">2 years</p>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <GraduationCap className="w-5 h-5" />
-                Education
-              </h3>
-              <div className="p-3 border rounded-lg">
-                <p className="font-medium">{candidateProfile.education}</p>
-                <p className="text-sm text-muted-foreground">2018 - 2020</p>
-              </div>
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Preferences & Availability */}
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Work Preferences & Availability</h3>
-            <div className="grid grid-cols-3 gap-4 text-sm">
-              <div>
-                <p className="font-medium mb-1">Work Style</p>
-                <p className="text-muted-foreground">{candidateProfile.workPreference}</p>
-              </div>
-              <div>
-                <p className="font-medium mb-1">Timezone</p>
-                <p className="text-muted-foreground">{candidateProfile.timezone}</p>
-              </div>
-              <div>
-                <p className="font-medium mb-1">Start Date</p>
-                <p className="text-muted-foreground">{candidateProfile.startDate}</p>
-              </div>
-            </div>
-            
-            <div className="mt-4">
-              <p className="font-medium mb-2">Preferred Locations</p>
-              <div className="flex flex-wrap gap-2">
-                {candidate.preferredLocations.map((location, index) => (
-                  <Badge key={index} variant="outline">{location}</Badge>
-                ))}
-              </div>
             </div>
           </div>
 
