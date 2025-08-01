@@ -3,8 +3,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, ArrowRight, Briefcase, MapPin, UserPlus, User, Calendar, DollarSign, Clock, Eye, Send, CheckCircle2, Zap } from "lucide-react";
+import { Star, ArrowRight, Briefcase, MapPin, UserPlus, User, Calendar, DollarSign, Clock, Eye, Send, CheckCircle2, Zap, Check } from "lucide-react";
 import { useEntities } from "@/context/EntityContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface CandidateJobMatch {
   candidateId: string;
@@ -29,7 +30,9 @@ interface CandidateMatchesProps {
 
 export default function CandidateMatches({ handleAddToOutreach }: CandidateMatchesProps) {
   const { candidates, jobs } = useEntities();
+  const { toast } = useToast();
   const [selectedJobId, setSelectedJobId] = useState<string>("");
+  const [outreachSent, setOutreachSent] = useState<Set<string>>(new Set());
 
   // Generate candidates for the selected job
   const getCandidatesForJob = (jobId: string) => {
@@ -119,6 +122,25 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
     if (rate >= 85) return 'text-green-600';
     if (rate >= 70) return 'text-yellow-600';
     return 'text-red-600';
+  };
+
+  // Handle outreach with notification and state change
+  const handleOutreachClick = (candidateId: string, jobId: string, candidateName: string) => {
+    const candidate = candidates.find(c => c.id === candidateId);
+    const job = jobs.find(j => j.id === jobId);
+    
+    // Add to outreach sent set
+    setOutreachSent(prev => new Set(prev).add(candidateId));
+    
+    // Show success notification
+    toast({
+      title: "Added to Outreach Agent",
+      description: `${candidateName} has been successfully added to the outreach pipeline for ${job?.title}`,
+      duration: 3000,
+    });
+    
+    // Call the original handler
+    handleAddToOutreach(candidateId, jobId);
   };
 
   return (
@@ -313,14 +335,26 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                 
                 {/* Compact Action Buttons */}
                 <div className="flex flex-col gap-2 ml-4">
-                  <Button
-                    onClick={() => handleAddToOutreach(candidate.candidateId, candidate.jobId)}
-                    className="flex items-center gap-2 min-w-[140px]"
-                    size="sm"
-                  >
-                    <Send className="w-4 h-4" />
-                    Send Outreach
-                  </Button>
+                  {outreachSent.has(candidate.candidateId) ? (
+                    <Button
+                      disabled
+                      variant="outline"
+                      className="flex items-center gap-2 min-w-[140px] bg-green-50 border-green-200 text-green-700"
+                      size="sm"
+                    >
+                      <Check className="w-4 h-4" />
+                      Added to Outreach
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => handleOutreachClick(candidate.candidateId, candidate.jobId, candidate.candidateName)}
+                      className="flex items-center gap-2 min-w-[140px]"
+                      size="sm"
+                    >
+                      <Send className="w-4 h-4" />
+                      Send Outreach
+                    </Button>
+                  )}
                   
                   <Button
                     variant="outline"
