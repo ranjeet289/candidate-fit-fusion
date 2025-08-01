@@ -210,17 +210,22 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
           </div>
           
           {candidatesForJob.map((candidate) => (
-            <div key={candidate.candidateId} className="p-6 border rounded-lg hover:bg-muted/50 transition-all duration-200 hover:shadow-md">
+            <div key={candidate.candidateId} className="p-4 border rounded-lg hover:bg-muted/50 transition-all duration-200 hover:shadow-md">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  {/* Candidate Header */}
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
-                      <User className="w-7 h-7 text-primary" />
+                  {/* Candidate Header - More Compact */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <h4 className="font-semibold text-lg">{candidate.candidateName}</h4>
+                      <div className="flex items-center gap-2 mb-1">
+                        <button 
+                          className="font-semibold text-base hover:text-primary transition-colors cursor-pointer"
+                          onClick={() => {/* Handle view profile */}}
+                        >
+                          {candidate.candidateName}
+                        </button>
                         <Badge 
                           className={`text-xs font-medium border ${getAvailabilityColor(candidate.availability)}`}
                           variant="outline"
@@ -228,8 +233,8 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                           {candidate.availability}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">{candidate.candidateTitle}</p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                      <p className="text-sm text-muted-foreground mb-1">{candidate.candidateTitle}</p>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           Active {candidate.lastActive}
@@ -243,46 +248,45 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                     </div>
                   </div>
                   
-                  {/* Key Metrics Row */}
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="text-center p-3 bg-muted/30 rounded-lg">
+                  {/* Compact Metrics Row */}
+                  <div className="grid grid-cols-3 gap-3 mb-3">
+                    <div className="text-center p-2 bg-muted/30 rounded">
                       <div className="flex items-center justify-center gap-1 mb-1">
-                        <Star className="w-4 h-4 text-primary" />
-                        <span className="text-lg font-bold text-primary">{candidate.matchScore.toFixed(1)}</span>
+                        <Star className="w-3 h-3 text-primary" />
+                        <span className="text-sm font-bold text-primary">{candidate.matchScore.toFixed(1)}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground">Match Score</p>
+                      <p className="text-xs text-muted-foreground">Match</p>
                     </div>
                     
-                    <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <div className="text-center p-2 bg-muted/30 rounded">
                       <div className="flex items-center justify-center gap-1 mb-1">
-                        <DollarSign className="w-4 h-4" />
-                        <span className={`text-lg font-bold ${getSalaryMatchColor(candidate.salaryMatch)}`}>
+                        <DollarSign className="w-3 h-3" />
+                        <span className={`text-sm font-bold ${getSalaryMatchColor(candidate.salaryMatch)}`}>
                           {candidate.salaryMatch}%
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground">Salary Fit</p>
+                      <p className="text-xs text-muted-foreground">Salary</p>
                     </div>
                     
-                    <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <div className="text-center p-2 bg-muted/30 rounded">
                       <div className="flex items-center justify-center gap-1 mb-1">
-                        <Zap className="w-4 h-4" />
-                        <span className={`text-lg font-bold ${getResponseRateColor(candidate.responseRate)}`}>
+                        <Zap className="w-3 h-3" />
+                        <span className={`text-sm font-bold ${getResponseRateColor(candidate.responseRate)}`}>
                           {candidate.responseRate}%
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground">Response Rate</p>
+                      <p className="text-xs text-muted-foreground">Response</p>
                     </div>
                   </div>
                   
-                  {/* Skills Analysis */}
-                  <div className="mb-4">
-                    <p className="text-sm font-medium mb-3">Skills Analysis:</p>
-                    <div className="space-y-3">
+                  {/* Compact Skills Analysis */}
+                  <div className="mb-3">
+                    <div className="flex items-center gap-4">
                       {candidate.skillGapAnalysis.strength.length > 0 && (
-                        <div>
-                          <p className="text-xs text-green-700 font-medium mb-1">✅ Key Strengths</p>
-                          <div className="flex flex-wrap gap-2">
-                            {candidate.skillGapAnalysis.strength.map((skill, index) => (
+                        <div className="flex-1">
+                          <p className="text-xs text-green-700 font-medium mb-1">✅ Strengths</p>
+                          <div className="flex flex-wrap gap-1">
+                            {candidate.skillGapAnalysis.strength.slice(0, 2).map((skill, index) => (
                               <Badge key={index} className="text-xs bg-green-50 text-green-700 border-green-200">
                                 {skill}
                               </Badge>
@@ -292,10 +296,10 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                       )}
                       
                       {candidate.skillGapAnalysis.missing.length > 0 && (
-                        <div>
-                          <p className="text-xs text-orange-700 font-medium mb-1">📚 Growth Areas</p>
-                          <div className="flex flex-wrap gap-2">
-                            {candidate.skillGapAnalysis.missing.map((skill, index) => (
+                        <div className="flex-1">
+                          <p className="text-xs text-orange-700 font-medium mb-1">📚 Growth</p>
+                          <div className="flex flex-wrap gap-1">
+                            {candidate.skillGapAnalysis.missing.slice(0, 2).map((skill, index) => (
                               <Badge key={index} variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
                                 {skill}
                               </Badge>
@@ -305,25 +309,13 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                       )}
                     </div>
                   </div>
-                  
-                  {/* Compatibility Reasons */}
-                  <div className="mb-4">
-                    <p className="text-sm font-medium mb-2">Why They're Perfect:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {candidate.reasons.map((reason, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {reason}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
                 </div>
                 
-                {/* Action Buttons */}
-                <div className="flex flex-col gap-2 ml-6">
+                {/* Compact Action Buttons */}
+                <div className="flex flex-col gap-2 ml-4">
                   <Button
                     onClick={() => handleAddToOutreach(candidate.candidateId, candidate.jobId)}
-                    className="flex items-center gap-2 min-w-[160px]"
+                    className="flex items-center gap-2 min-w-[140px]"
                     size="sm"
                   >
                     <Send className="w-4 h-4" />
@@ -332,20 +324,11 @@ export default function CandidateMatches({ handleAddToOutreach }: CandidateMatch
                   
                   <Button
                     variant="outline"
-                    className="flex items-center gap-2 min-w-[160px]"
+                    className="flex items-center gap-2 min-w-[140px]"
                     size="sm"
                   >
-                    <Eye className="w-4 h-4" />
-                    View Profile
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    className="flex items-center gap-2 min-w-[160px]"
-                    size="sm"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    Schedule Interview
+                    <CheckCircle2 className="w-4 h-4" />
+                    Submit
                   </Button>
                 </div>
               </div>
