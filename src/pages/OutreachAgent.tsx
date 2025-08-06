@@ -13,6 +13,7 @@ import { MessageSquare, User, Mail, Phone, Calendar, Send, Eye, CheckCircle, Clo
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { usePageTitle } from "@/hooks/use-page-title";
+import OutreachCandidateModal from "@/components/OutreachCandidateModal";
 
 const candidatesFromPipeline = [
   {
@@ -138,6 +139,7 @@ export default function OutreachAgent() {
   const [isCreatingSequence, setIsCreatingSequence] = useState(false);
   const [editingSequence, setEditingSequence] = useState<string | null>(null);
   const [newSequenceName, setNewSequenceName] = useState("");
+  const [selectedCandidateForModal, setSelectedCandidateForModal] = useState<string | null>(null);
   const [automationConfig, setAutomationConfig] = useState({
     method: "email", // or "linkedin"
     frequency: "immediate", // later you could have options like "scheduled"
@@ -416,7 +418,12 @@ export default function OutreachAgent() {
                           <User className="w-6 h-6 text-primary" />
                         </div>
                         <div>
-                          <h4 className="font-medium">{candidate.name}</h4>
+                          <button 
+                            onClick={() => setSelectedCandidateForModal(candidate.id)}
+                            className="font-medium hover:text-primary cursor-pointer text-left"
+                          >
+                            {candidate.name}
+                          </button>
                           <p className="text-sm text-muted-foreground">{candidate.title}</p>
                           <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
                             <span className="flex items-center gap-1">
@@ -718,6 +725,13 @@ export default function OutreachAgent() {
           </Tabs>
         </div>
       </main>
+
+      {/* Candidate Detail Modal */}
+      <OutreachCandidateModal
+        candidate={candidatesFromPipeline.find(c => c.id === selectedCandidateForModal) || null}
+        open={!!selectedCandidateForModal}
+        onOpenChange={(open) => !open && setSelectedCandidateForModal(null)}
+      />
     </div>
   );
 }

@@ -8,11 +8,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown, BarChart3, Send } from "lucide-react";
+import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import FitScoreBreakdown from "@/components/FitScoreBreakdown";
-import { FeedbackAnalytics } from "@/components/FeedbackAnalytics";
+
 import { RescrapeReasonModal, RescrapeReason } from "@/components/RescrapeReasonModal";
 
 const dummyJobs = [
@@ -548,13 +548,6 @@ export default function SourcingAgent() {
               >
                 Sourcing History
               </TabsTrigger>
-              <TabsTrigger 
-                value="analytics" 
-                className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-              >
-                <BarChart3 className="w-4 h-4 mr-1" />
-                Analytics
-              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="sourcing">
@@ -1066,17 +1059,6 @@ export default function SourcingAgent() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="analytics">
-              <Card className="p-8 bg-card shadow-sm border">
-                <div className="mb-6">
-                  <h2 className="text-xl font-semibold mb-2">Rescrape Analytics & Insights</h2>
-                  <p className="text-muted-foreground">
-                    Track AI sourcing performance through rescrape feedback and improve candidate matching.
-                  </p>
-                </div>
-                <FeedbackAnalytics rescrapeReasons={rescrapeReasons} />
-              </Card>
-            </TabsContent>
           </Tabs>
         </div>
       </main>
