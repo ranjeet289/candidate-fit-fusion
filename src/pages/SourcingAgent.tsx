@@ -654,9 +654,6 @@ export default function SourcingAgent() {
                             Add {selectedCandidates.length} to Pipeline
                           </Button>
                         )}
-                        <Badge variant="outline" className="text-green-600 border-green-600 text-xs">
-                          8.2+ Fit Score Only
-                        </Badge>
                         <div className="text-xs text-muted-foreground">
                           {candidates.filter(c => c.inPipeline).length} in pipeline
                         </div>
