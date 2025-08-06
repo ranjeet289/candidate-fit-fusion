@@ -12,6 +12,7 @@ import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History,
 import { useToast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import FitScoreBreakdown from "@/components/FitScoreBreakdown";
+import { SourcingLoader } from "@/components/SourcingLoader";
 
 import { RescrapeReasonModal, RescrapeReason } from "@/components/RescrapeReasonModal";
 
@@ -617,14 +618,14 @@ export default function SourcingAgent() {
                   )}
 
                   <div className="flex gap-4">
-                    <Button 
+                     <Button 
                       onClick={handleStartSourcing}
                       disabled={isSearching || !selectedJob}
                       className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                       {isSearching ? (
                         <div className="flex items-center gap-2">
-                          <Globe className="w-4 h-4 animate-spin" />
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                           Scraping profiles across the internet...
                         </div>
                       ) : (
@@ -648,6 +649,9 @@ export default function SourcingAgent() {
                     )}
                   </div>
                 </div>
+
+                {/* Loading state for sourcing/rescraping */}
+                <SourcingLoader isVisible={isSearching} operation="sourcing" />
 
                 {candidates.length > 0 && (
                   <div>
@@ -911,7 +915,7 @@ export default function SourcingAgent() {
                           <div className="text-xs text-muted-foreground">In Pipeline</div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button
+                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => handleHistoryRescrape(session.id)}
@@ -920,7 +924,7 @@ export default function SourcingAgent() {
                           >
                             {rescrapeLoading === session.id ? (
                               <>
-                                <Globe className="w-3 h-3 animate-spin" />
+                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary"></div>
                                 Rescraping...
                               </>
                             ) : (
