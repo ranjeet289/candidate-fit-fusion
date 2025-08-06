@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown, BarChart3 } from "lucide-react";
+import { Target, User, MapPin, Briefcase, Star, Globe, Plus, RotateCcw, History, CheckCircle, ArrowRight, Mail, Copy, ChevronDown, BarChart3, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import FitScoreBreakdown from "@/components/FitScoreBreakdown";
@@ -496,6 +496,38 @@ export default function SourcingAgent() {
     });
   };
 
+  const handleSubmitCandidate = (candidateId: string) => {
+    const candidate = candidates.find(c => c.id === candidateId);
+    toast({
+      title: "Candidate Submitted",
+      description: `${candidate?.name} has been submitted to the client`,
+    });
+  };
+
+  const handleBulkSubmit = () => {
+    const candidateNames = selectedCandidates.map(id => 
+      candidates.find(c => c.id === id)?.name
+    ).filter(Boolean);
+    
+    setSelectedCandidates([]);
+    
+    toast({
+      title: "Candidates Submitted",
+      description: `${candidateNames.length} candidates have been submitted to the client`,
+    });
+  };
+
+  const handleHistorySubmitCandidate = (candidateId: string) => {
+    const candidate = history
+      .flatMap(s => s.candidates || [])
+      .find(c => c.id === candidateId);
+    
+    toast({
+      title: "Candidate Submitted",
+      description: `${candidate?.name} has been submitted to the client`,
+    });
+  };
+
   const selectedJobData = dummyJobs.find(job => job.id === selectedJob);
 
   return (
@@ -642,22 +674,33 @@ export default function SourcingAgent() {
                             </label>
                           </div>
                         )}
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {selectedCandidates.length > 0 && (
-                          <Button 
-                            onClick={handleBulkAddToPipeline}
-                            size="sm"
-                            className="h-8 text-xs bg-primary hover:bg-primary/90"
-                          >
-                            <Plus className="w-3 h-3 mr-1" />
-                            Add {selectedCandidates.length} to Pipeline
-                          </Button>
-                        )}
-                        <div className="text-xs text-muted-foreground">
-                          {candidates.filter(c => c.inPipeline).length} in pipeline
-                        </div>
-                      </div>
+                       </div>
+                       <div className="flex items-center gap-3">
+                         {selectedCandidates.length > 0 && (
+                           <>
+                             <Button 
+                               onClick={handleBulkAddToPipeline}
+                               size="sm"
+                               className="h-8 text-xs bg-primary hover:bg-primary/90"
+                             >
+                               <Plus className="w-3 h-3 mr-1" />
+                               Add {selectedCandidates.length} to Pipeline
+                             </Button>
+                             <Button 
+                               onClick={handleBulkSubmit}
+                               size="sm"
+                               variant="outline"
+                               className="h-8 text-xs"
+                             >
+                               <ArrowRight className="w-3 h-3 mr-1" />
+                               Submit now {selectedCandidates.length}
+                             </Button>
+                           </>
+                         )}
+                         <div className="text-xs text-muted-foreground">
+                           {candidates.filter(c => c.inPipeline).length} in pipeline
+                         </div>
+                       </div>
                     </div>
                     <div className="grid gap-3">
                       {candidates.map((candidate) => (
@@ -812,14 +855,25 @@ export default function SourcingAgent() {
 
                           <div className="flex gap-2">
                             {!candidate.inPipeline ? (
-                              <Button 
-                                size="sm" 
-                                className="bg-primary text-white h-8 text-xs"
-                                onClick={() => handleAddToPipeline(candidate.id)}
-                              >
-                                <Plus className="w-3 h-3 mr-1" />
-                                Add to Pipeline
-                              </Button>
+                              <>
+                                <Button 
+                                  size="sm" 
+                                  className="bg-primary text-white h-8 text-xs"
+                                  onClick={() => handleAddToPipeline(candidate.id)}
+                                >
+                                  <Plus className="w-3 h-3 mr-1" />
+                                  Add to Pipeline
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  className="h-8 text-xs"
+                                  onClick={() => handleSubmitCandidate(candidate.id)}
+                                >
+                                  <ArrowRight className="w-3 h-3 mr-1" />
+                                  Submit now
+                                </Button>
+                              </>
                             ) : (
                               <Button size="sm" variant="outline" className="h-8 text-xs" asChild>
                                 <a href="/outreach-agent">
@@ -979,14 +1033,24 @@ export default function SourcingAgent() {
                                         </a>
                                       </Button>
                                     ) : (
-                                      <Button 
-                                        size="sm" 
-                                        className="bg-primary text-white"
-                                        onClick={() => handleMoveToPipeline(candidate.id, session.id)}
-                                      >
-                                        <Plus className="w-3 h-3 mr-1" />
-                                        Add to Pipeline
-                                      </Button>
+                                      <>
+                                        <Button 
+                                          size="sm" 
+                                          className="bg-primary text-white"
+                                          onClick={() => handleMoveToPipeline(candidate.id, session.id)}
+                                        >
+                                          <Plus className="w-3 h-3 mr-1" />
+                                          Add to Pipeline
+                                        </Button>
+                                        <Button 
+                                          size="sm" 
+                                          variant="outline"
+                                          onClick={() => handleHistorySubmitCandidate(candidate.id)}
+                                        >
+                                          <ArrowRight className="w-3 h-3 mr-1" />
+                                          Submit now
+                                        </Button>
+                                      </>
                                     )}
                                   </div>
                                 </Card>
