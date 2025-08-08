@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useEntities } from "@/context/EntityContext";
 import { Search, MapPin, Linkedin, FileText, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 // Simple tokenization
 function tokenize(text: string): string[] {
@@ -45,13 +47,16 @@ function vectorize(tokens: string[]): Record<string, number> {
 }
 
 export default function ATSSearchPage() {
-  const { candidates } = useEntities();
+  const { candidates, jobs } = useEntities();
   const [jd, setJd] = useState("");
   const [role, setRole] = useState("");
   const [location, setLocation] = useState("");
   const [mode, setMode] = useState<"keyword" | "semantic" | "both">("both");
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<any | null>(null);
+  const [submitOpen, setSubmitOpen] = useState(false);
+  const [submitCandidate, setSubmitCandidate] = useState<any | null>(null);
+  const [selectedJobId, setSelectedJobId] = useState<string>("");
 
   const queryText = `${role} ${jd} ${location}`.trim();
 
@@ -105,6 +110,24 @@ export default function ATSSearchPage() {
   const onOpen = (c: any) => {
     setActive(c);
     setOpen(true);
+  };
+
+  const openSubmit = (c: any) => {
+    setSubmitCandidate(c);
+    setSelectedJobId("");
+    setSubmitOpen(true);
+  };
+
+  const handleSubmitNow = () => {
+    if (!submitCandidate) return;
+    if (!selectedJobId) {
+      toast.error("Please select a job JD to submit.");
+      return;
+    }
+    const job = jobs.find((j: any) => String(j.id) === String(selectedJobId));
+    toast.success(`Submitted ${submitCandidate.name} to ${job?.title || selectedJobId}`);
+    setSubmitOpen(false);
+    setSubmitCandidate(null);
   };
 
   return (
@@ -197,6 +220,9 @@ export default function ATSSearchPage() {
                         {r.why || "Relevant profile based on semantic similarity"}
                       </div>
                       <div className="flex items-center gap-2">
+                        <Button size="sm" onClick={() => openSubmit(c)}>
+                          Submit now
+                        </Button>
                         <Button variant="outline" size="sm" asChild disabled={!resume}>
                           <a href={resume || "#"} target="_blank" rel="noopener noreferrer">
                             <FileText className="w-4 h-4 mr-1" /> View Resume
@@ -250,6 +276,41 @@ export default function ATSSearchPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <Dialog open={submitOpen} onOpenChange={setSubmitOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Submit candidate to a Job</DialogTitle>
+          </DialogHeader>
+          {submitCandidate ? (
+            <div className="space-y-4">
+              <div className="text-sm text-muted-foreground">
+                Candidate: <span className="font-medium text-foreground">{submitCandidate.name}</span>
+              </div>
+              <div>
+                <label className="block font-semibold mb-2">Select Job (JD)</label>
+                <Select value={selectedJobId} onValueChange={setSelectedJobId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a job" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {jobs.map((j: any) => (
+                      <SelectItem key={j.id} value={String(j.id)}>
+                        {j.title} — {j.company}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2 justify-end pt-2">
+                <Button variant="outline" onClick={() => setSubmitOpen(false)}>Cancel</Button>
+                <Button onClick={handleSubmitNow} disabled={!selectedJobId}>Submit now</Button>
+              </div>
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
