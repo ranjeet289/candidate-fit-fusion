@@ -11,6 +11,7 @@ import Users from './pages/Users';
 import SourcingAgent from './pages/SourcingAgent';
 import OutreachAgent from './pages/OutreachAgent';
 import RecommendationAgent from './pages/RecommendationAgent';
+import ATSSearch from './pages/ATSSearch';
 import AIRecruiter from './pages/AIRecruiter';
 import AIAgentsOverview from './pages/AIAgentsOverview';
 import NotFound from './pages/NotFound';
@@ -33,17 +34,18 @@ function App() {
             
             {/* Page content */}
             <div className="flex-1">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/overview" element={<Overview />} />
-                <Route path="/jobs" element={<Jobs />} />
-                <Route path="/candidates" element={<Candidates />} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/sourcing-agent" element={<SourcingAgent />} />
-                <Route path="/outreach-agent" element={<OutreachAgent />} />
-                <Route path="/recommendation-agent" element={<RecommendationAgent />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/overview" element={<Overview />} />
+                  <Route path="/jobs" element={<Jobs />} />
+                  <Route path="/candidates" element={<Candidates />} />
+                  <Route path="/users" element={<Users />} />
+                  <Route path="/sourcing-agent" element={<SourcingAgent />} />
+                  <Route path="/outreach-agent" element={<OutreachAgent />} />
+                  <Route path="/recommendation-agent" element={<RecommendationAgent />} />
+                  <Route path="/ats-search" element={<ATSSearch />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
             </div>
           </main>
         </div>
