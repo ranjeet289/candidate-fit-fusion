@@ -318,7 +318,13 @@ export default function ATSSearchPage() {
               <Input
                 value={roleInput}
                 onChange={(e) => setRoleInput(e.target.value)}
-                placeholder="Search by role, title, keywords"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    onSearchClick();
+                  }
+                }}
+                placeholder="Search by role, title, keywords - Press Enter to search"
                 className="pl-9"
               />
             </div>
@@ -329,9 +335,6 @@ export default function ATSSearchPage() {
           <div className="flex items-center gap-2">
             <Button variant="secondary" disabled={selectedIds.size === 0} onClick={openBulkSubmit}>
               <CheckSquare className="w-4 h-4 mr-2" /> Submit Selected
-            </Button>
-            <Button variant="default" disabled={!canSearch} onClick={onSearchClick}>
-              <Search className="w-4 h-4 mr-2" /> Search
             </Button>
           </div>
         </div>
