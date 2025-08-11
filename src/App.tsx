@@ -43,7 +43,6 @@ function App() {
                   <Route path="/sourcing-agent" element={<SourcingAgent />} />
                   <Route path="/outreach-agent" element={<OutreachAgent />} />
                   <Route path="/recommendation-agent" element={<RecommendationAgent />} />
-                  <Route path="/ats-search" element={<ATSSearch />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>
