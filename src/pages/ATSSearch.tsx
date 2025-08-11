@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useEntities } from "@/context/EntityContext";
-import { Search, MapPin, Linkedin, FileText, Filter, CheckSquare, Mail, Copy } from "lucide-react";
+import { Search, MapPin, Linkedin, FileText, Filter, CheckSquare, Mail, Copy, X } from "lucide-react";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { usePageTitle } from "@/hooks/use-page-title";
@@ -120,6 +120,16 @@ export default function ATSSearchPage() {
     setAppliedRole(roleInput);
     setAppliedFilters(draftFilters);
   };
+
+  const onClearResults = () => {
+    setRoleInput("");
+    setAppliedRole("");
+    setDraftFilters(emptyFilters);
+    setAppliedFilters(emptyFilters);
+    setSelectedIds(new Set());
+    toast.success("Search results cleared");
+  };
+
   const applyFiltersOnly = () => {
     setAppliedFilters(draftFilters);
     setFiltersOpen(false);
@@ -350,6 +360,11 @@ export default function ATSSearchPage() {
             </Button>
           </div>
           <div className="flex items-center gap-2">
+            {(queryText || hasAppliedFilters) && (
+              <Button variant="outline" onClick={onClearResults}>
+                <X className="w-4 h-4 mr-2" /> Clear Results
+              </Button>
+            )}
             <Button variant="secondary" disabled={selectedIds.size === 0} onClick={openBulkSubmit}>
               <CheckSquare className="w-4 h-4 mr-2" /> Submit Selected
             </Button>
