@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useEntities } from "@/context/EntityContext";
-import { Search, MapPin, Linkedin, FileText, Filter, CheckSquare } from "lucide-react";
+import { Search, MapPin, Linkedin, FileText, Filter, CheckSquare, Mail, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { usePageTitle } from "@/hooks/use-page-title";
@@ -78,6 +78,11 @@ const emptyFilters: Filters = {
 };
 
 export default function ATSSearchPage() {
+  const copyEmail = (email: string) => {
+    navigator.clipboard.writeText(email);
+    toast.success("Email copied to clipboard");
+  };
+
   const { candidates, jobs } = useEntities();
   const { setTitle } = usePageTitle();
 
@@ -425,6 +430,18 @@ export default function ATSSearchPage() {
                              <MapPin className="w-3.5 h-3.5" /> {c.location}
                            </span>
                          )}
+                       </div>
+                       <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                         <Mail className="w-3 h-3" />
+                         <span>{c.email || `${c.name.toLowerCase().replace(' ', '.')}@email.com`}</span>
+                         <Button 
+                           variant="ghost" 
+                           size="sm" 
+                           className="h-4 w-4 p-0 ml-1"
+                           onClick={() => copyEmail(c.email || `${c.name.toLowerCase().replace(' ', '.')}@email.com`)}
+                         >
+                           <Copy className="w-3 h-3 text-gray-500" />
+                         </Button>
                        </div>
                        {Array.isArray(c.skills) && (
                          <div className="flex flex-wrap gap-1 mt-1">
