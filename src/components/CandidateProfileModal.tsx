@@ -18,8 +18,12 @@ import {
   Building,
   Award,
   DollarSign,
-  ArrowRight
+  ArrowRight,
+  Copy,
+  Download,
+  Linkedin
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface CandidateProfileModalProps {
   isOpen: boolean;
@@ -50,6 +54,10 @@ export default function CandidateProfileModal({
   onSubmit,
   isOutreachSent 
 }: CandidateProfileModalProps) {
+  const copyEmail = (email: string) => {
+    navigator.clipboard.writeText(email);
+    toast.success("Email copied to clipboard");
+  };
   // Mock evaluation data based on the JSON structure
   const evaluationData = {
     breakdown: {
@@ -116,6 +124,14 @@ export default function CandidateProfileModal({
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <h2 className="text-lg font-bold">{candidate.candidateName}</h2>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                    <Linkedin className="w-4 h-4 text-blue-600" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                    <Download className="w-4 h-4 text-gray-600" />
+                  </Button>
+                </div>
                 <div className="flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full">
                   <Star className="w-3 h-3 text-primary" />
                   <span className="text-xs font-bold text-primary">{candidate.matchScore.toFixed(1)}</span>
@@ -137,7 +153,7 @@ export default function CandidateProfileModal({
             </div>
             
             {/* Action Buttons */}
-            <div className="flex flex-col gap-1">
+            <div className="flex gap-2">
               {isOutreachSent ? (
                 <Button disabled variant="outline" size="sm" className="bg-green-50 border-green-200 text-green-700 text-xs">
                   <CheckCircle2 className="w-3 h-3 mr-1" />
@@ -168,6 +184,14 @@ export default function CandidateProfileModal({
                 <div className="flex items-center gap-1">
                   <Mail className="w-3 h-3 text-muted-foreground" />
                   <span>{candidateProfile?.email}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-4 w-4 p-0 ml-1"
+                    onClick={() => copyEmail(candidateProfile?.email || '')}
+                  >
+                    <Copy className="w-3 h-3 text-gray-500" />
+                  </Button>
                 </div>
                 <div className="flex items-center gap-1">
                   <Phone className="w-3 h-3 text-muted-foreground" />

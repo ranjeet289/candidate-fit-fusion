@@ -2,7 +2,8 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, MapPin, Calendar, Star, Eye, Linkedin, Copy } from "lucide-react";
+import { User, MapPin, Calendar, Star, Eye, Linkedin, Copy, Download, Mail } from "lucide-react";
+import { toast } from "sonner";
 
 interface CandidateCardViewProps {
   candidates: any[];
@@ -10,6 +11,11 @@ interface CandidateCardViewProps {
 }
 
 export default function CandidateCardView({ candidates, onViewProfile }: CandidateCardViewProps) {
+  const copyEmail = (email: string) => {
+    navigator.clipboard.writeText(email);
+    toast.success("Email copied to clipboard");
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Active': return 'bg-green-100 text-green-800 border-green-200';
@@ -40,14 +46,41 @@ export default function CandidateCardView({ candidates, onViewProfile }: Candida
               <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                 <User className="w-5 h-5 text-primary" />
               </div>
-              <div>
-                <h3 className="font-semibold">{candidate.name}</h3>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-semibold">{candidate.name}</h3>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                      <Linkedin className="w-3 h-3 text-blue-600" />
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                      <Download className="w-3 h-3 text-gray-600" />
+                    </Button>
+                  </div>
+                </div>
                 <p className="text-sm text-muted-foreground">{candidate.title}</p>
+                <div className="flex items-center gap-2 text-sm mt-1">
+                  <Mail className="w-3 h-3 text-muted-foreground" />
+                  <span className="text-muted-foreground">{candidate.email || `${candidate.name.toLowerCase().replace(' ', '.')}@email.com`}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-4 w-4 p-0"
+                    onClick={() => copyEmail(candidate.email || `${candidate.name.toLowerCase().replace(' ', '.')}@email.com`)}
+                  >
+                    <Copy className="w-3 h-3 text-gray-500" />
+                  </Button>
+                </div>
               </div>
             </div>
-            <Badge className={`${getStatusColor(candidate.stage)} text-xs`}>
-              {candidate.stage}
-            </Badge>
+            <div className="flex flex-col gap-2">
+              <Badge className={`${getStatusColor(candidate.stage)} text-xs`}>
+                {candidate.stage}
+              </Badge>
+              <Button variant="outline" size="sm" className="text-xs">
+                Submit now
+              </Button>
+            </div>
           </div>
           
           <div className="space-y-2 mb-4">
@@ -71,7 +104,7 @@ export default function CandidateCardView({ candidates, onViewProfile }: Candida
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex justify-start">
             <Button
               variant="outline"
               size="sm"
@@ -80,14 +113,6 @@ export default function CandidateCardView({ candidates, onViewProfile }: Candida
               <Eye className="w-4 h-4 mr-2" />
               View Profile
             </Button>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm">
-                <Linkedin className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Copy className="w-4 h-4" />
-              </Button>
-            </div>
           </div>
         </Card>
       ))}

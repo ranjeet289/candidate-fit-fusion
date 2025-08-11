@@ -2,7 +2,8 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, MoreHorizontal, Eye, Copy, Linkedin } from "lucide-react";
+import { User, MoreHorizontal, Eye, Copy, Linkedin, Download, Mail } from "lucide-react";
+import { toast } from "sonner";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -24,6 +25,11 @@ interface CandidateTableViewProps {
 }
 
 export default function CandidateTableView({ candidates, onViewProfile }: CandidateTableViewProps) {
+  const copyEmail = (email: string) => {
+    navigator.clipboard.writeText(email);
+    toast.success("Email copied to clipboard");
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Active': return 'bg-green-100 text-green-700 border-green-200';
@@ -58,6 +64,7 @@ export default function CandidateTableView({ candidates, onViewProfile }: Candid
               <TableHead className="text-gray-600 font-medium">Fit Score</TableHead>
               <TableHead className="text-gray-600 font-medium">Stage</TableHead>
               <TableHead className="text-gray-600 font-medium">Date Added</TableHead>
+              <TableHead className="text-gray-600 font-medium">Submit</TableHead>
               <TableHead className="text-gray-600 font-medium">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -70,8 +77,30 @@ export default function CandidateTableView({ candidates, onViewProfile }: Candid
                       <User className="w-4 h-4 text-blue-600" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">{candidate.name}</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="font-medium text-gray-900">{candidate.name}</div>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="sm" className="h-5 w-5 p-0">
+                            <Linkedin className="w-3 h-3 text-blue-600" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-5 w-5 p-0">
+                            <Download className="w-3 h-3 text-gray-600" />
+                          </Button>
+                        </div>
+                      </div>
                       <div className="text-sm text-gray-500">{candidate.location}</div>
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <Mail className="w-3 h-3" />
+                        <span>{candidate.email || `${candidate.name.toLowerCase().replace(' ', '.')}@email.com`}</span>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-4 w-4 p-0 ml-1"
+                          onClick={() => copyEmail(candidate.email || `${candidate.name.toLowerCase().replace(' ', '.')}@email.com`)}
+                        >
+                          <Copy className="w-3 h-3 text-gray-500" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </TableCell>
@@ -94,6 +123,11 @@ export default function CandidateTableView({ candidates, onViewProfile }: Candid
                   </Badge>
                 </TableCell>
                 <TableCell className="py-4 text-sm text-gray-600">{candidate.dateAdded}</TableCell>
+                <TableCell className="py-4">
+                  <Button variant="outline" size="sm" className="text-xs">
+                    Submit now
+                  </Button>
+                </TableCell>
                 <TableCell className="py-4">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
