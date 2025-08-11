@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -47,115 +46,155 @@ function vectorize(tokens: string[]): Record<string, number> {
   return v;
 }
 
+interface Filters {
+  locations: string[];
+  skillsInclude: string[];
+  skillsExclude: string[];
+  currentCompanies: string[];
+  pastCompanies: string[];
+  schools: string[];
+}
+
+const emptyFilters: Filters = {
+  locations: [],
+  skillsInclude: [],
+  skillsExclude: [],
+  currentCompanies: [],
+  pastCompanies: [],
+  schools: [],
+};
+
 export default function ATSSearchPage() {
   const { candidates, jobs } = useEntities();
+  const { setTitle } = usePageTitle();
+
+  // Put title in global header next to notification icon
+  useEffect(() => {
+    setTitle("ATS Candidate Search");
+  }, [setTitle]);
+
   // Draft inputs (change freely)
   const [roleInput, setRoleInput] = useState("");
-  const [jdInput, setJdInput] = useState("");
-  const [locationInput, setLocationInput] = useState("");
   // Applied inputs (used for searching)
   const [appliedRole, setAppliedRole] = useState("");
-  const [appliedJd, setAppliedJd] = useState("");
-  const [appliedLocation, setAppliedLocation] = useState("");
   const [mode, setMode] = useState<"keyword" | "semantic" | "both">("both");
+
+  // Filters: draft vs applied so changes only take effect on Apply/Search
+  const [draftFilters, setDraftFilters] = useState<Filters>(emptyFilters);
+  const [appliedFilters, setAppliedFilters] = useState<Filters>(emptyFilters);
+
+  // UI state
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<any | null>(null);
+
+  // Submit single
   const [submitOpen, setSubmitOpen] = useState(false);
   const [submitCandidate, setSubmitCandidate] = useState<any | null>(null);
   const [selectedJobId, setSelectedJobId] = useState<string>("");
 
-  // Filters: draft vs applied so changes only take effect on Apply/Search
-  const defaultFilters = { stage: "all", titleInclude: "", skillsInclude: "", skillsExclude: "" };
-  const [draftFilters, setDraftFilters] = useState(defaultFilters);
-  const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
+  // Bulk selection + submit
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkJobId, setBulkJobId] = useState<string>("");
 
-  const queryText = `${appliedRole} ${appliedJd} ${appliedLocation}`.trim();
-  const hasQueryOrFilters =
-    Boolean(queryText) ||
-    Boolean(
-      appliedFilters.titleInclude ||
-        appliedFilters.skillsInclude ||
-        appliedFilters.skillsExclude ||
-        (appliedFilters.stage && appliedFilters.stage !== "all")
-    );
-  
-  // Stage options (align with Candidates page)
-  const stages = ['all', 'Active', 'Submitted to AM', 'Submitted to Client', 'Sendout', 'Next Interview', 'Final Interview', 'Offer', 'Rejected'];
-  
-  // Handlers to control when search actually runs
-  const applyFiltersOnly = () => setAppliedFilters(draftFilters);
   const onSearchClick = () => {
     setAppliedRole(roleInput);
-    setAppliedJd(jdInput);
-    setAppliedLocation(locationInput);
     setAppliedFilters(draftFilters);
   };
+  const applyFiltersOnly = () => {
+    setAppliedFilters(draftFilters);
+    setFiltersOpen(false);
+  };
 
-  // Draft activity vs applied activity
-  const draftQueryText = `${roleInput} ${jdInput} ${locationInput}`.trim();
-  const hasDraftFilters = Boolean(
-    draftFilters.titleInclude ||
-    draftFilters.skillsInclude ||
-    draftFilters.skillsExclude ||
-    (draftFilters.stage && draftFilters.stage !== "all")
-  );
-  const canSearch = Boolean(draftQueryText || hasDraftFilters);
+  const hasDraftFilters = Object.values(draftFilters).some((v) => v.length > 0);
+  const canSearch = Boolean(roleInput.trim() || hasDraftFilters);
+  const hasAppliedFilters = Object.values(appliedFilters).some((v) => v.length > 0);
 
+  // Extract suggestions from candidate data when available
+  const suggestions = useMemo(() => {
+    const locs = unique(
+      candidates
+        .map((c: any) => c.location)
+        .filter(Boolean)
+        .map((s: string) => String(s))
+    ) as string[];
+
+    const skills = unique(
+      candidates.flatMap((c: any) => (Array.isArray(c.skills) ? c.skills : [])).map((s) => String(s))
+    ) as string[];
+
+    const currCompanies = unique(
+      candidates
+        .map((c: any) => c.currentCompany || c.company)
+        .filter(Boolean)
+        .map((s: string) => String(s))
+    ) as string[];
+
+    const pastCompanies = unique(
+      candidates.flatMap((c: any) => (Array.isArray(c.pastCompanies) ? c.pastCompanies : [])).map((s) => String(s))
+    ) as string[];
+
+    const schools = unique(
+      candidates.flatMap((c: any) =>
+        Array.isArray(c.schools)
+          ? c.schools
+          : Array.isArray(c.education)
+          ? c.education
+          : c.school
+          ? [c.school]
+          : []
+      ).map((s: any) => String(s))
+    ) as string[];
+
+    return { locs, skills, currCompanies, pastCompanies, schools };
+  }, [candidates]);
+
+  const queryText = `${appliedRole}`.trim();
   const results = useMemo(() => {
-    const filtersActive = Boolean(
-      appliedFilters.titleInclude ||
-        appliedFilters.skillsInclude ||
-        appliedFilters.skillsExclude ||
-        (appliedFilters.stage && appliedFilters.stage !== "all")
-    );
+    const filtersActive = hasAppliedFilters;
     if (!queryText && !filtersActive) return [] as any[];
+
     const qTokens = tokenize(queryText);
     const qVec = vectorize(qTokens);
 
-    const titleNeedle = (appliedFilters.titleInclude || "").toLowerCase().trim();
-    const includeSkills = (appliedFilters.skillsInclude || "")
-      .toLowerCase()
-      .split(/[\,\s]+/)
-      .map((s) => s.trim())
-      .filter(Boolean);
-    const excludeSkills = (appliedFilters.skillsExclude || "")
-      .toLowerCase()
-      .split(/[\,\s]+/)
-      .map((s) => s.trim())
-      .filter(Boolean);
-
     return candidates
       .map((c: any) => {
-        const textParts = [c.name, c.title, c.location, Array.isArray(c.skills) ? c.skills.join(" ") : (c.skills || "")].filter(Boolean);
+        const textParts = [c.name, c.title, c.location, Array.isArray(c.skills) ? c.skills.join(" ") : c.skills || ""].filter(Boolean);
         const blob = textParts.join(" ").toLowerCase();
         const cTokens = tokenize(blob);
         const cVec = vectorize(cTokens);
 
-        // Keyword score: count of query tokens present + bonus for location match
         const matched = unique(qTokens.filter((t) => cTokens.includes(t)));
         let keywordScore = matched.length;
-        if (appliedLocation && c.location && String(c.location).toLowerCase().includes(appliedLocation.toLowerCase())) keywordScore += 1.5;
 
-        // Semantic score via cosine on bag-of-words
+        // Location bonus if any of the applied locations match
+        if (
+          appliedFilters.locations.length > 0 && c.location && typeof c.location === "string" &&
+          appliedFilters.locations.some((loc) => String(c.location).toLowerCase().includes(String(loc).toLowerCase()))
+        ) {
+          keywordScore += 1.5;
+        }
+
         const semanticScore = cosineSim(qVec, cVec);
-
         let finalScore = 0;
         if (mode === "keyword") finalScore = keywordScore;
-        else if (mode === "semantic") finalScore = semanticScore * 10; // scale to be comparable
+        else if (mode === "semantic") finalScore = semanticScore * 10;
         else finalScore = keywordScore * 0.5 + semanticScore * 10 * 0.5;
 
-        // Why shown snippet
         const why: string[] = [];
         if (matched.length) why.push(`Matched terms: ${matched.slice(0, 5).join(", ")}`);
-        if (appliedLocation && c.location && String(c.location).toLowerCase().includes(appliedLocation.toLowerCase())) why.push(`Location match: ${c.location}`);
-        if (titleNeedle && String(c.title || "").toLowerCase().includes(titleNeedle)) why.push(`Title match: ${String(c.title || "").slice(0, 40)}`);
+        if (
+          appliedFilters.locations.length > 0 && c.location &&
+          appliedFilters.locations.some((loc) => String(c.location).toLowerCase().includes(String(loc).toLowerCase()))
+        )
+          why.push(`Location match: ${c.location}`);
         if (Array.isArray(c.skills)) {
           const cSkillsLower = c.skills.map((s: string) => String(s).toLowerCase());
-          const incHit = includeSkills.filter((s) => cSkillsLower.includes(s));
+          const incHit = appliedFilters.skillsInclude.filter((s) => cSkillsLower.includes(String(s).toLowerCase()));
           if (incHit.length) why.push(`Skills: ${incHit.slice(0, 5).join(", ")}`);
         }
         if (!why.length && semanticScore > 0) {
-          // Take overlapping top tokens as justification
           const overlaps = unique(cTokens.filter((t) => qTokens.includes(t))).slice(0, 5);
           if (overlaps.length) why.push(`Relevant skills/keywords: ${overlaps.join(", ")}`);
         }
@@ -170,22 +209,50 @@ export default function ATSSearchPage() {
       })
       .filter((r) => {
         const c = r.candidate;
-        if (appliedFilters.stage && appliedFilters.stage !== "all") {
-          if (!c.stage || c.stage !== appliedFilters.stage) return false;
-        }
-        if (titleNeedle && !String(c.title || "").toLowerCase().includes(titleNeedle)) return false;
+        // Skills include: require all
         const cSkills = Array.isArray(c.skills) ? c.skills.map((s: string) => String(s).toLowerCase()) : [];
-        if (includeSkills.length > 0) {
-          for (const s of includeSkills) if (!cSkills.includes(s)) return false;
+        if (appliedFilters.skillsInclude.length > 0) {
+          for (const s of appliedFilters.skillsInclude) if (!cSkills.includes(String(s).toLowerCase())) return false;
         }
-        if (excludeSkills.length > 0) {
-          for (const s of excludeSkills) if (cSkills.includes(s)) return false;
+        if (appliedFilters.skillsExclude.length > 0) {
+          for (const s of appliedFilters.skillsExclude) if (cSkills.includes(String(s).toLowerCase())) return false;
+        }
+        // Location: any of selected
+        if (appliedFilters.locations.length > 0) {
+          if (!c.location) return false;
+          const locOk = appliedFilters.locations.some((loc) => String(c.location).toLowerCase().includes(String(loc).toLowerCase()));
+          if (!locOk) return false;
+        }
+        // Current company
+        if (appliedFilters.currentCompanies.length > 0) {
+          const curr = c.currentCompany || c.company;
+          if (!curr) return false;
+          const ok = appliedFilters.currentCompanies.some((co) => String(curr).toLowerCase().includes(String(co).toLowerCase()));
+          if (!ok) return false;
+        }
+        // Past companies
+        if (appliedFilters.pastCompanies.length > 0) {
+          const past: string[] = Array.isArray(c.pastCompanies) ? c.pastCompanies : [];
+          const ok = past.length > 0 && appliedFilters.pastCompanies.some((co) => past.map((p) => String(p).toLowerCase()).includes(String(co).toLowerCase()));
+          if (!ok) return false;
+        }
+        // Schools
+        if (appliedFilters.schools.length > 0) {
+          const schools: string[] = Array.isArray(c.schools)
+            ? c.schools
+            : Array.isArray(c.education)
+            ? c.education
+            : c.school
+            ? [c.school]
+            : [];
+          const ok = schools.length > 0 && appliedFilters.schools.some((s) => schools.map((p) => String(p).toLowerCase()).includes(String(s).toLowerCase()));
+          if (!ok) return false;
         }
         if (r.score <= 0 && !filtersActive) return false;
         return true;
       })
       .sort((a, b) => b.score - a.score);
-  }, [candidates, appliedJd, appliedRole, appliedLocation, mode, queryText, appliedFilters]);
+  }, [candidates, appliedRole, mode, queryText, appliedFilters, hasAppliedFilters]);
 
   const onOpen = (c: any) => {
     setActive(c);
@@ -210,118 +277,102 @@ export default function ATSSearchPage() {
     setSubmitCandidate(null);
   };
 
+  // Bulk submit
+  const toggleAll = (checked: boolean) => {
+    if (!checked) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(results.map((r) => String(r.candidate.id || r.candidate.name))));
+    }
+  };
+  const toggleOne = (id: string, checked: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
+  const openBulkSubmit = () => {
+    if (selectedIds.size === 0) return;
+    setBulkJobId("");
+    setBulkOpen(true);
+  };
+  const handleBulkSubmit = () => {
+    if (!bulkJobId) {
+      toast.error("Please select a job JD to submit.");
+      return;
+    }
+    const job = jobs.find((j: any) => String(j.id) === String(bulkJobId));
+    toast.success(`Submitted ${selectedIds.size} candidate(s) to ${job?.title || bulkJobId}`);
+    setBulkOpen(false);
+    setSelectedIds(new Set());
+  };
+
   return (
     <div className="flex-1 p-4 md:p-8 space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">ATS Candidate Search</h1>
-        <p className="text-muted-foreground">Search the database using a JD brief, role, and location with keyword and AI semantic matching.</p>
-      </header>
-
-      <section className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
-          <Card className="p-4 lg:col-span-1 space-y-4">
-            <div>
-              <label className="block font-semibold mb-2">Role</label>
-              <Input value={roleInput} onChange={(e) => setRoleInput(e.target.value)} placeholder="e.g., Senior Frontend Engineer" />
+      {/* Top bar aligned with app header: title already moved to header */}
+      <section className="flex flex-col gap-3">
+        <div className="flex flex-col md:flex-row md:items-center gap-3 justify-between">
+          <div className="flex-1 flex items-center gap-2">
+            <div className="relative w-full">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={roleInput}
+                onChange={(e) => setRoleInput(e.target.value)}
+                placeholder="Search by role, title, keywords"
+                className="pl-9"
+              />
             </div>
-            <div>
-              <label className="block font-semibold mb-2">Location</label>
-              <Input value={locationInput} onChange={(e) => setLocationInput(e.target.value)} placeholder="e.g., Bengaluru, Remote" />
-            </div>
-            <div>
-              <label className="block font-semibold mb-2">JD Brief</label>
-              <Textarea value={jdInput} onChange={(e) => setJdInput(e.target.value)} placeholder="Paste a short JD or requirements…" className="min-h-[140px]" />
-            </div>
-
-            <div className="space-y-3 pt-1">
-              <div className="text-sm font-semibold">Filters</div>
-              <div>
-                <label className="block text-sm mb-1">Title contains</label>
-                <Input
-                  value={draftFilters.titleInclude}
-                  onChange={(e) => setDraftFilters({ ...draftFilters, titleInclude: e.target.value })}
-                  placeholder="e.g., frontend, recruiter"
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm mb-1">Skills include</label>
-                  <Input
-                    value={draftFilters.skillsInclude}
-                    onChange={(e) => setDraftFilters({ ...draftFilters, skillsInclude: e.target.value })}
-                    placeholder="e.g., react, typescript"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm mb-1">Skills exclude</label>
-                  <Input
-                    value={draftFilters.skillsExclude}
-                    onChange={(e) => setDraftFilters({ ...draftFilters, skillsExclude: e.target.value })}
-                    placeholder="e.g., angular, php"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm mb-1">Stage</label>
-                <Select value={draftFilters.stage} onValueChange={(val) => setDraftFilters({ ...draftFilters, stage: val })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All stages" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stages.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {s === 'all' ? 'All' : s}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant="secondary" onClick={applyFiltersOnly}>Apply filters</Button>
-                <span className="text-xs text-muted-foreground">Results update only when you click Search or Apply filters.</span>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm text-muted-foreground">Match Mode:</span>
-              <div className="flex rounded-md border border-border overflow-hidden">
-                {(["keyword", "semantic", "both"] as const).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => setMode(m)}
-                    className={`px-3 py-1.5 text-sm ${mode === m ? "bg-primary text-primary-foreground" : "bg-background text-foreground hover:bg-muted"}`}
-                    aria-pressed={mode === m}
-                  >
-                    {m === "semantic" ? (
-                      <span className="inline-flex items-center gap-1"><Sparkles className="w-4 h-4" /> Semantic</span>
-                    ) : m === "keyword" ? (
-                      <span className="inline-flex items-center gap-1"><Search className="w-4 h-4" /> Keyword</span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1">Both</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </Card>
-
-        <section className="lg:col-span-2 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              {hasQueryOrFilters ? `${results.length} candidate(s) found` : "Enter search or apply filters"}
-            </div>
+            <Button variant="outline" onClick={() => setFiltersOpen(true)}>
+              <Filter className="w-4 h-4 mr-2" /> Filters
+            </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" disabled={selectedIds.size === 0} onClick={openBulkSubmit}>
+              <CheckSquare className="w-4 h-4 mr-2" /> Submit Selected
+            </Button>
             <Button variant="default" disabled={!canSearch} onClick={onSearchClick}>
               <Search className="w-4 h-4 mr-2" /> Search
             </Button>
           </div>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          {queryText || hasAppliedFilters ? `${results.length} candidate(s) found` : "Enter search or apply filters"}
+        </div>
+      </section>
 
-          <div className="grid gap-3">
-            {results.map((r) => {
-              const c = r.candidate;
-              const linkedin = c.linkedinUrl || c.linkedin;
-              const resume = c.resumeUrl;
-              return (
-                <Card key={c.id || c.name} className="p-4">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      {/* Results */}
+      <section className="space-y-3">
+        {results.length > 0 && (
+          <div className="flex items-center gap-3">
+            <Checkbox
+              id="select-all"
+              checked={selectedIds.size > 0 && selectedIds.size === results.length}
+              onCheckedChange={(v: any) => toggleAll(Boolean(v))}
+            />
+            <label htmlFor="select-all" className="text-sm text-muted-foreground">Select all</label>
+            {selectedIds.size > 0 && (
+              <span className="text-sm text-muted-foreground">{selectedIds.size} selected</span>
+            )}
+          </div>
+        )}
+        <div className="grid gap-3">
+          {results.map((r) => {
+            const c = r.candidate;
+            const linkedin = c.linkedinUrl || c.linkedin;
+            const resume = c.resumeUrl;
+            const id = String(c.id || c.name);
+            const isChecked = selectedIds.has(id);
+            return (
+              <Card key={id} className="p-4">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    <Checkbox
+                      checked={isChecked}
+                      onCheckedChange={(v: any) => toggleOne(id, Boolean(v))}
+                      className="mt-1"
+                    />
                     <div className="space-y-1">
                       <button onClick={() => onOpen(c)} className="text-left font-semibold text-foreground hover:underline">
                         {c.name}
@@ -342,37 +393,38 @@ export default function ATSSearchPage() {
                         </div>
                       )}
                     </div>
-                    <div className="flex flex-col md:items-end gap-2">
-                      <div className="text-xs text-muted-foreground">
-                        Score: {r.score} {mode !== "keyword" && <span className="opacity-80">(sem {r.semanticScore.toFixed(2)})</span>}
-                      </div>
-                      <div className="text-sm text-foreground/90">
-                        {r.why || "Relevant profile based on semantic similarity"}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button size="sm" onClick={() => openSubmit(c)}>
-                          Submit now
-                        </Button>
-                        <Button variant="outline" size="sm" asChild disabled={!resume}>
-                          <a href={resume || "#"} target="_blank" rel="noopener noreferrer">
-                            <FileText className="w-4 h-4 mr-1" /> View Resume
-                          </a>
-                        </Button>
-                        <Button variant="outline" size="sm" asChild disabled={!linkedin}>
-                          <a href={linkedin ? (linkedin.startsWith("http") ? linkedin : `https://${linkedin}`) : "#"} target="_blank" rel="noopener noreferrer">
-                            <Linkedin className="w-4 h-4 mr-1" /> LinkedIn
-                          </a>
-                        </Button>
-                      </div>
+                  </div>
+                  <div className="flex flex-col md:items-end gap-2">
+                    <div className="text-xs text-muted-foreground">
+                      Score: {r.score} {mode !== "keyword" && <span className="opacity-80">(sem {r.semanticScore.toFixed(2)})</span>}
+                    </div>
+                    <div className="text-sm text-foreground/90">
+                      {r.why || "Relevant profile based on semantic similarity"}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" onClick={() => openSubmit(c)}>
+                        Submit now
+                      </Button>
+                      <Button variant="outline" size="sm" asChild disabled={!resume}>
+                        <a href={resume || "#"} target="_blank" rel="noopener noreferrer">
+                          <FileText className="w-4 h-4 mr-1" /> View Resume
+                        </a>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild disabled={!linkedin}>
+                        <a href={linkedin ? (linkedin.startsWith("http") ? linkedin : `https://${linkedin}`) : "#"} target="_blank" rel="noopener noreferrer">
+                          <Linkedin className="w-4 h-4 mr-1" /> LinkedIn
+                        </a>
+                      </Button>
                     </div>
                   </div>
-                </Card>
-              );
-            })}
-          </div>
-        </section>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
       </section>
 
+      {/* Candidate details */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -407,6 +459,7 @@ export default function ATSSearchPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Single submit dialog */}
       <Dialog open={submitOpen} onOpenChange={setSubmitOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -440,7 +493,171 @@ export default function ATSSearchPage() {
           ) : null}
         </DialogContent>
       </Dialog>
+
+      {/* Bulk submit dialog */}
+      <Dialog open={bulkOpen} onOpenChange={setBulkOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Submit selected candidates</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="text-sm text-muted-foreground">{selectedIds.size} candidate(s) selected</div>
+            <div>
+              <label className="block font-semibold mb-2">Select Job (JD)</label>
+              <Select value={bulkJobId} onValueChange={setBulkJobId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a job" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jobs.map((j: any) => (
+                    <SelectItem key={j.id} value={String(j.id)}>
+                      {j.title} — {j.company}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" onClick={() => setBulkOpen(false)}>Cancel</Button>
+              <Button onClick={handleBulkSubmit} disabled={!bulkJobId || selectedIds.size === 0}>Submit all</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Filters dialog */}
+      <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Filters</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2">Location</label>
+              <TagPicker
+                options={suggestions.locs}
+                values={draftFilters.locations}
+                onChange={(vals) => setDraftFilters({ ...draftFilters, locations: vals })}
+                placeholder="Add locations"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2">Skills include</label>
+              <TagPicker
+                options={suggestions.skills}
+                values={draftFilters.skillsInclude}
+                onChange={(vals) => setDraftFilters({ ...draftFilters, skillsInclude: vals })}
+                placeholder="Add required skills"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2">Skills exclude</label>
+              <TagPicker
+                options={suggestions.skills}
+                values={draftFilters.skillsExclude}
+                onChange={(vals) => setDraftFilters({ ...draftFilters, skillsExclude: vals })}
+                placeholder="Add excluded skills"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2">Current company</label>
+              <TagPicker
+                options={suggestions.currCompanies}
+                values={draftFilters.currentCompanies}
+                onChange={(vals) => setDraftFilters({ ...draftFilters, currentCompanies: vals })}
+                placeholder="Add current companies"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2">Past company</label>
+              <TagPicker
+                options={suggestions.pastCompanies}
+                values={draftFilters.pastCompanies}
+                onChange={(vals) => setDraftFilters({ ...draftFilters, pastCompanies: vals })}
+                placeholder="Add past companies"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2">School / University</label>
+              <TagPicker
+                options={suggestions.schools}
+                values={draftFilters.schools}
+                onChange={(vals) => setDraftFilters({ ...draftFilters, schools: vals })}
+                placeholder="Add schools"
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setFiltersOpen(false)}>Close</Button>
+            <Button variant="secondary" onClick={applyFiltersOnly}>Apply filters</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
+// Tiny TagPicker with search + multi-select behavior
+function TagPicker({ options, values, onChange, placeholder }: { options: string[]; values: string[]; onChange: (v: string[]) => void; placeholder?: string; }) {
+  const [query, setQuery] = useState("");
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return !q ? options : options.filter((o) => String(o).toLowerCase().includes(q));
+  }, [options, query]);
+
+  const add = (val: string) => {
+    const v = String(val).trim();
+    if (!v) return;
+    if (!values.includes(v)) onChange([...values, v]);
+    setQuery("");
+  };
+  const remove = (val: string) => onChange(values.filter((x) => x !== val));
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-1">
+        {values.map((v) => (
+          <Badge key={v} variant="secondary" className="flex items-center gap-1">
+            {v}
+            <button className="ml-1 text-xs text-muted-foreground hover:text-foreground" onClick={() => remove(v)}>×</button>
+          </Badge>
+        ))}
+      </div>
+      <div className="space-y-2">
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              add(query);
+            }
+          }}
+          placeholder={placeholder || "Type to search"}
+        />
+        <div className="max-h-40 overflow-auto border rounded-md">
+          {filtered.length === 0 ? (
+            <div className="p-2 text-sm text-muted-foreground">No matches. Press Enter to add "{query}"</div>
+          ) : (
+            <ul className="p-1">
+              {filtered.map((opt) => {
+                const checked = values.includes(opt);
+                return (
+                  <li key={opt}>
+                    <button
+                      type="button"
+                      className={`w-full text-left px-2 py-1 rounded-sm ${checked ? "bg-accent text-accent-foreground" : "hover:bg-muted"}`}
+                      onClick={() => (checked ? remove(opt) : add(opt))}
+                    >
+                      {opt}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
