@@ -387,15 +387,29 @@ export default function ATSSearchPage() {
                       className="mt-1"
                     />
                      <div className="space-y-1">
-                       <button onClick={() => onOpen(c)} className="text-left font-semibold text-foreground hover:underline">
-                         {typeof r.highlightedName === "string" ? r.highlightedName : 
-                           r.highlightedName?.map((segment: any, i: number) => (
-                             <span key={i} className={segment.highlighted ? "bg-yellow-200 px-1 rounded" : ""}>
-                               {segment.text}
-                             </span>
-                           )) || c.name
-                         }
-                       </button>
+                       <div className="flex items-center gap-2">
+                         <button onClick={() => onOpen(c)} className="text-left font-semibold text-foreground hover:underline">
+                           {typeof r.highlightedName === "string" ? r.highlightedName : 
+                             r.highlightedName?.map((segment: any, i: number) => (
+                               <span key={i} className={segment.highlighted ? "bg-yellow-200 px-1 rounded" : ""}>
+                                 {segment.text}
+                               </span>
+                             )) || c.name
+                           }
+                         </button>
+                         <div className="flex gap-1">
+                           <Button variant="ghost" size="sm" className="h-6 w-6 p-0" asChild disabled={!linkedin}>
+                             <a href={linkedin ? (linkedin.startsWith("http") ? linkedin : `https://${linkedin}`) : "#"} target="_blank" rel="noopener noreferrer">
+                               <Linkedin className="w-3 h-3 text-blue-600" />
+                             </a>
+                           </Button>
+                           <Button variant="ghost" size="sm" className="h-6 w-6 p-0" asChild disabled={!resume}>
+                             <a href={resume || "#"} target="_blank" rel="noopener noreferrer">
+                               <FileText className="w-3 h-3 text-gray-600" />
+                             </a>
+                           </Button>
+                         </div>
+                       </div>
                        <div className="text-sm text-muted-foreground flex items-center gap-2">
                          <span>
                            {typeof r.highlightedTitle === "string" ? r.highlightedTitle :
@@ -430,30 +444,18 @@ export default function ATSSearchPage() {
                            })}
                          </div>
                        )}
-                    </div>
-                  </div>
-                  <div className="flex flex-col md:items-end gap-2">
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" onClick={() => openSubmit(c)}>
-                        Submit now
-                      </Button>
-                      <Button variant="outline" size="sm" asChild disabled={!resume}>
-                        <a href={resume || "#"} target="_blank" rel="noopener noreferrer">
-                          <FileText className="w-4 h-4 mr-1" /> View Resume
-                        </a>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild disabled={!linkedin}>
-                        <a href={linkedin ? (linkedin.startsWith("http") ? linkedin : `https://${linkedin}`) : "#"} target="_blank" rel="noopener noreferrer">
-                          <Linkedin className="w-4 h-4 mr-1" /> LinkedIn
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
+                     </div>
+                   </div>
+                   <div className="flex items-center">
+                     <Button size="sm" onClick={() => openSubmit(c)}>
+                       Submit now
+                     </Button>
+                   </div>
+                 </div>
+               </Card>
+             );
+           })}
+         </div>
       </section>
 
       {/* Candidate details */}
