@@ -21,6 +21,13 @@ export interface Candidate {
   fit: number;
   source: string;
   skills: string[];
+  location?: string;
+  currentCompany?: string;
+  pastCompanies?: string[];
+  schools?: string[];
+  stage?: string;
+  resumeUrl?: string;
+  linkedinUrl?: string;
   fitBreakdown?: FitScoreBreakdown;
 }
 
@@ -57,6 +64,13 @@ const defaultCandidates: Candidate[] = [
     fit: 9.2, 
     source: "Sourcing Agent", 
     skills: ["Python", "TensorFlow", "AWS"],
+    location: "San Francisco, CA",
+    currentCompany: "Google",
+    pastCompanies: ["Meta", "Apple"],
+    schools: ["Stanford University", "MIT"],
+    stage: "Active",
+    resumeUrl: "#",
+    linkedinUrl: "linkedin.com/in/sarahchen",
     fitBreakdown: { education: 9.5, careerTrajectory: 9.0, companyRelevance: 9.8, tenureStability: 8.5, mostImportantSkills: 9.2, bonusSignals: 8.0, redFlags: 0.0, location: 9.2 }
   },
   { 
@@ -66,6 +80,13 @@ const defaultCandidates: Candidate[] = [
     fit: 8.8, 
     source: "Sourcing Agent", 
     skills: ["PyTorch", "NLP", "Computer Vision"],
+    location: "New York, NY",
+    currentCompany: "OpenAI",
+    pastCompanies: ["Microsoft", "Amazon"],
+    schools: ["Carnegie Mellon University"],
+    stage: "Submitted to AM",
+    resumeUrl: "#",
+    linkedinUrl: "linkedin.com/in/marcusjohnson",
     fitBreakdown: { education: 9.8, careerTrajectory: 8.5, companyRelevance: 9.2, tenureStability: 8.0, mostImportantSkills: 8.5, bonusSignals: 7.5, redFlags: 0.0, location: 8.5 }
   },
   { 
@@ -75,7 +96,94 @@ const defaultCandidates: Candidate[] = [
     fit: 8.5, 
     source: "Sourcing Agent", 
     skills: ["Machine Learning", "SQL", "R"],
+    location: "Remote",
+    currentCompany: "Netflix",
+    pastCompanies: ["Spotify", "Uber"],
+    schools: ["UC Berkeley", "IIT Delhi"],
+    stage: "Next Interview",
+    resumeUrl: "#",
+    linkedinUrl: "linkedin.com/in/priyapatel",
     fitBreakdown: { education: 8.0, careerTrajectory: 8.8, companyRelevance: 8.9, tenureStability: 9.0, mostImportantSkills: 7.8, bonusSignals: 6.0, redFlags: 0.0, location: 7.8 }
+  },
+  { 
+    id: "C004", 
+    name: "Alex Rodriguez", 
+    title: "Frontend Engineer", 
+    fit: 8.9, 
+    source: "Sourcing Agent", 
+    skills: ["React", "TypeScript", "Node.js", "GraphQL"],
+    location: "Austin, TX",
+    currentCompany: "Stripe",
+    pastCompanies: ["Airbnb", "Dropbox"],
+    schools: ["University of Texas", "Coding Bootcamp"],
+    stage: "Final Interview",
+    resumeUrl: "#",
+    linkedinUrl: "linkedin.com/in/alexrodriguez",
+    fitBreakdown: { education: 7.5, careerTrajectory: 9.2, companyRelevance: 9.1, tenureStability: 8.8, mostImportantSkills: 9.0, bonusSignals: 7.8, redFlags: 0.0, location: 8.9 }
+  },
+  { 
+    id: "C005", 
+    name: "Emily Watson", 
+    title: "DevOps Engineer", 
+    fit: 8.3, 
+    source: "Sourcing Agent", 
+    skills: ["Docker", "Kubernetes", "AWS", "Terraform"],
+    location: "Seattle, WA",
+    currentCompany: "Amazon",
+    pastCompanies: ["Microsoft", "Tesla"],
+    schools: ["University of Washington"],
+    stage: "Offer",
+    resumeUrl: "#",
+    linkedinUrl: "linkedin.com/in/emilywatson",
+    fitBreakdown: { education: 8.2, careerTrajectory: 8.5, companyRelevance: 8.7, tenureStability: 9.1, mostImportantSkills: 8.1, bonusSignals: 6.5, redFlags: 0.0, location: 8.3 }
+  },
+  { 
+    id: "C006", 
+    name: "David Kim", 
+    title: "Full Stack Developer", 
+    fit: 7.9, 
+    source: "Sourcing Agent", 
+    skills: ["JavaScript", "Python", "React", "Django", "PostgreSQL"],
+    location: "Los Angeles, CA",
+    currentCompany: "Snapchat",
+    pastCompanies: ["TikTok", "Pinterest"],
+    schools: ["UCLA", "USC"],
+    stage: "Active",
+    resumeUrl: "#",
+    linkedinUrl: "linkedin.com/in/davidkim",
+    fitBreakdown: { education: 7.8, careerTrajectory: 8.1, companyRelevance: 8.0, tenureStability: 8.5, mostImportantSkills: 7.7, bonusSignals: 6.8, redFlags: 0.0, location: 7.9 }
+  },
+  { 
+    id: "C007", 
+    name: "Aisha Okafor", 
+    title: "Product Manager", 
+    fit: 8.7, 
+    source: "Sourcing Agent", 
+    skills: ["Product Strategy", "Agile", "Analytics", "A/B Testing"],
+    location: "Chicago, IL",
+    currentCompany: "Slack",
+    pastCompanies: ["Zoom", "Salesforce"],
+    schools: ["Northwestern University", "Harvard Business School"],
+    stage: "Submitted to Client",
+    resumeUrl: "#",
+    linkedinUrl: "linkedin.com/in/aishaokafor",
+    fitBreakdown: { education: 9.0, careerTrajectory: 8.8, companyRelevance: 8.9, tenureStability: 8.4, mostImportantSkills: 8.6, bonusSignals: 8.2, redFlags: 0.0, location: 8.7 }
+  },
+  { 
+    id: "C008", 
+    name: "James Thompson", 
+    title: "Backend Engineer", 
+    fit: 8.1, 
+    source: "Sourcing Agent", 
+    skills: ["Java", "Spring", "Microservices", "Redis", "MySQL"],
+    location: "Boston, MA",
+    currentCompany: "HubSpot",
+    pastCompanies: ["Oracle", "IBM"],
+    schools: ["MIT", "Northeastern University"],
+    stage: "Rejected",
+    resumeUrl: "#",
+    linkedinUrl: "linkedin.com/in/jamesthompson",
+    fitBreakdown: { education: 8.8, careerTrajectory: 7.9, companyRelevance: 8.2, tenureStability: 8.6, mostImportantSkills: 8.0, bonusSignals: 6.9, redFlags: 0.0, location: 8.1 }
   }
 ];
 
