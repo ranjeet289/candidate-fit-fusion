@@ -550,6 +550,15 @@ export default function ATSSearchPage() {
               />
             </div>
             <div>
+              <label className="block text-sm font-medium mb-1">Current company</label>
+              <TagPicker
+                options={suggestions.currCompanies}
+                values={draftFilters.currentCompanies}
+                onChange={(vals) => setDraftFilters({ ...draftFilters, currentCompanies: vals })}
+                placeholder="Search current companies..."
+              />
+            </div>
+            <div>
               <label className="block text-sm font-medium mb-1">Skills include</label>
               <TagPicker
                 options={suggestions.skills}
@@ -565,15 +574,6 @@ export default function ATSSearchPage() {
                 values={draftFilters.skillsExclude}
                 onChange={(vals) => setDraftFilters({ ...draftFilters, skillsExclude: vals })}
                 placeholder="Add excluded skills"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Current company</label>
-              <TagPicker
-                options={suggestions.currCompanies}
-                values={draftFilters.currentCompanies}
-                onChange={(vals) => setDraftFilters({ ...draftFilters, currentCompanies: vals })}
-                placeholder="Search current companies..."
               />
             </div>
             <div>
