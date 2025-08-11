@@ -155,6 +155,9 @@ export default function ATSSearchPage() {
 
     const qTokens = tokenize(queryText);
     const qVec = vectorize(qTokens);
+    
+    console.log('Search query:', queryText);
+    console.log('Query tokens:', qTokens);
 
     return candidates
       .map((c: any) => {
