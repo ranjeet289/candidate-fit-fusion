@@ -1,15 +1,16 @@
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useEntities } from "@/context/EntityContext";
-import { Search, MapPin, Linkedin, FileText, Sparkles } from "lucide-react";
+import { Search, MapPin, Linkedin, FileText, Filter, CheckSquare } from "lucide-react";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 // Simple tokenization
 function tokenize(text: string): string[] {
