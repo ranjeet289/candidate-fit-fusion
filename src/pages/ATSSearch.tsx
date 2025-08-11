@@ -48,9 +48,14 @@ function vectorize(tokens: string[]): Record<string, number> {
 
 export default function ATSSearchPage() {
   const { candidates, jobs } = useEntities();
-  const [jd, setJd] = useState("");
-  const [role, setRole] = useState("");
-  const [location, setLocation] = useState("");
+  // Draft inputs (change freely)
+  const [roleInput, setRoleInput] = useState("");
+  const [jdInput, setJdInput] = useState("");
+  const [locationInput, setLocationInput] = useState("");
+  // Applied inputs (used for searching)
+  const [appliedRole, setAppliedRole] = useState("");
+  const [appliedJd, setAppliedJd] = useState("");
+  const [appliedLocation, setAppliedLocation] = useState("");
   const [mode, setMode] = useState<"keyword" | "semantic" | "both">("both");
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<any | null>(null);
@@ -58,12 +63,65 @@ export default function ATSSearchPage() {
   const [submitCandidate, setSubmitCandidate] = useState<any | null>(null);
   const [selectedJobId, setSelectedJobId] = useState<string>("");
 
-  const queryText = `${role} ${jd} ${location}`.trim();
+  // Filters: draft vs applied so changes only take effect on Apply/Search
+  const defaultFilters = { stage: "all", titleInclude: "", skillsInclude: "", skillsExclude: "" };
+  const [draftFilters, setDraftFilters] = useState(defaultFilters);
+  const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
+
+  const queryText = `${appliedRole} ${appliedJd} ${appliedLocation}`.trim();
+  const hasQueryOrFilters =
+    Boolean(queryText) ||
+    Boolean(
+      appliedFilters.titleInclude ||
+        appliedFilters.skillsInclude ||
+        appliedFilters.skillsExclude ||
+        (appliedFilters.stage && appliedFilters.stage !== "all")
+    );
+  
+  // Stage options (align with Candidates page)
+  const stages = ['all', 'Active', 'Submitted to AM', 'Submitted to Client', 'Sendout', 'Next Interview', 'Final Interview', 'Offer', 'Rejected'];
+  
+  // Handlers to control when search actually runs
+  const applyFiltersOnly = () => setAppliedFilters(draftFilters);
+  const onSearchClick = () => {
+    setAppliedRole(roleInput);
+    setAppliedJd(jdInput);
+    setAppliedLocation(locationInput);
+    setAppliedFilters(draftFilters);
+  };
+
+  // Draft activity vs applied activity
+  const draftQueryText = `${roleInput} ${jdInput} ${locationInput}`.trim();
+  const hasDraftFilters = Boolean(
+    draftFilters.titleInclude ||
+    draftFilters.skillsInclude ||
+    draftFilters.skillsExclude ||
+    (draftFilters.stage && draftFilters.stage !== "all")
+  );
+  const canSearch = Boolean(draftQueryText || hasDraftFilters);
 
   const results = useMemo(() => {
-    if (!queryText) return [] as any[];
+    const filtersActive = Boolean(
+      appliedFilters.titleInclude ||
+        appliedFilters.skillsInclude ||
+        appliedFilters.skillsExclude ||
+        (appliedFilters.stage && appliedFilters.stage !== "all")
+    );
+    if (!queryText && !filtersActive) return [] as any[];
     const qTokens = tokenize(queryText);
     const qVec = vectorize(qTokens);
+
+    const titleNeedle = (appliedFilters.titleInclude || "").toLowerCase().trim();
+    const includeSkills = (appliedFilters.skillsInclude || "")
+      .toLowerCase()
+      .split(/[\,\s]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const excludeSkills = (appliedFilters.skillsExclude || "")
+      .toLowerCase()
+      .split(/[\,\s]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
 
     return candidates
       .map((c: any) => {
@@ -75,7 +133,7 @@ export default function ATSSearchPage() {
         // Keyword score: count of query tokens present + bonus for location match
         const matched = unique(qTokens.filter((t) => cTokens.includes(t)));
         let keywordScore = matched.length;
-        if (location && c.location && c.location.toLowerCase().includes(location.toLowerCase())) keywordScore += 1.5;
+        if (appliedLocation && c.location && String(c.location).toLowerCase().includes(appliedLocation.toLowerCase())) keywordScore += 1.5;
 
         // Semantic score via cosine on bag-of-words
         const semanticScore = cosineSim(qVec, cVec);
@@ -88,7 +146,13 @@ export default function ATSSearchPage() {
         // Why shown snippet
         const why: string[] = [];
         if (matched.length) why.push(`Matched terms: ${matched.slice(0, 5).join(", ")}`);
-        if (location && c.location && c.location.toLowerCase().includes(location.toLowerCase())) why.push(`Location match: ${c.location}`);
+        if (appliedLocation && c.location && String(c.location).toLowerCase().includes(appliedLocation.toLowerCase())) why.push(`Location match: ${c.location}`);
+        if (titleNeedle && String(c.title || "").toLowerCase().includes(titleNeedle)) why.push(`Title match: ${String(c.title || "").slice(0, 40)}`);
+        if (Array.isArray(c.skills)) {
+          const cSkillsLower = c.skills.map((s: string) => String(s).toLowerCase());
+          const incHit = includeSkills.filter((s) => cSkillsLower.includes(s));
+          if (incHit.length) why.push(`Skills: ${incHit.slice(0, 5).join(", ")}`);
+        }
         if (!why.length && semanticScore > 0) {
           // Take overlapping top tokens as justification
           const overlaps = unique(cTokens.filter((t) => qTokens.includes(t))).slice(0, 5);
@@ -103,9 +167,24 @@ export default function ATSSearchPage() {
           why: why.join(" • "),
         };
       })
-      .filter((r) => r.score > 0)
+      .filter((r) => {
+        const c = r.candidate;
+        if (appliedFilters.stage && appliedFilters.stage !== "all") {
+          if (!c.stage || c.stage !== appliedFilters.stage) return false;
+        }
+        if (titleNeedle && !String(c.title || "").toLowerCase().includes(titleNeedle)) return false;
+        const cSkills = Array.isArray(c.skills) ? c.skills.map((s: string) => String(s).toLowerCase()) : [];
+        if (includeSkills.length > 0) {
+          for (const s of includeSkills) if (!cSkills.includes(s)) return false;
+        }
+        if (excludeSkills.length > 0) {
+          for (const s of excludeSkills) if (cSkills.includes(s)) return false;
+        }
+        if (r.score <= 0 && !filtersActive) return false;
+        return true;
+      })
       .sort((a, b) => b.score - a.score);
-  }, [candidates, jd, role, location, mode, queryText]);
+  }, [candidates, appliedJd, appliedRole, appliedLocation, mode, queryText, appliedFilters]);
 
   const onOpen = (c: any) => {
     setActive(c);
@@ -138,48 +217,98 @@ export default function ATSSearchPage() {
       </header>
 
       <section className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
-        <Card className="p-4 lg:col-span-1 space-y-4">
-          <div>
-            <label className="block font-semibold mb-2">Role</label>
-            <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="e.g., Senior Frontend Engineer" />
-          </div>
-          <div>
-            <label className="block font-semibold mb-2">Location</label>
-            <Input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g., Bengaluru, Remote" />
-          </div>
-          <div>
-            <label className="block font-semibold mb-2">JD Brief</label>
-            <Textarea value={jd} onChange={(e) => setJd(e.target.value)} placeholder="Paste a short JD or requirements…" className="min-h-[140px]" />
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-muted-foreground">Match Mode:</span>
-            <div className="flex rounded-md border border-border overflow-hidden">
-              {(["keyword", "semantic", "both"] as const).map((m) => (
-                <button
-                  key={m}
-                  onClick={() => setMode(m)}
-                  className={`px-3 py-1.5 text-sm ${mode === m ? "bg-primary text-primary-foreground" : "bg-background text-foreground hover:bg-muted"}`}
-                  aria-pressed={mode === m}
-                >
-                  {m === "semantic" ? (
-                    <span className="inline-flex items-center gap-1"><Sparkles className="w-4 h-4" /> Semantic</span>
-                  ) : m === "keyword" ? (
-                    <span className="inline-flex items-center gap-1"><Search className="w-4 h-4" /> Keyword</span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1">Both</span>
-                  )}
-                </button>
-              ))}
+          <Card className="p-4 lg:col-span-1 space-y-4">
+            <div>
+              <label className="block font-semibold mb-2">Role</label>
+              <Input value={roleInput} onChange={(e) => setRoleInput(e.target.value)} placeholder="e.g., Senior Frontend Engineer" />
             </div>
-          </div>
-        </Card>
+            <div>
+              <label className="block font-semibold mb-2">Location</label>
+              <Input value={locationInput} onChange={(e) => setLocationInput(e.target.value)} placeholder="e.g., Bengaluru, Remote" />
+            </div>
+            <div>
+              <label className="block font-semibold mb-2">JD Brief</label>
+              <Textarea value={jdInput} onChange={(e) => setJdInput(e.target.value)} placeholder="Paste a short JD or requirements…" className="min-h-[140px]" />
+            </div>
+
+            <div className="space-y-3 pt-1">
+              <div className="text-sm font-semibold">Filters</div>
+              <div>
+                <label className="block text-sm mb-1">Title contains</label>
+                <Input
+                  value={draftFilters.titleInclude}
+                  onChange={(e) => setDraftFilters({ ...draftFilters, titleInclude: e.target.value })}
+                  placeholder="e.g., frontend, recruiter"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm mb-1">Skills include</label>
+                  <Input
+                    value={draftFilters.skillsInclude}
+                    onChange={(e) => setDraftFilters({ ...draftFilters, skillsInclude: e.target.value })}
+                    placeholder="e.g., react, typescript"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm mb-1">Skills exclude</label>
+                  <Input
+                    value={draftFilters.skillsExclude}
+                    onChange={(e) => setDraftFilters({ ...draftFilters, skillsExclude: e.target.value })}
+                    placeholder="e.g., angular, php"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Stage</label>
+                <Select value={draftFilters.stage} onValueChange={(val) => setDraftFilters({ ...draftFilters, stage: val })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All stages" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {stages.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s === 'all' ? 'All' : s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="secondary" onClick={applyFiltersOnly}>Apply filters</Button>
+                <span className="text-xs text-muted-foreground">Results update only when you click Search or Apply filters.</span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm text-muted-foreground">Match Mode:</span>
+              <div className="flex rounded-md border border-border overflow-hidden">
+                {(["keyword", "semantic", "both"] as const).map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setMode(m)}
+                    className={`px-3 py-1.5 text-sm ${mode === m ? "bg-primary text-primary-foreground" : "bg-background text-foreground hover:bg-muted"}`}
+                    aria-pressed={mode === m}
+                  >
+                    {m === "semantic" ? (
+                      <span className="inline-flex items-center gap-1"><Sparkles className="w-4 h-4" /> Semantic</span>
+                    ) : m === "keyword" ? (
+                      <span className="inline-flex items-center gap-1"><Search className="w-4 h-4" /> Keyword</span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1">Both</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </Card>
 
         <section className="lg:col-span-2 space-y-3">
           <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              {queryText ? `${results.length} candidate(s) found` : "Enter search to see results"}
+              {hasQueryOrFilters ? `${results.length} candidate(s) found` : "Enter search or apply filters"}
             </div>
-            <Button variant="default" disabled={!queryText}>
+            <Button variant="default" disabled={!canSearch} onClick={onSearchClick}>
               <Search className="w-4 h-4 mr-2" /> Search
             </Button>
           </div>
