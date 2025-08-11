@@ -535,7 +535,7 @@ export default function ATSSearchPage() {
 
       {/* Filters dialog */}
       <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
-        <DialogContent className="max-w-3xl bg-gray-50">
+        <DialogContent className="max-w-3xl h-[600px] bg-gray-50 overflow-hidden">
           <DialogHeader>
             <DialogTitle>Filters</DialogTitle>
           </DialogHeader>
@@ -626,8 +626,8 @@ function TagPicker({ options, values, onChange, placeholder }: { options: string
   const remove = (val: string) => onChange(values.filter((x) => x !== val));
 
   return (
-    <div className="space-y-1">
-      <div className="flex flex-wrap gap-1">
+    <div className="h-20 flex flex-col">
+      <div className="min-h-[24px] flex flex-wrap gap-1 mb-1">
         {values.map((v) => (
           <Badge key={v} variant="secondary" className="flex items-center gap-1 text-xs">
             {v}
@@ -635,7 +635,7 @@ function TagPicker({ options, values, onChange, placeholder }: { options: string
           </Badge>
         ))}
       </div>
-      <div>
+      <div className="relative flex-1">
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -646,10 +646,10 @@ function TagPicker({ options, values, onChange, placeholder }: { options: string
             }
           }}
           placeholder={placeholder || "Type to search"}
-          className="text-sm"
+          className="text-sm h-9"
         />
         {query && filtered.length > 0 && (
-          <div className="max-h-32 overflow-auto border rounded-md mt-1">
+          <div className="absolute top-full left-0 right-0 z-50 max-h-32 overflow-auto border rounded-md bg-white shadow-lg mt-1">
             <ul className="p-1">
               {filtered.map((opt) => {
                 const checked = values.includes(opt);
