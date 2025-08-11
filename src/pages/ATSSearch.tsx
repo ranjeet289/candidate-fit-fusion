@@ -431,13 +431,13 @@ export default function ATSSearchPage() {
                            </span>
                          )}
                        </div>
-                       <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                          <Mail className="w-3 h-3" />
                          <span>{c.email || `${c.name.toLowerCase().replace(' ', '.')}@email.com`}</span>
                          <Button 
                            variant="ghost" 
                            size="sm" 
-                           className="h-4 w-4 p-0 ml-1"
+                           className="h-4 w-4 p-0"
                            onClick={() => copyEmail(c.email || `${c.name.toLowerCase().replace(' ', '.')}@email.com`)}
                          >
                            <Copy className="w-3 h-3 text-gray-500" />
