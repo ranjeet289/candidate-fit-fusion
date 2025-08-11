@@ -46,6 +46,19 @@ function vectorize(tokens: string[]): Record<string, number> {
   return v;
 }
 
+// Text highlighting function
+function highlightMatches(text: string, matchedTerms: string[]) {
+  if (!text || !matchedTerms.length) return text;
+  
+  const regex = new RegExp(`(${matchedTerms.join("|")})`, "gi");
+  return text.split(regex).map((part, index) => {
+    const isMatch = matchedTerms.some(term => 
+      part.toLowerCase() === term.toLowerCase()
+    );
+    return isMatch ? { text: part, highlighted: true } : { text: part, highlighted: false };
+  });
+}
+
 interface Filters {
   locations: string[];
   skillsInclude: string[];
@@ -187,29 +200,21 @@ export default function ATSSearchPage() {
         else if (mode === "semantic") finalScore = semanticScore * 10;
         else finalScore = keywordScore * 0.5 + semanticScore * 10 * 0.5;
 
-        const why: string[] = [];
-        if (matched.length) why.push(`Matched terms: ${matched.slice(0, 5).join(", ")}`);
-        if (
-          appliedFilters.locations.length > 0 && c.location &&
-          appliedFilters.locations.some((loc) => String(c.location).toLowerCase().includes(String(loc).toLowerCase()))
-        )
-          why.push(`Location match: ${c.location}`);
-        if (Array.isArray(c.skills)) {
-          const cSkillsLower = c.skills.map((s: string) => String(s).toLowerCase());
-          const incHit = appliedFilters.skillsInclude.filter((s) => cSkillsLower.includes(String(s).toLowerCase()));
-          if (incHit.length) why.push(`Skills: ${incHit.slice(0, 5).join(", ")}`);
-        }
-        if (!why.length && semanticScore > 0) {
-          const overlaps = unique(cTokens.filter((t) => qTokens.includes(t))).slice(0, 5);
-          if (overlaps.length) why.push(`Relevant skills/keywords: ${overlaps.join(", ")}`);
-        }
+        // Create highlighted text segments for candidate display
+        const highlightedName = highlightMatches(c.name, matched);
+        const highlightedTitle = highlightMatches(c.title, matched);
+        const highlightedSkills = Array.isArray(c.skills) ? 
+          c.skills.map(skill => highlightMatches(skill, matched)) : [];
 
         return {
           candidate: c,
           score: Number(finalScore.toFixed(3)),
           keywordScore: Number(keywordScore.toFixed(3)),
           semanticScore: Number(semanticScore.toFixed(3)),
-          why: why.join(" • "),
+          matched,
+          highlightedName,
+          highlightedTitle,
+          highlightedSkills,
         };
       })
       .filter((r) => {
@@ -381,34 +386,53 @@ export default function ATSSearchPage() {
                       onCheckedChange={(v: any) => toggleOne(id, Boolean(v))}
                       className="mt-1"
                     />
-                    <div className="space-y-1">
-                      <button onClick={() => onOpen(c)} className="text-left font-semibold text-foreground hover:underline">
-                        {c.name}
-                      </button>
-                      <div className="text-sm text-muted-foreground flex items-center gap-2">
-                        <span>{c.title}</span>
-                        {c.location && (
-                          <span className="inline-flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5" /> {c.location}
-                          </span>
-                        )}
-                      </div>
-                      {Array.isArray(c.skills) && (
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {c.skills.slice(0, 6).map((s: string) => (
-                            <Badge key={s} variant="outline" className="text-xs">{s}</Badge>
-                          ))}
-                        </div>
-                      )}
+                     <div className="space-y-1">
+                       <button onClick={() => onOpen(c)} className="text-left font-semibold text-foreground hover:underline">
+                         {typeof r.highlightedName === "string" ? r.highlightedName : 
+                           r.highlightedName?.map((segment: any, i: number) => (
+                             <span key={i} className={segment.highlighted ? "bg-yellow-200 px-1 rounded" : ""}>
+                               {segment.text}
+                             </span>
+                           )) || c.name
+                         }
+                       </button>
+                       <div className="text-sm text-muted-foreground flex items-center gap-2">
+                         <span>
+                           {typeof r.highlightedTitle === "string" ? r.highlightedTitle :
+                             r.highlightedTitle?.map((segment: any, i: number) => (
+                               <span key={i} className={segment.highlighted ? "bg-yellow-200 px-1 rounded" : ""}>
+                                 {segment.text}
+                               </span>
+                             )) || c.title
+                           }
+                         </span>
+                         {c.location && (
+                           <span className="inline-flex items-center gap-1">
+                             <MapPin className="w-3.5 h-3.5" /> {c.location}
+                           </span>
+                         )}
+                       </div>
+                       {Array.isArray(c.skills) && (
+                         <div className="flex flex-wrap gap-1 mt-1">
+                           {c.skills.slice(0, 6).map((skill: string, skillIndex: number) => {
+                             const highlightedSkill = r.highlightedSkills?.[skillIndex];
+                             return (
+                               <Badge key={skill} variant="outline" className="text-xs">
+                                 {typeof highlightedSkill === "string" ? highlightedSkill :
+                                   highlightedSkill?.map((segment: any, i: number) => (
+                                     <span key={i} className={segment.highlighted ? "bg-yellow-300 px-0.5 rounded" : ""}>
+                                       {segment.text}
+                                     </span>
+                                   )) || skill
+                                 }
+                               </Badge>
+                             );
+                           })}
+                         </div>
+                       )}
                     </div>
                   </div>
                   <div className="flex flex-col md:items-end gap-2">
-                    <div className="text-xs text-muted-foreground">
-                      Score: {r.score} {mode !== "keyword" && <span className="opacity-80">(sem {r.semanticScore.toFixed(2)})</span>}
-                    </div>
-                    <div className="text-sm text-foreground/90">
-                      {r.why || "Relevant profile based on semantic similarity"}
-                    </div>
                     <div className="flex items-center gap-2">
                       <Button size="sm" onClick={() => openSubmit(c)}>
                         Submit now
