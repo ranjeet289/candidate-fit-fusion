@@ -106,22 +106,20 @@ export default function ATSSearchPage() {
     setAppliedFilters(draftFilters);
     setFiltersOpen(false);
   };
+  const clearFilters = () => {
+    setDraftFilters(emptyFilters);
+  };
 
   const hasDraftFilters = Object.values(draftFilters).some((v) => v.length > 0);
   const canSearch = Boolean(roleInput.trim() || hasDraftFilters);
   const hasAppliedFilters = Object.values(appliedFilters).some((v) => v.length > 0);
 
-  // Extract suggestions from candidate data when available
   const suggestions = useMemo(() => {
     const locs = unique(
       candidates
         .map((c: any) => c.location)
         .filter(Boolean)
         .map((s: string) => String(s))
-    ) as string[];
-
-    const skills = unique(
-      candidates.flatMap((c: any) => (Array.isArray(c.skills) ? c.skills : [])).map((s) => String(s))
     ) as string[];
 
     const currCompanies = unique(
@@ -147,7 +145,7 @@ export default function ATSSearchPage() {
       ).map((s: any) => String(s))
     ) as string[];
 
-    return { locs, skills, currCompanies, pastCompanies, schools };
+    return { locs, currCompanies, pastCompanies, schools };
   }, [candidates]);
 
   const queryText = `${appliedRole}`.trim();
@@ -527,69 +525,73 @@ export default function ATSSearchPage() {
 
       {/* Filters dialog */}
       <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-gray-50">
           <DialogHeader>
             <DialogTitle>Filters</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-semibold mb-2">Location</label>
+              <label className="block text-sm font-medium mb-1">Location</label>
               <TagPicker
                 options={suggestions.locs}
                 values={draftFilters.locations}
                 onChange={(vals) => setDraftFilters({ ...draftFilters, locations: vals })}
-                placeholder="Add locations"
+                placeholder="Location"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-2">Skills include</label>
+              <label className="block text-sm font-medium mb-1">Skills include</label>
               <TagPicker
-                options={suggestions.skills}
+                options={[]}
                 values={draftFilters.skillsInclude}
                 onChange={(vals) => setDraftFilters({ ...draftFilters, skillsInclude: vals })}
                 placeholder="Add required skills"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-2">Skills exclude</label>
+              <label className="block text-sm font-medium mb-1">Skills exclude</label>
               <TagPicker
-                options={suggestions.skills}
+                options={[]}
                 values={draftFilters.skillsExclude}
                 onChange={(vals) => setDraftFilters({ ...draftFilters, skillsExclude: vals })}
                 placeholder="Add excluded skills"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-2">Current company</label>
+              <label className="block text-sm font-medium mb-1">Current company</label>
               <TagPicker
                 options={suggestions.currCompanies}
                 values={draftFilters.currentCompanies}
                 onChange={(vals) => setDraftFilters({ ...draftFilters, currentCompanies: vals })}
-                placeholder="Add current companies"
+                placeholder="Search current companies..."
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-2">Past company</label>
+              <label className="block text-sm font-medium mb-1">Past company</label>
               <TagPicker
                 options={suggestions.pastCompanies}
                 values={draftFilters.pastCompanies}
                 onChange={(vals) => setDraftFilters({ ...draftFilters, pastCompanies: vals })}
-                placeholder="Add past companies"
+                placeholder="Search past companies..."
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-2">School / University</label>
+              <label className="block text-sm font-medium mb-1">School / University</label>
               <TagPicker
                 options={suggestions.schools}
                 values={draftFilters.schools}
                 onChange={(vals) => setDraftFilters({ ...draftFilters, schools: vals })}
-                placeholder="Add schools"
+                placeholder="Search schools..."
               />
             </div>
           </div>
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={() => setFiltersOpen(false)}>Close</Button>
-            <Button variant="secondary" onClick={applyFiltersOnly}>Apply filters</Button>
+          <div className="flex items-center justify-between gap-2 pt-4">
+            <Button variant="outline" onClick={clearFilters} className="flex-1">
+              Clear Filters
+            </Button>
+            <Button onClick={applyFiltersOnly} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+              Apply Filter
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -614,16 +616,16 @@ function TagPicker({ options, values, onChange, placeholder }: { options: string
   const remove = (val: string) => onChange(values.filter((x) => x !== val));
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <div className="flex flex-wrap gap-1">
         {values.map((v) => (
-          <Badge key={v} variant="secondary" className="flex items-center gap-1">
+          <Badge key={v} variant="secondary" className="flex items-center gap-1 text-xs">
             {v}
             <button className="ml-1 text-xs text-muted-foreground hover:text-foreground" onClick={() => remove(v)}>×</button>
           </Badge>
         ))}
       </div>
-      <div className="space-y-2">
+      <div>
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -634,11 +636,10 @@ function TagPicker({ options, values, onChange, placeholder }: { options: string
             }
           }}
           placeholder={placeholder || "Type to search"}
+          className="text-sm"
         />
-        <div className="max-h-40 overflow-auto border rounded-md">
-          {filtered.length === 0 ? (
-            <div className="p-2 text-sm text-muted-foreground">No matches. Press Enter to add "{query}"</div>
-          ) : (
+        {query && filtered.length > 0 && (
+          <div className="max-h-32 overflow-auto border rounded-md mt-1">
             <ul className="p-1">
               {filtered.map((opt) => {
                 const checked = values.includes(opt);
@@ -646,7 +647,7 @@ function TagPicker({ options, values, onChange, placeholder }: { options: string
                   <li key={opt}>
                     <button
                       type="button"
-                      className={`w-full text-left px-2 py-1 rounded-sm ${checked ? "bg-accent text-accent-foreground" : "hover:bg-muted"}`}
+                      className={`w-full text-left px-2 py-1 text-sm rounded-sm ${checked ? "bg-accent text-accent-foreground" : "hover:bg-muted"}`}
                       onClick={() => (checked ? remove(opt) : add(opt))}
                     >
                       {opt}
@@ -655,8 +656,8 @@ function TagPicker({ options, values, onChange, placeholder }: { options: string
                 );
               })}
             </ul>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
