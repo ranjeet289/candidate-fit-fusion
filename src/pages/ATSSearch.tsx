@@ -539,9 +539,9 @@ export default function ATSSearchPage() {
           <DialogHeader>
             <DialogTitle>Filters</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="block text-sm font-medium">Location</label>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+            <div>
+              <label className="block text-sm font-medium mb-1">Location</label>
               <TagPicker
                 options={suggestions.locs}
                 values={draftFilters.locations}
@@ -549,8 +549,8 @@ export default function ATSSearchPage() {
                 placeholder="Location"
               />
             </div>
-            <div className="space-y-1">
-              <label className="block text-sm font-medium">Skills include</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Skills include</label>
               <TagPicker
                 options={suggestions.skills}
                 values={draftFilters.skillsInclude}
@@ -558,8 +558,8 @@ export default function ATSSearchPage() {
                 placeholder="Add required skills"
               />
             </div>
-            <div className="space-y-1">
-              <label className="block text-sm font-medium">Skills exclude</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Skills exclude</label>
               <TagPicker
                 options={suggestions.skills}
                 values={draftFilters.skillsExclude}
@@ -567,8 +567,8 @@ export default function ATSSearchPage() {
                 placeholder="Add excluded skills"
               />
             </div>
-            <div className="space-y-1">
-              <label className="block text-sm font-medium">Current company</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Current company</label>
               <TagPicker
                 options={suggestions.currCompanies}
                 values={draftFilters.currentCompanies}
@@ -576,8 +576,8 @@ export default function ATSSearchPage() {
                 placeholder="Search current companies..."
               />
             </div>
-            <div className="space-y-1">
-              <label className="block text-sm font-medium">Past company</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Past company</label>
               <TagPicker
                 options={suggestions.pastCompanies}
                 values={draftFilters.pastCompanies}
@@ -585,8 +585,8 @@ export default function ATSSearchPage() {
                 placeholder="Search past companies..."
               />
             </div>
-            <div className="space-y-1">
-              <label className="block text-sm font-medium">School / University</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">School / University</label>
               <TagPicker
                 options={suggestions.schools}
                 values={draftFilters.schools}
