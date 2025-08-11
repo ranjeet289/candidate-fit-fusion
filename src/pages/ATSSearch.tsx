@@ -122,6 +122,10 @@ export default function ATSSearchPage() {
         .map((s: string) => String(s))
     ) as string[];
 
+    const skills = unique(
+      candidates.flatMap((c: any) => (Array.isArray(c.skills) ? c.skills : [])).map((s) => String(s))
+    ) as string[];
+
     const currCompanies = unique(
       candidates
         .map((c: any) => c.currentCompany || c.company)
@@ -145,7 +149,7 @@ export default function ATSSearchPage() {
       ).map((s: any) => String(s))
     ) as string[];
 
-    return { locs, currCompanies, pastCompanies, schools };
+    return { locs, skills, currCompanies, pastCompanies, schools };
   }, [candidates]);
 
   const queryText = `${appliedRole}`.trim();
@@ -531,13 +535,13 @@ export default function ATSSearchPage() {
 
       {/* Filters dialog */}
       <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
-        <DialogContent className="max-w-2xl bg-gray-50">
+        <DialogContent className="max-w-3xl bg-gray-50">
           <DialogHeader>
             <DialogTitle>Filters</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium mb-1">Location</label>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">Location</label>
               <TagPicker
                 options={suggestions.locs}
                 values={draftFilters.locations}
@@ -545,26 +549,26 @@ export default function ATSSearchPage() {
                 placeholder="Location"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Skills include</label>
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">Skills include</label>
               <TagPicker
-                options={[]}
+                options={suggestions.skills}
                 values={draftFilters.skillsInclude}
                 onChange={(vals) => setDraftFilters({ ...draftFilters, skillsInclude: vals })}
                 placeholder="Add required skills"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Skills exclude</label>
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">Skills exclude</label>
               <TagPicker
-                options={[]}
+                options={suggestions.skills}
                 values={draftFilters.skillsExclude}
                 onChange={(vals) => setDraftFilters({ ...draftFilters, skillsExclude: vals })}
                 placeholder="Add excluded skills"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Current company</label>
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">Current company</label>
               <TagPicker
                 options={suggestions.currCompanies}
                 values={draftFilters.currentCompanies}
@@ -572,8 +576,8 @@ export default function ATSSearchPage() {
                 placeholder="Search current companies..."
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Past company</label>
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">Past company</label>
               <TagPicker
                 options={suggestions.pastCompanies}
                 values={draftFilters.pastCompanies}
@@ -581,8 +585,8 @@ export default function ATSSearchPage() {
                 placeholder="Search past companies..."
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">School / University</label>
+            <div className="space-y-1">
+              <label className="block text-sm font-medium">School / University</label>
               <TagPicker
                 options={suggestions.schools}
                 values={draftFilters.schools}
