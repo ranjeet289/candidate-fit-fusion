@@ -199,7 +199,7 @@ export default function PlatformCandidates() {
       {/* Candidate profile modal */}
       {selectedCandidate && (
         <Sheet open={!!selectedCandidate} onOpenChange={() => setSelectedCandidate(null)}>
-          <SheetContent className="w-full sm:w-[600px] sm:max-w-[600px] overflow-y-auto">
+          <SheetContent className="w-full sm:w-[800px] sm:max-w-[800px] overflow-y-auto">
             <CandidateProfile candidate={selectedCandidate} />
           </SheetContent>
         </Sheet>

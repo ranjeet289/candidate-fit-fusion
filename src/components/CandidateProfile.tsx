@@ -45,8 +45,9 @@ export default function CandidateProfile({ candidate }: CandidateProfileProps) {
 
       {/* Tabs */}
       <Tabs defaultValue="about" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="communications">Communications</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
           <TabsTrigger value="schedule">Schedule</TabsTrigger>
           <TabsTrigger value="support">Support Status</TabsTrigger>
@@ -68,6 +69,60 @@ export default function CandidateProfile({ candidate }: CandidateProfileProps) {
                   {skill}
                 </Badge>
               ))}
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="communications" className="mt-6 space-y-4">
+          <div className="space-y-4">
+            <h3 className="font-medium">Communication History</h3>
+            
+            <div className="space-y-3">
+              {[
+                {
+                  type: "Email",
+                  subject: "Initial Outreach - Senior Developer Position",
+                  date: "2024-12-10",
+                  status: "Sent",
+                  platform: "Email"
+                },
+                {
+                  type: "LinkedIn",
+                  subject: "Follow-up message",
+                  date: "2024-12-08",
+                  status: "Read",
+                  platform: "LinkedIn"
+                },
+                {
+                  type: "Phone",
+                  subject: "Screening call scheduled",
+                  date: "2024-12-05",
+                  status: "Completed",
+                  platform: "Phone"
+                }
+              ].map((comm, index) => (
+                <div key={index} className="border rounded-lg p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Badge variant={comm.status === "Sent" ? "default" : comm.status === "Read" ? "secondary" : "outline"}>
+                        {comm.status}
+                      </Badge>
+                      <span className="text-sm text-gray-500">{comm.platform}</span>
+                    </div>
+                    <span className="text-sm text-gray-500">{comm.date}</span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">{comm.subject}</p>
+                    <p className="text-xs text-gray-600">{comm.type} communication</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="pt-4 border-t">
+              <Button size="sm" className="w-full">
+                Send New Message
+              </Button>
             </div>
           </div>
         </TabsContent>
