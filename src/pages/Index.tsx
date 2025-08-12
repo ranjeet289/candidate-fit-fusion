@@ -6,13 +6,17 @@ import { Target, Send, MessageSquare, ArrowRight, Star } from "lucide-react";
 import { usePageTitle } from "@/hooks/use-page-title";
 
 const Index = () => {
+  console.log('Index.tsx: Index component rendering');
   const { setTitle, setIcon, setBadge } = usePageTitle();
 
   useEffect(() => {
+    console.log('Index.tsx: useEffect running, setting page title');
     setTitle("Synapse Recruitment AI");
     setIcon(<Star className="w-6 h-6 text-primary" />);
     setBadge(null);
   }, [setTitle, setIcon, setBadge]);
+
+  console.log('Index.tsx: About to render JSX');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">

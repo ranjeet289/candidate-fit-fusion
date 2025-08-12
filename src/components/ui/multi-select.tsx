@@ -25,13 +25,20 @@ interface MultiSelectProps {
 }
 
 export function MultiSelect({
-  options,
-  selected,
+  options = [],
+  selected = [],
   onChange,
   placeholder = "Select items...",
   className,
 }: MultiSelectProps) {
+  console.log('MultiSelect: Rendering with', options?.length || 0, 'options');
   const [open, setOpen] = React.useState(false)
+
+  // Safety check for invalid props
+  if (!Array.isArray(options) || !Array.isArray(selected) || typeof onChange !== 'function') {
+    console.error('MultiSelect: Invalid props provided');
+    return null;
+  }
 
   const handleUnselect = (item: string) => {
     onChange(selected.filter((i) => i !== item))
@@ -95,7 +102,7 @@ export function MultiSelect({
           <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0" align="start">
+      <PopoverContent className="p-0" align="start" style={{ width: 'var(--radix-popover-trigger-width)' }}>
         <Command>
           <CommandInput placeholder="Search..." />
           <CommandEmpty>No item found.</CommandEmpty>

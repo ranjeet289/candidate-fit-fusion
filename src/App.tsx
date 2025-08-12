@@ -20,6 +20,7 @@ import { PageTitleProvider, usePageTitle } from './hooks/use-page-title';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
+  console.log('App.tsx: App component rendering');
   return (
     <EntityProvider>
       <PageTitleProvider>

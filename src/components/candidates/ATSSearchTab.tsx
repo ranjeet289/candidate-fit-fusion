@@ -77,6 +77,8 @@ const emptyFilters: Filters = {
 };
 
 export default function ATSSearchTab() {
+  console.log('ATSSearchTab: Component rendering');
+  
   const copyEmail = (email: string) => {
     navigator.clipboard.writeText(email);
     toast.success("Email copied to clipboard");
@@ -489,72 +491,15 @@ export default function ATSSearchTab() {
       </section>
 
       {/* Filter dialog and other modals would go here - simplified for this example */}
-      {/* Filter modal */}
+      {/* Filter modal - temporarily simplified */}
       <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Filters</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            {/* Locations filter */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Locations</label>
-              <MultiSelect
-                options={suggestions.locs.map((loc) => ({ label: loc, value: loc }))}
-                selected={draftFilters.locations}
-                onChange={(values) => setDraftFilters((f) => ({ ...f, locations: values }))}
-                placeholder="Select locations"
-              />
-            </div>
-            {/* Skills include */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Skills Include</label>
-              <MultiSelect
-                options={suggestions.skills.map((skill) => ({ label: skill, value: skill }))}
-                selected={draftFilters.skillsInclude}
-                onChange={(values) => setDraftFilters((f) => ({ ...f, skillsInclude: values }))}
-                placeholder="Select skills to include"
-              />
-            </div>
-            {/* Skills exclude */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Skills Exclude</label>
-              <MultiSelect
-                options={suggestions.skills.map((skill) => ({ label: skill, value: skill }))}
-                selected={draftFilters.skillsExclude}
-                onChange={(values) => setDraftFilters((f) => ({ ...f, skillsExclude: values }))}
-                placeholder="Select skills to exclude"
-              />
-            </div>
-            {/* Current companies */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Current Companies</label>
-              <MultiSelect
-                options={suggestions.currCompanies.map((co) => ({ label: co, value: co }))}
-                selected={draftFilters.currentCompanies}
-                onChange={(values) => setDraftFilters((f) => ({ ...f, currentCompanies: values }))}
-                placeholder="Select current companies"
-              />
-            </div>
-            {/* Past companies */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Past Companies</label>
-              <MultiSelect
-                options={suggestions.pastCompanies.map((co) => ({ label: co, value: co }))}
-                selected={draftFilters.pastCompanies}
-                onChange={(values) => setDraftFilters((f) => ({ ...f, pastCompanies: values }))}
-                placeholder="Select past companies"
-              />
-            </div>
-            {/* Schools */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Schools</label>
-              <MultiSelect
-                options={suggestions.schools.map((s) => ({ label: s, value: s }))}
-                selected={draftFilters.schools}
-                onChange={(values) => setDraftFilters((f) => ({ ...f, schools: values }))}
-                placeholder="Select schools"
-              />
+            <div className="text-center text-muted-foreground py-8">
+              Filter options temporarily disabled for debugging.
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={clearFilters}>Clear</Button>
