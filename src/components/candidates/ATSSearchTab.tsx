@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { useEntities } from "@/context/EntityContext";
 import { Search, MapPin, Linkedin, FileText, Filter, CheckSquare, Mail, Copy, X } from "lucide-react";
 import { toast } from "sonner";
@@ -498,122 +499,62 @@ export default function ATSSearchTab() {
             {/* Locations filter */}
             <div>
               <label className="block text-sm font-medium mb-1">Locations</label>
-              <Select
-                multiple
-                value={draftFilters.locations}
-                onValueChange={(values) => setDraftFilters((f) => ({ ...f, locations: values }))}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select locations" />
-                </SelectTrigger>
-                <SelectContent>
-                  {suggestions.locs.map((loc) => (
-                    <SelectItem key={loc} value={loc}>
-                      {loc}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                options={suggestions.locs.map((loc) => ({ label: loc, value: loc }))}
+                selected={draftFilters.locations}
+                onChange={(values) => setDraftFilters((f) => ({ ...f, locations: values }))}
+                placeholder="Select locations"
+              />
             </div>
             {/* Skills include */}
             <div>
               <label className="block text-sm font-medium mb-1">Skills Include</label>
-              <Select
-                multiple
-                value={draftFilters.skillsInclude}
-                onValueChange={(values) => setDraftFilters((f) => ({ ...f, skillsInclude: values }))}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select skills to include" />
-                </SelectTrigger>
-                <SelectContent>
-                  {suggestions.skills.map((skill) => (
-                    <SelectItem key={skill} value={skill}>
-                      {skill}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                options={suggestions.skills.map((skill) => ({ label: skill, value: skill }))}
+                selected={draftFilters.skillsInclude}
+                onChange={(values) => setDraftFilters((f) => ({ ...f, skillsInclude: values }))}
+                placeholder="Select skills to include"
+              />
             </div>
             {/* Skills exclude */}
             <div>
               <label className="block text-sm font-medium mb-1">Skills Exclude</label>
-              <Select
-                multiple
-                value={draftFilters.skillsExclude}
-                onValueChange={(values) => setDraftFilters((f) => ({ ...f, skillsExclude: values }))}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select skills to exclude" />
-                </SelectTrigger>
-                <SelectContent>
-                  {suggestions.skills.map((skill) => (
-                    <SelectItem key={skill} value={skill}>
-                      {skill}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                options={suggestions.skills.map((skill) => ({ label: skill, value: skill }))}
+                selected={draftFilters.skillsExclude}
+                onChange={(values) => setDraftFilters((f) => ({ ...f, skillsExclude: values }))}
+                placeholder="Select skills to exclude"
+              />
             </div>
             {/* Current companies */}
             <div>
               <label className="block text-sm font-medium mb-1">Current Companies</label>
-              <Select
-                multiple
-                value={draftFilters.currentCompanies}
-                onValueChange={(values) => setDraftFilters((f) => ({ ...f, currentCompanies: values }))}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select current companies" />
-                </SelectTrigger>
-                <SelectContent>
-                  {suggestions.currCompanies.map((co) => (
-                    <SelectItem key={co} value={co}>
-                      {co}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                options={suggestions.currCompanies.map((co) => ({ label: co, value: co }))}
+                selected={draftFilters.currentCompanies}
+                onChange={(values) => setDraftFilters((f) => ({ ...f, currentCompanies: values }))}
+                placeholder="Select current companies"
+              />
             </div>
             {/* Past companies */}
             <div>
               <label className="block text-sm font-medium mb-1">Past Companies</label>
-              <Select
-                multiple
-                value={draftFilters.pastCompanies}
-                onValueChange={(values) => setDraftFilters((f) => ({ ...f, pastCompanies: values }))}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select past companies" />
-                </SelectTrigger>
-                <SelectContent>
-                  {suggestions.pastCompanies.map((co) => (
-                    <SelectItem key={co} value={co}>
-                      {co}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                options={suggestions.pastCompanies.map((co) => ({ label: co, value: co }))}
+                selected={draftFilters.pastCompanies}
+                onChange={(values) => setDraftFilters((f) => ({ ...f, pastCompanies: values }))}
+                placeholder="Select past companies"
+              />
             </div>
             {/* Schools */}
             <div>
               <label className="block text-sm font-medium mb-1">Schools</label>
-              <Select
-                multiple
-                value={draftFilters.schools}
-                onValueChange={(values) => setDraftFilters((f) => ({ ...f, schools: values }))}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select schools" />
-                </SelectTrigger>
-                <SelectContent>
-                  {suggestions.schools.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                options={suggestions.schools.map((s) => ({ label: s, value: s }))}
+                selected={draftFilters.schools}
+                onChange={(values) => setDraftFilters((f) => ({ ...f, schools: values }))}
+                placeholder="Select schools"
+              />
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={clearFilters}>Clear</Button>

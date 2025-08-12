@@ -3,6 +3,7 @@ import { usePageTitle } from "@/hooks/use-page-title";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PlatformCandidates from "@/components/candidates/PlatformCandidates";
 import ATSSearchTab from "@/components/candidates/ATSSearchTab";
+import JobPostingsTab from "@/components/jobs/JobPostingsTab";
 
 export default function CandidatesPage() {
   const { setTitle } = usePageTitle();
@@ -26,9 +27,10 @@ export default function CandidatesPage() {
 
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="platform">Platform Candidates</TabsTrigger>
             <TabsTrigger value="ats">ATS Search</TabsTrigger>
+            <TabsTrigger value="jobs">Job Postings</TabsTrigger>
           </TabsList>
           
           <TabsContent value="platform" className="space-y-0">
@@ -37,6 +39,10 @@ export default function CandidatesPage() {
           
           <TabsContent value="ats" className="space-y-0">
             <ATSSearchTab />
+          </TabsContent>
+          
+          <TabsContent value="jobs" className="space-y-0">
+            <JobPostingsTab />
           </TabsContent>
         </Tabs>
       </div>
